@@ -1,6 +1,7 @@
 package com.group.mobileparkingchain.ui.screens.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -17,6 +18,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.screens.reservation.ParkingDetail
+import com.group.mobileparkingchain.ui.screens.reservation.ReservationDetailSheet
+import com.group.mobileparkingchain.ui.screens.reservation.PaymentMethod
 
 data class ParkingSpot(
     val id: String,
@@ -43,20 +47,40 @@ enum class FilterType {
 fun HomeScreen() {
     var selectedFilter by remember { mutableStateOf(FilterType.ALL) }
     var searchQuery by remember { mutableStateOf("") }
+    var showReservationSheet by remember { mutableStateOf(false) }
+    var selectedSpot by remember { mutableStateOf<ParkingSpot?>(null) }
 
     // Sample parking data
     val parkingSpots = remember {
         listOf(
-            ParkingSpot("A1", "Car", ParkingStatus.AVAILABLE),
-            ParkingSpot("A2", "Car", ParkingStatus.OCCUPIED),
-            ParkingSpot("A3", "Motocycle", ParkingStatus.AVAILABLE),
-            ParkingSpot("A1", "Car", ParkingStatus.AVAILABLE),
-            ParkingSpot("A2", "Car", ParkingStatus.OCCUPIED),
-            ParkingSpot("A3", "Motocycle", ParkingStatus.AVAILABLE),
-            ParkingSpot("A1", "Car", ParkingStatus.AVAILABLE),
-            ParkingSpot("A2", "Car", ParkingStatus.OCCUPIED),
-            ParkingSpot("A3", "Motocycle", ParkingStatus.AVAILABLE),
+            ParkingSpot("P-123", "Car", ParkingStatus.AVAILABLE),
+            ParkingSpot("P-124", "Car", ParkingStatus.OCCUPIED),
+            ParkingSpot("P-125", "Motorcycle", ParkingStatus.AVAILABLE),
+            ParkingSpot("P-126", "Car", ParkingStatus.AVAILABLE),
+            ParkingSpot("P-127", "Car", ParkingStatus.RESERVED),
+            ParkingSpot("P-128", "Motorcycle", ParkingStatus.AVAILABLE),
+            ParkingSpot("P-129", "Car", ParkingStatus.AVAILABLE),
+            ParkingSpot("P-130", "Car", ParkingStatus.OCCUPIED),
+            ParkingSpot("P-131", "Motorcycle", ParkingStatus.AVAILABLE),
         )
+    }
+
+    // Filter parking spots based on selected filter and search query
+    val filteredSpots = remember(selectedFilter, searchQuery, parkingSpots) {
+        parkingSpots.filter { spot ->
+            val matchesFilter = when (selectedFilter) {
+                FilterType.ALL -> true
+                FilterType.AVAILABLE -> spot.status == ParkingStatus.AVAILABLE
+                FilterType.CAR -> spot.type.equals("Car", ignoreCase = true)
+                FilterType.MOTORCYCLE -> spot.type.equals("Motorcycle", ignoreCase = true)
+                FilterType.LEV -> false // Add LEV spots if needed
+            }
+            val matchesSearch = searchQuery.isEmpty() ||
+                    spot.id.contains(searchQuery, ignoreCase = true) ||
+                    spot.type.contains(searchQuery, ignoreCase = true)
+
+            matchesFilter && matchesSearch
+        }
     }
 
     Scaffold(
@@ -70,12 +94,12 @@ fun HomeScreen() {
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* TODO */ }) {
+                    IconButton(onClick = { /* TODO: Open drawer */ }) {
                         Icon(Icons.Default.Menu, "Menu")
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* TODO */ }) {
+                    IconButton(onClick = { /* TODO: Open notifications */ }) {
                         Icon(Icons.Default.Notifications, "Notifications")
                     }
                 },
@@ -108,7 +132,9 @@ fun HomeScreen() {
                     unfocusedContainerColor = Color(0xFF1E2836),
                     focusedContainerColor = Color(0xFF1E2836),
                     unfocusedBorderColor = Color.Transparent,
-                    focusedBorderColor = Color(0xFF2196F3)
+                    focusedBorderColor = Color(0xFF2196F3),
+                    unfocusedTextColor = Color.White,
+                    focusedTextColor = Color.White
                 )
             )
 
@@ -155,7 +181,7 @@ fun HomeScreen() {
                 FilterChip(
                     selected = selectedFilter == FilterType.MOTORCYCLE,
                     onClick = { selectedFilter = FilterType.MOTORCYCLE },
-                    label = { Text("Motocycle") },
+                    label = { Text("Motorcycle") },
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = Color(0xFF2196F3),
                         selectedLabelColor = Color.White,
@@ -196,12 +222,23 @@ fun HomeScreen() {
             Spacer(modifier = Modifier.height(16.dp))
 
             // Parking Grid Title
-            Text(
-                "Parking Grid",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color.White
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "Parking Grid",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
+                Text(
+                    "${filteredSpots.size} spots",
+                    fontSize = 14.sp,
+                    color = Color.Gray
+                )
+            }
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -211,11 +248,57 @@ fun HomeScreen() {
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(parkingSpots.size) { index ->
-                    ParkingSpotCard(parkingSpots[index])
+                items(filteredSpots.size) { index ->
+                    ParkingSpotCard(
+                        spot = filteredSpots[index],
+                        onClick = {
+                            if (filteredSpots[index].status == ParkingStatus.AVAILABLE) {
+                                selectedSpot = filteredSpots[index]
+                                showReservationSheet = true
+                            }
+                        }
+                    )
                 }
             }
         }
+    }
+
+    // Reservation Bottom Sheet
+    if (showReservationSheet && selectedSpot != null) {
+        ReservationDetailSheet(
+            parkingDetail = ParkingDetail(
+                id = selectedSpot!!.id,
+                location = "Level 1, Section A",
+                type = selectedSpot!!.type + " Parking",
+                lastUpdated = "2 minutes ago",
+                pricePerHour = 2.00,
+                status = "Available"
+            ),
+            onDismiss = {
+                showReservationSheet = false
+                selectedSpot = null
+            },
+            onReserve = { paymentMethod ->
+                // Handle reservation with selected payment method
+                // TODO: Implement reservation logic based on payment method
+                when (paymentMethod) {
+                    PaymentMethod.ABA_PAYWAY -> {
+                        // Process ABA PayWay payment
+                    }
+                    PaymentMethod.CREDIT_CARD -> {
+                        // Process credit card payment
+                    }
+                    PaymentMethod.WING -> {
+                        // Process Wing payment
+                    }
+                    PaymentMethod.PI_PAY -> {
+                        // Process Pi Pay payment
+                    }
+                }
+                showReservationSheet = false
+                selectedSpot = null
+            }
+        )
     }
 }
 
@@ -239,7 +322,10 @@ fun LegendItem(color: Color, label: String) {
 }
 
 @Composable
-fun ParkingSpotCard(spot: ParkingSpot) {
+fun ParkingSpotCard(
+    spot: ParkingSpot,
+    onClick: () -> Unit
+) {
     val backgroundColor = when (spot.status) {
         ParkingStatus.AVAILABLE -> Color(0xFF1B4D2C)
         ParkingStatus.OCCUPIED -> Color(0xFF4D1B1B)
@@ -255,7 +341,11 @@ fun ParkingSpotCard(spot: ParkingSpot) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .aspectRatio(1f),
+            .aspectRatio(1f)
+            .clickable(
+                enabled = spot.status == ParkingStatus.AVAILABLE,
+                onClick = onClick
+            ),
         colors = CardDefaults.cardColors(
             containerColor = backgroundColor
         ),
@@ -270,7 +360,7 @@ fun ParkingSpotCard(spot: ParkingSpot) {
         ) {
             Text(
                 spot.id,
-                fontSize = 24.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = textColor
             )
@@ -280,8 +370,8 @@ fun ParkingSpotCard(spot: ParkingSpot) {
                 color = Color.White.copy(alpha = 0.7f)
             )
             Text(
-                "🚗",
-                fontSize = 32.sp
+                if (spot.type.equals("Motorcycle", ignoreCase = true)) "🏍️" else "🚗",
+                fontSize = 28.sp
             )
         }
     }
