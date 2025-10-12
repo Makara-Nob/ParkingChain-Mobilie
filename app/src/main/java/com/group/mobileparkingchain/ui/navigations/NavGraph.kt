@@ -1,9 +1,11 @@
 package com.group.mobileparkingchain.navigation
 
+import androidx.compose.animation.scaleIn
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.group.mobileparkingchain.ui.screens.booking.CompleteBookingScreen
 import com.group.mobileparkingchain.ui.screens.home.HomeScreen
 import com.group.mobileparkingchain.ui.screens.signin.SignInScreen
 import com.group.mobileparkingchain.ui.screens.signup.SignUpScreen
@@ -14,6 +16,7 @@ sealed class Screen(val route: String) {
     object SignIn : Screen("signin")
     object Home : Screen("home")
     object SignUp : Screen("signup")
+    object complete_booking : Screen("complete_booking")
 }
 
 @Composable

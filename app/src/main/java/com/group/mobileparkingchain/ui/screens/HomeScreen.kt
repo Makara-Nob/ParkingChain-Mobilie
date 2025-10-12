@@ -20,7 +20,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.group.mobileparkingchain.ui.screens.reservation.ParkingDetail
 import com.group.mobileparkingchain.ui.screens.reservation.ReservationDetailSheet
-import com.group.mobileparkingchain.ui.screens.reservation.PaymentMethod
+import com.group.mobileparkingchain.ui.screens.booking.BookingInfo
+import com.group.mobileparkingchain.ui.screens.booking.CompleteBookingScreen
+import com.group.mobileparkingchain.ui.screens.payment.PaymentScreen
+import com.group.mobileparkingchain.ui.screens.payment.PaymentInfo
+import java.util.Date
 
 data class ParkingSpot(
     val id: String,
@@ -49,6 +53,12 @@ fun HomeScreen() {
     var searchQuery by remember { mutableStateOf("") }
     var showReservationSheet by remember { mutableStateOf(false) }
     var selectedSpot by remember { mutableStateOf<ParkingSpot?>(null) }
+    var showCompleteBooking by remember { mutableStateOf(false) }
+
+    // Booking details state
+    var bookingDuration by remember { mutableStateOf(0) }
+    var bookingStartTime by remember { mutableStateOf(0L) }
+    var bookingTotal by remember { mutableStateOf(0.0) }
 
     // Sample parking data
     val parkingSpots = remember {
@@ -73,7 +83,7 @@ fun HomeScreen() {
                 FilterType.AVAILABLE -> spot.status == ParkingStatus.AVAILABLE
                 FilterType.CAR -> spot.type.equals("Car", ignoreCase = true)
                 FilterType.MOTORCYCLE -> spot.type.equals("Motorcycle", ignoreCase = true)
-                FilterType.LEV -> false // Add LEV spots if needed
+                FilterType.LEV -> false
             }
             val matchesSearch = searchQuery.isEmpty() ||
                     spot.id.contains(searchQuery, ignoreCase = true) ||
@@ -83,222 +93,248 @@ fun HomeScreen() {
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        "Smart Parking",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { /* TODO: Open drawer */ }) {
-                        Icon(Icons.Default.Menu, "Menu")
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { /* TODO: Open notifications */ }) {
-                        Icon(Icons.Default.Notifications, "Notifications")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF1A1A1A)
-                )
-            )
-        },
-        containerColor = Color(0xFF121212)
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = 16.dp)
-        ) {
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Search Bar
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                placeholder = { Text("Search", color = Color.Gray) },
-                leadingIcon = {
-                    Icon(Icons.Default.Search, "Search", tint = Color.Gray)
-                },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedContainerColor = Color(0xFF1E2836),
-                    focusedContainerColor = Color(0xFF1E2836),
-                    unfocusedBorderColor = Color.Transparent,
-                    focusedBorderColor = Color(0xFF2196F3),
-                    unfocusedTextColor = Color.White,
-                    focusedTextColor = Color.White
-                )
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Filter Chips
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                FilterChip(
-                    selected = selectedFilter == FilterType.ALL,
-                    onClick = { selectedFilter = FilterType.ALL },
-                    label = { Text("All") },
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = Color(0xFF2196F3),
-                        selectedLabelColor = Color.White,
-                        containerColor = Color(0xFF1E2836),
-                        labelColor = Color.Gray
-                    )
-                )
-                FilterChip(
-                    selected = selectedFilter == FilterType.AVAILABLE,
-                    onClick = { selectedFilter = FilterType.AVAILABLE },
-                    label = { Text("Available") },
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = Color(0xFF2196F3),
-                        selectedLabelColor = Color.White,
-                        containerColor = Color(0xFF1E2836),
-                        labelColor = Color.Gray
-                    )
-                )
-                FilterChip(
-                    selected = selectedFilter == FilterType.CAR,
-                    onClick = { selectedFilter = FilterType.CAR },
-                    label = { Text("Car") },
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = Color(0xFF2196F3),
-                        selectedLabelColor = Color.White,
-                        containerColor = Color(0xFF1E2836),
-                        labelColor = Color.Gray
-                    )
-                )
-                FilterChip(
-                    selected = selectedFilter == FilterType.MOTORCYCLE,
-                    onClick = { selectedFilter = FilterType.MOTORCYCLE },
-                    label = { Text("Motorcycle") },
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = Color(0xFF2196F3),
-                        selectedLabelColor = Color.White,
-                        containerColor = Color(0xFF1E2836),
-                        labelColor = Color.Gray
-                    )
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Legend
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF1E2836)
-                ),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        "Legend",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.White
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    LegendItem(Color(0xFF4CAF50), "Available")
-                    Spacer(modifier = Modifier.height(8.dp))
-                    LegendItem(Color(0xFFE53935), "Occupied")
-                    Spacer(modifier = Modifier.height(8.dp))
-                    LegendItem(Color(0xFF2196F3), "Reserved")
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Parking Grid Title
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    "Parking Grid",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.White
-                )
-                Text(
-                    "${filteredSpots.size} spots",
-                    fontSize = 14.sp,
-                    color = Color.Gray
-                )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Parking Grid
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(filteredSpots.size) { index ->
-                    ParkingSpotCard(
-                        spot = filteredSpots[index],
-                        onClick = {
-                            if (filteredSpots[index].status == ParkingStatus.AVAILABLE) {
-                                selectedSpot = filteredSpots[index]
-                                showReservationSheet = true
-                            }
-                        }
-                    )
-                }
-            }
-        }
-    }
-
-    // Reservation Bottom Sheet
-    if (showReservationSheet && selectedSpot != null) {
-        ReservationDetailSheet(
-            parkingDetail = ParkingDetail(
-                id = selectedSpot!!.id,
-                location = "Level 1, Section A",
-                type = selectedSpot!!.type + " Parking",
-                lastUpdated = "2 minutes ago",
-                pricePerHour = 2.00,
-                status = "Available"
+    // Show Complete Booking Screen if active
+    if (showCompleteBooking && selectedSpot != null) {
+        CompleteBookingScreen(
+            bookingInfo = BookingInfo(
+                spotId = selectedSpot!!.id.removePrefix("P-"),
+                spotLocation = "Mair Street Parking Lot",
+                spotType = selectedSpot!!.type,
+                ratePerHour = 5.0
             ),
-            onDismiss = {
-                showReservationSheet = false
+            onBackClick = {
+                showCompleteBooking = false
                 selectedSpot = null
             },
-            onReserve = { paymentMethod ->
-                // Handle reservation with selected payment method
-                // TODO: Implement reservation logic based on payment method
-                when (paymentMethod) {
-                    PaymentMethod.ABA_PAYWAY -> {
-                        // Process ABA PayWay payment
-                    }
-                    PaymentMethod.CREDIT_CARD -> {
-                        // Process credit card payment
-                    }
-                    PaymentMethod.WING -> {
-                        // Process Wing payment
-                    }
-                    PaymentMethod.PI_PAY -> {
-                        // Process Pi Pay payment
-                    }
-                }
-                showReservationSheet = false
+            onContinueToPayment = { duration, startTime, total ->
+                // Store the booking details
+                bookingDuration = duration
+                bookingStartTime = startTime
+                bookingTotal = total
+
+                // Close complete booking screen
+                showCompleteBooking = false
+
+                // TODO: Navigate to payment screen
+                // For now, just print the values
+                println("=== BOOKING DETAILS ===")
+                println("Spot ID: ${selectedSpot!!.id}")
+                println("Duration: $duration hours")
+                println("Start Time: ${Date(startTime)}")
+                println("Total Amount: $$total")
+                println("=====================")
+
+                // TODO: Show payment screen here
+                // showPaymentScreen = true
+
+                // Reset selected spot after booking
                 selectedSpot = null
             }
         )
+    } else {
+        // Show Home Screen
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(
+                            "Smart Parking",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { /* TODO: Open drawer */ }) {
+                            Icon(Icons.Default.Menu, "Menu", tint = Color.White)
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = { /* TODO: Open notifications */ }) {
+                            Icon(Icons.Default.Notifications, "Notifications", tint = Color.White)
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color(0xFF1A1A1A),
+                        titleContentColor = Color.White
+                    )
+                )
+            },
+            containerColor = Color(0xFF121212)
+        ) { padding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(horizontal = 16.dp)
+            ) {
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Search Bar
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    placeholder = { Text("Search", color = Color.Gray) },
+                    leadingIcon = {
+                        Icon(Icons.Default.Search, "Search", tint = Color.Gray)
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedContainerColor = Color(0xFF1E2836),
+                        focusedContainerColor = Color(0xFF1E2836),
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedBorderColor = Color(0xFF2196F3),
+                        unfocusedTextColor = Color.White,
+                        focusedTextColor = Color.White
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Filter Chips
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    FilterChip(
+                        selected = selectedFilter == FilterType.ALL,
+                        onClick = { selectedFilter = FilterType.ALL },
+                        label = { Text("All") },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = Color(0xFF2196F3),
+                            selectedLabelColor = Color.White,
+                            containerColor = Color(0xFF1E2836),
+                            labelColor = Color.Gray
+                        )
+                    )
+                    FilterChip(
+                        selected = selectedFilter == FilterType.AVAILABLE,
+                        onClick = { selectedFilter = FilterType.AVAILABLE },
+                        label = { Text("Available") },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = Color(0xFF2196F3),
+                            selectedLabelColor = Color.White,
+                            containerColor = Color(0xFF1E2836),
+                            labelColor = Color.Gray
+                        )
+                    )
+                    FilterChip(
+                        selected = selectedFilter == FilterType.CAR,
+                        onClick = { selectedFilter = FilterType.CAR },
+                        label = { Text("Car") },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = Color(0xFF2196F3),
+                            selectedLabelColor = Color.White,
+                            containerColor = Color(0xFF1E2836),
+                            labelColor = Color.Gray
+                        )
+                    )
+                    FilterChip(
+                        selected = selectedFilter == FilterType.MOTORCYCLE,
+                        onClick = { selectedFilter = FilterType.MOTORCYCLE },
+                        label = { Text("Motorcycle") },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = Color(0xFF2196F3),
+                            selectedLabelColor = Color.White,
+                            containerColor = Color(0xFF1E2836),
+                            labelColor = Color.Gray
+                        )
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Legend
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFF1E2836)
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Text(
+                            "Legend",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.White
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        LegendItem(Color(0xFF4CAF50), "Available")
+                        Spacer(modifier = Modifier.height(8.dp))
+                        LegendItem(Color(0xFFE53935), "Occupied")
+                        Spacer(modifier = Modifier.height(8.dp))
+                        LegendItem(Color(0xFF2196F3), "Reserved")
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Parking Grid Title
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        "Parking Grid",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White
+                    )
+                    Text(
+                        "${filteredSpots.size} spots",
+                        fontSize = 14.sp,
+                        color = Color.Gray
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Parking Grid
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(filteredSpots.size) { index ->
+                        ParkingSpotCard(
+                            spot = filteredSpots[index],
+                            onClick = {
+                                if (filteredSpots[index].status == ParkingStatus.AVAILABLE) {
+                                    selectedSpot = filteredSpots[index]
+                                    showReservationSheet = true
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+        }
+
+        // Reservation Bottom Sheet
+        if (showReservationSheet && selectedSpot != null) {
+            ReservationDetailSheet(
+                parkingDetail = ParkingDetail(
+                    id = selectedSpot!!.id,
+                    location = "Level 1, Section A",
+                    type = selectedSpot!!.type + " Parking",
+                    lastUpdated = "2 minutes ago",
+                    pricePerHour = 2.00,
+                    status = "Available"
+                ),
+                onDismiss = {
+                    showReservationSheet = false
+                    selectedSpot = null
+                },
+                onReserve = {
+                    showReservationSheet = false
+                    showCompleteBooking = true
+                }
+            )
+        }
     }
 }
 
