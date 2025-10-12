@@ -58,27 +58,9 @@ fun SignUpScreen(
                 .padding(vertical = 40.dp)
         ) {
             // Logo (smaller version)
-            ParkingLogo(size = 100)
+            ParkingLogo(size = 200)
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            // App Name
-            Text(
-                text = "SMART",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                color = PrimaryBlue,
-                letterSpacing = 3.sp
-            )
-            Text(
-                text = "PARKING",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                color = PrimaryBlue,
-                letterSpacing = 3.sp
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
 
             // Join Us Now Title
             Text(

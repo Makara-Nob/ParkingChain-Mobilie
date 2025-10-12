@@ -7,13 +7,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.group.mobileparkingchain.ui.components.LoadingSpinner
 import com.group.mobileparkingchain.ui.components.ParkingLogo
-import com.group.mobileparkingchain.ui.theme.PrimaryBlue
 import com.group.mobileparkingchain.ui.theme.SmartParkingTheme
 import com.group.mobileparkingchain.ui.theme.TextGray
 import kotlinx.coroutines.delay
@@ -45,26 +43,6 @@ fun WelcomeScreen(
         ) {
             // Logo
             ParkingLogo()
-
-            Spacer(modifier = Modifier.height(48.dp))
-
-            // App Name
-            Text(
-                text = "SMART",
-                fontSize = 48.sp,
-                fontWeight = FontWeight.Bold,
-                color = PrimaryBlue,
-                letterSpacing = 4.sp
-            )
-            Text(
-                text = "PARKING",
-                fontSize = 48.sp,
-                fontWeight = FontWeight.Bold,
-                color = PrimaryBlue,
-                letterSpacing = 4.sp
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
 
             // Tagline
             Text(

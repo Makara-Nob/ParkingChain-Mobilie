@@ -72,7 +72,7 @@ fun HomeScreen() {
             ParkingSpot("P-129", "Car", ParkingStatus.AVAILABLE),
             ParkingSpot("P-130", "Car", ParkingStatus.OCCUPIED),
             ParkingSpot("P-131", "Motorcycle", ParkingStatus.AVAILABLE),
-        )
+            )
     }
 
     // Filter parking spots based on selected filter and search query
