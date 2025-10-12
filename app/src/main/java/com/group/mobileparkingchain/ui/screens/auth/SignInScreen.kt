@@ -31,8 +31,8 @@ fun SignInScreen(
     onNavigateToSignUp: () -> Unit = {},
     onForgotPassword: () -> Unit = {}
 ) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("user@example.com") }
+    var password by remember { mutableStateOf("88889999") }
     var passwordVisible by remember { mutableStateOf(false) }
     var showError by remember { mutableStateOf(false) }
 

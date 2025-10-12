@@ -24,7 +24,6 @@ import com.group.mobileparkingchain.ui.screens.booking.BookingInfo
 import com.group.mobileparkingchain.ui.screens.booking.CompleteBookingScreen
 import com.group.mobileparkingchain.ui.screens.payment.PaymentScreen
 import com.group.mobileparkingchain.ui.screens.payment.PaymentInfo
-import java.util.Date
 
 data class ParkingSpot(
     val id: String,
@@ -54,6 +53,7 @@ fun HomeScreen() {
     var showReservationSheet by remember { mutableStateOf(false) }
     var selectedSpot by remember { mutableStateOf<ParkingSpot?>(null) }
     var showCompleteBooking by remember { mutableStateOf(false) }
+    var showPaymentScreen by remember { mutableStateOf(false) }
 
     // Booking details state
     var bookingDuration by remember { mutableStateOf(0) }
@@ -93,8 +93,33 @@ fun HomeScreen() {
         }
     }
 
-    // Show Complete Booking Screen if active
-    if (showCompleteBooking && selectedSpot != null) {
+    // Show Payment Screen
+    if (showPaymentScreen && selectedSpot != null) {
+        PaymentScreen(
+            paymentInfo = PaymentInfo(
+                spotId = selectedSpot!!.id.removePrefix("P-"),
+                duration = bookingDuration,
+                startTime = bookingStartTime,
+                total = bookingTotal
+            ),
+            onBackClick = {
+                showPaymentScreen = false
+                showCompleteBooking = true
+            },
+            onPaymentSuccess = {
+                // Payment successful - reset everything
+                showPaymentScreen = false
+                showCompleteBooking = false
+                selectedSpot = null
+
+                // TODO: Show success screen or navigate to booking confirmation
+                println("=== PAYMENT SUCCESSFUL ===")
+                println("Booking confirmed!")
+            }
+        )
+    }
+    // Show Complete Booking Screen
+    else if (showCompleteBooking && selectedSpot != null) {
         CompleteBookingScreen(
             bookingInfo = BookingInfo(
                 spotId = selectedSpot!!.id.removePrefix("P-"),
@@ -112,27 +137,14 @@ fun HomeScreen() {
                 bookingStartTime = startTime
                 bookingTotal = total
 
-                // Close complete booking screen
+                // Close complete booking and show payment screen
                 showCompleteBooking = false
-
-                // TODO: Navigate to payment screen
-                // For now, just print the values
-                println("=== BOOKING DETAILS ===")
-                println("Spot ID: ${selectedSpot!!.id}")
-                println("Duration: $duration hours")
-                println("Start Time: ${Date(startTime)}")
-                println("Total Amount: $$total")
-                println("=====================")
-
-                // TODO: Show payment screen here
-                // showPaymentScreen = true
-
-                // Reset selected spot after booking
-                selectedSpot = null
+                showPaymentScreen = true
             }
         )
-    } else {
-        // Show Home Screen
+    }
+    // Show Home Screen
+    else {
         Scaffold(
             topBar = {
                 TopAppBar(
