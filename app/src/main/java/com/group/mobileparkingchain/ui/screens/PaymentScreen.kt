@@ -1,7 +1,6 @@
 package com.group.mobileparkingchain.ui.screens.payment
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -17,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.text.SimpleDateFormat
@@ -71,6 +71,59 @@ fun PaymentScreen(
                 )
             )
         },
+        bottomBar = {
+            // ✅ Sticky total & pay button
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFF121212))
+                    .padding(16.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Total", fontSize = 20.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
+                    Text(
+                        "$${String.format("%.2f", paymentInfo.total)}",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Button(
+                    onClick = {
+                        isProcessing = true
+                        onPaymentSuccess()
+                        isProcessing = false
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3)),
+                    shape = RoundedCornerShape(12.dp),
+                    enabled = !isProcessing && isFormValid(selectedPaymentMethod, cardNumber, expiryDate, cvv)
+                ) {
+                    if (isProcessing) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = Color.White,
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text(
+                            text = "Confirm & Pay",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+            }
+        },
         containerColor = Color(0xFF121212)
     ) { padding ->
         Column(
@@ -85,14 +138,10 @@ fun PaymentScreen(
             // Booking Summary
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF1E2836)
-                ),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFF1E2836)),
                 shape = RoundedCornerShape(16.dp)
             ) {
-                Column(
-                    modifier = Modifier.padding(20.dp)
-                ) {
+                Column(modifier = Modifier.padding(20.dp)) {
                     Text(
                         "BOOKING DETAILS",
                         fontSize = 12.sp,
@@ -100,15 +149,11 @@ fun PaymentScreen(
                         fontWeight = FontWeight.Medium
                     )
                     Spacer(modifier = Modifier.height(12.dp))
-
                     BookingSummaryRow("Parking Spot", "P-${paymentInfo.spotId}")
                     Spacer(modifier = Modifier.height(8.dp))
                     BookingSummaryRow("Duration", "${paymentInfo.duration} hours")
                     Spacer(modifier = Modifier.height(8.dp))
-                    BookingSummaryRow(
-                        "Start Time",
-                        dateFormat.format(Date(paymentInfo.startTime))
-                    )
+                    BookingSummaryRow("Start Time", dateFormat.format(Date(paymentInfo.startTime)))
                 }
             }
 
@@ -141,84 +186,22 @@ fun PaymentScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Payment Form based on selected method
+            // Payment Form
             when (selectedPaymentMethod) {
-                PaymentMethodType.CREDIT_CARD -> {
-                    CreditCardForm(
-                        cardNumber = cardNumber,
-                        onCardNumberChange = { cardNumber = it },
-                        expiryDate = expiryDate,
-                        onExpiryDateChange = { expiryDate = it },
-                        cvv = cvv,
-                        onCvvChange = { cvv = it }
-                    )
-                }
-                PaymentMethodType.DIGITAL_WALLET -> {
-                    DigitalWalletOptions()
-                }
-                PaymentMethodType.MOCK_PAYMENT -> {
-                    MockPaymentInfo()
-                }
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            // Total and Pay Button
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    "Total",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.White
+                PaymentMethodType.CREDIT_CARD -> CreditCardForm(
+                    cardNumber = cardNumber,
+                    onCardNumberChange = { cardNumber = formatCardNumber(it) },
+                    expiryDate = expiryDate,
+                    onExpiryDateChange = { expiryDate = formatExpiryDate(it) },
+                    cvv = cvv,
+                    onCvvChange = { cvv = it.filter { c -> c.isDigit() }.take(3) }
                 )
-                Text(
-                    "$${String.format("%.2f", paymentInfo.total)}",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
+
+                PaymentMethodType.DIGITAL_WALLET -> DigitalWalletOptions()
+                PaymentMethodType.MOCK_PAYMENT -> MockPaymentInfo()
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Button(
-                onClick = {
-                    isProcessing = true
-                    // Simulate payment processing
-                    // In real app, call payment API here
-                    onPaymentSuccess()
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF2196F3)
-                ),
-                shape = RoundedCornerShape(12.dp),
-                enabled = !isProcessing && isFormValid(selectedPaymentMethod, cardNumber, expiryDate, cvv)
-            ) {
-                if (isProcessing) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        color = Color.White,
-                        strokeWidth = 2.dp
-                    )
-                } else {
-                    Text(
-                        text = "Confirm & pay",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(80.dp)) // for bottom padding
         }
     }
 }
@@ -229,30 +212,15 @@ fun BookingSummaryRow(label: String, value: String) {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
-            text = label,
-            fontSize = 14.sp,
-            color = Color.Gray
-        )
-        Text(
-            text = value,
-            fontSize = 14.sp,
-            color = Color.White,
-            fontWeight = FontWeight.Medium
-        )
+        Text(label, fontSize = 14.sp, color = Color.Gray)
+        Text(value, fontSize = 14.sp, color = Color.White, fontWeight = FontWeight.Medium)
     }
 }
 
 @Composable
-fun PaymentMethodChip(
-    label: String,
-    isSelected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+fun PaymentMethodChip(label: String, isSelected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Surface(
-        modifier = modifier
-            .clickable(onClick = onClick),
+        modifier = modifier.clickable(onClick = onClick),
         color = if (isSelected) Color(0xFF2196F3) else Color(0xFF1E2836),
         shape = RoundedCornerShape(12.dp)
     ) {
@@ -265,7 +233,7 @@ fun PaymentMethodChip(
                 fontSize = 12.sp,
                 fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
                 color = if (isSelected) Color.White else Color.Gray,
-                maxLines = 2
+                textAlign = TextAlign.Center
             )
         }
     }
@@ -281,96 +249,42 @@ fun CreditCardForm(
     onCvvChange: (String) -> Unit
 ) {
     Column {
-        // Card Number
-        Text(
-            "Card Number",
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
-            color = Color(0xFF2196F3)
-        )
-        Spacer(modifier = Modifier.height(8.dp))
+        LabeledField("Card Number")
         OutlinedTextField(
             value = cardNumber,
-            onValueChange = { if (it.length <= 16) onCardNumberChange(it.filter { char -> char.isDigit() }) },
-            placeholder = { Text("Enter Card number", color = Color.Gray) },
+            onValueChange = onCardNumberChange,
+            placeholder = { Text("XXXX XXXX XXXX XXXX", color = Color.Gray) },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
-            colors = OutlinedTextFieldDefaults.colors(
-                unfocusedContainerColor = Color(0xFF1E2836),
-                focusedContainerColor = Color(0xFF1E2836),
-                unfocusedBorderColor = Color.Transparent,
-                focusedBorderColor = Color(0xFF2196F3),
-                unfocusedTextColor = Color.White,
-                focusedTextColor = Color.White
-            ),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            singleLine = true
+            colors = textFieldColors()
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            // Expiry Date
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    "Expiry Date",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xFF2196F3)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
+                LabeledField("Expiry Date")
                 OutlinedTextField(
                     value = expiryDate,
-                    onValueChange = {
-                        if (it.length <= 5) {
-                            val filtered = it.filter { char -> char.isDigit() || char == '/' }
-                            onExpiryDateChange(filtered)
-                        }
-                    },
+                    onValueChange = onExpiryDateChange,
                     placeholder = { Text("MM/YY", color = Color.Gray) },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedContainerColor = Color(0xFF1E2836),
-                        focusedContainerColor = Color(0xFF1E2836),
-                        unfocusedBorderColor = Color.Transparent,
-                        focusedBorderColor = Color(0xFF2196F3),
-                        unfocusedTextColor = Color.White,
-                        focusedTextColor = Color.White
-                    ),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    singleLine = true
+                    colors = textFieldColors()
                 )
             }
-
-            // CVV
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    "CVV",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xFF2196F3)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
+                LabeledField("CVV")
                 OutlinedTextField(
                     value = cvv,
-                    onValueChange = { if (it.length <= 3) onCvvChange(it.filter { char -> char.isDigit() }) },
-                    placeholder = { Text("123", color = Color.Gray) },
+                    onValueChange = onCvvChange,
+                    placeholder = { Text("***", color = Color.Gray) },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedContainerColor = Color(0xFF1E2836),
-                        focusedContainerColor = Color(0xFF1E2836),
-                        unfocusedBorderColor = Color.Transparent,
-                        focusedBorderColor = Color(0xFF2196F3),
-                        unfocusedTextColor = Color.White,
-                        focusedTextColor = Color.White
-                    ),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    singleLine = true
+                    colors = textFieldColors()
                 )
             }
         }
@@ -379,17 +293,9 @@ fun CreditCardForm(
 
 @Composable
 fun DigitalWalletOptions() {
-    Column(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Text(
-            "Select Digital Wallet",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = Color.White
-        )
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text("Select Digital Wallet", fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
         Spacer(modifier = Modifier.height(16.dp))
-
         WalletOption("ABA PayWay", "💳")
         Spacer(modifier = Modifier.height(12.dp))
         WalletOption("Wing Money", "🦅")
@@ -405,34 +311,21 @@ fun WalletOption(name: String, icon: String) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { /* TODO: Handle wallet selection */ },
+            .clickable { /* TODO: handle wallet selection */ },
         color = Color(0xFF1E2836),
         shape = RoundedCornerShape(12.dp)
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier = Modifier.padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(text = icon, fontSize = 24.sp)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(icon, fontSize = 24.sp)
                 Spacer(modifier = Modifier.width(12.dp))
-                Text(
-                    text = name,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.White
-                )
+                Text(name, fontSize = 16.sp, fontWeight = FontWeight.Medium, color = Color.White)
             }
-            Text(
-                text = "→",
-                fontSize = 20.sp,
-                color = Color.Gray
-            )
+            Text("→", fontSize = 20.sp, color = Color.Gray)
         }
     }
 }
@@ -441,48 +334,63 @@ fun WalletOption(name: String, icon: String) {
 fun MockPaymentInfo() {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF1E2836)
-        ),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF1E2836)),
         shape = RoundedCornerShape(12.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                "🧪",
-                fontSize = 48.sp
-            )
+        Column(modifier = Modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text("🧪", fontSize = 48.sp)
             Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                "Mock Payment Mode",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color.White
-            )
+            Text("Mock Payment Mode", fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 "This is a test payment method. Your booking will be confirmed instantly without any actual payment.",
                 fontSize = 14.sp,
                 color = Color.Gray,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                textAlign = TextAlign.Center
             )
         }
     }
 }
 
-fun isFormValid(
-    paymentMethod: PaymentMethodType,
-    cardNumber: String,
-    expiryDate: String,
-    cvv: String
-): Boolean {
+@Composable
+fun LabeledField(label: String) {
+    Text(label, fontSize = 14.sp, fontWeight = FontWeight.Medium, color = Color(0xFF2196F3))
+    Spacer(modifier = Modifier.height(8.dp))
+}
+
+@Composable
+fun textFieldColors() = OutlinedTextFieldDefaults.colors(
+    unfocusedContainerColor = Color(0xFF1E2836),
+    focusedContainerColor = Color(0xFF1E2836),
+    unfocusedBorderColor = Color.Transparent,
+    focusedBorderColor = Color(0xFF2196F3),
+    unfocusedTextColor = Color.White,
+    focusedTextColor = Color.White
+)
+
+fun isFormValid(paymentMethod: PaymentMethodType, cardNumber: String, expiryDate: String, cvv: String): Boolean {
     return when (paymentMethod) {
         PaymentMethodType.CREDIT_CARD -> {
-            cardNumber.length == 16 && expiryDate.isNotEmpty() && cvv.length == 3
+            cardNumber.replace(" ", "").length == 16 &&
+                    expiryDate.matches(Regex("^(0[1-9]|1[0-2])/[0-9]{2}$")) &&
+                    cvv.length == 3
         }
         PaymentMethodType.DIGITAL_WALLET,
         PaymentMethodType.MOCK_PAYMENT -> true
+    }
+}
+
+// ✅ Format helper functions
+fun formatCardNumber(input: String): String {
+    val digits = input.filter { it.isDigit() }.take(16)
+    return digits.chunked(4).joinToString(" ")
+}
+
+fun formatExpiryDate(input: String): String {
+    val digits = input.filter { it.isDigit() }.take(4)
+    return when {
+        digits.length >= 3 -> digits.substring(0, 2) + "/" + digits.substring(2)
+        digits.length >= 1 -> digits
+        else -> ""
     }
 }

@@ -1,29 +1,39 @@
 package com.group.mobileparkingchain.ui.screens.home
 
+import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.group.mobileparkingchain.ui.screens.reservation.ParkingDetail
 import com.group.mobileparkingchain.ui.screens.reservation.ReservationDetailSheet
 import com.group.mobileparkingchain.ui.screens.booking.BookingInfo
 import com.group.mobileparkingchain.ui.screens.booking.CompleteBookingScreen
 import com.group.mobileparkingchain.ui.screens.payment.PaymentScreen
 import com.group.mobileparkingchain.ui.screens.payment.PaymentInfo
+import com.group.mobileparkingchain.ui.screens.profile.UserProfile
 
 data class ParkingSpot(
     val id: String,
@@ -47,8 +57,12 @@ enum class FilterType {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
-    var selectedFilter by remember { mutableStateOf(FilterType.ALL) }
+fun HomeScreen(
+    onNavigateToProfile: () -> Unit = {},
+    userProfile: UserProfile,
+) {
+    var selectedFilter by remember {
+        mutableStateOf(FilterType.ALL) }
     var searchQuery by remember { mutableStateOf("") }
     var showReservationSheet by remember { mutableStateOf(false) }
     var selectedSpot by remember { mutableStateOf<ParkingSpot?>(null) }
@@ -59,6 +73,7 @@ fun HomeScreen() {
     var bookingDuration by remember { mutableStateOf(0) }
     var bookingStartTime by remember { mutableStateOf(0L) }
     var bookingTotal by remember { mutableStateOf(0.0) }
+    val context = LocalContext.current
 
     // Sample parking data
     val parkingSpots = remember {
@@ -72,7 +87,10 @@ fun HomeScreen() {
             ParkingSpot("P-129", "Car", ParkingStatus.AVAILABLE),
             ParkingSpot("P-130", "Car", ParkingStatus.OCCUPIED),
             ParkingSpot("P-131", "Motorcycle", ParkingStatus.AVAILABLE),
-            )
+            ParkingSpot("P-132", "Motorcycle", ParkingStatus.AVAILABLE),
+            ParkingSpot("P-133", "Motorcycle", ParkingStatus.AVAILABLE),
+            ParkingSpot("P-134", "Motorcycle", ParkingStatus.AVAILABLE),
+        )
     }
 
     // Filter parking spots based on selected filter and search query
@@ -112,10 +130,14 @@ fun HomeScreen() {
                 showCompleteBooking = false
                 selectedSpot = null
 
-                // TODO: Show success screen or navigate to booking confirmation
+                // ✅ Show success toast
+                Toast.makeText(context, "Payment successful! Booking confirmed 🎉", Toast.LENGTH_LONG).show()
+
+                // Optional: Print for debug
                 println("=== PAYMENT SUCCESSFUL ===")
                 println("Booking confirmed!")
             }
+
         )
     }
     // Show Complete Booking Screen
@@ -164,7 +186,37 @@ fun HomeScreen() {
                         IconButton(onClick = { /* TODO: Open notifications */ }) {
                             Icon(Icons.Default.Notifications, "Notifications", tint = Color.White)
                         }
+
+                        // Profile Image
+                        Box(
+                            modifier = Modifier
+                                .padding(end = 8.dp)
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFF2C2C2C))
+                                .border(2.dp, Color(0xFF2196F3), CircleShape)
+                                .clickable(onClick = onNavigateToProfile),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            if (userProfile.profileImageUrl != null) {
+                                AsyncImage(
+                                    model = userProfile.profileImageUrl,
+                                    contentDescription = "Profile",
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop,
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Default.Person,
+                                    contentDescription = "Profile",
+                                    tint = Color.Gray,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+
+                        }
                     },
+
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = Color(0xFF1A1A1A),
                         titleContentColor = Color.White
@@ -305,24 +357,52 @@ fun HomeScreen() {
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Parking Grid
+                val pageSize = 9
+                var currentPage by remember { mutableStateOf(1) }
+
+                val pagedSpots = remember(filteredSpots, currentPage) {
+                    filteredSpots.take(currentPage * pageSize)
+                }
+
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(3),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(filteredSpots.size) { index ->
+                    items(pagedSpots.size) { index ->
                         ParkingSpotCard(
-                            spot = filteredSpots[index],
+                            spot = pagedSpots[index],
                             onClick = {
-                                if (filteredSpots[index].status == ParkingStatus.AVAILABLE) {
-                                    selectedSpot = filteredSpots[index]
+                                if (pagedSpots[index].status == ParkingStatus.AVAILABLE) {
+                                    selectedSpot = pagedSpots[index]
                                     showReservationSheet = true
                                 }
                             }
                         )
+
+                        // Detect when scrolled to bottom
+                        if (index == pagedSpots.lastIndex && pagedSpots.size < filteredSpots.size) {
+                            LaunchedEffect(Unit) {
+                                currentPage += 1
+                            }
+                        }
+                    }
+
+                    // Optional loading footer
+                    if (pagedSpots.size < filteredSpots.size) {
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(color = Color(0xFF2196F3))
+                            }
+                        }
                     }
                 }
+
             }
         }
 
