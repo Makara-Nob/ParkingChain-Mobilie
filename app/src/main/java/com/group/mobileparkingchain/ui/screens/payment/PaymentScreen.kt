@@ -1,39 +1,54 @@
 package com.group.mobileparkingchain.ui.screens.payment
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.enumuration.PaymentMethodType
+import com.group.mobileparkingchain.model.PaymentInfo
+import com.group.mobileparkingchain.ui.components.payment.CreditCardForm
+import com.group.mobileparkingchain.ui.components.payment.DigitalWalletOptions
+import com.group.mobileparkingchain.ui.components.payment.MockPaymentInfo
+import com.group.mobileparkingchain.ui.components.payment.PaymentMethodChip
+import com.group.mobileparkingchain.util.PaymentUtils
 import java.text.SimpleDateFormat
-import java.util.*
-
-data class PaymentInfo(
-    val spotId: String,
-    val duration: Int,
-    val startTime: Long,
-    val total: Double
-)
-
-enum class PaymentMethodType {
-    CREDIT_CARD,
-    DIGITAL_WALLET,
-    MOCK_PAYMENT
-}
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -190,9 +205,9 @@ fun PaymentScreen(
             when (selectedPaymentMethod) {
                 PaymentMethodType.CREDIT_CARD -> CreditCardForm(
                     cardNumber = cardNumber,
-                    onCardNumberChange = { cardNumber = formatCardNumber(it) },
+                    onCardNumberChange = { cardNumber = PaymentUtils.formatCardNumber(it) },
                     expiryDate = expiryDate,
-                    onExpiryDateChange = { expiryDate = formatExpiryDate(it) },
+                    onExpiryDateChange = { expiryDate = PaymentUtils.formatExpiryDate(it) },
                     cvv = cvv,
                     onCvvChange = { cvv = it.filter { c -> c.isDigit() }.take(3) }
                 )
@@ -217,140 +232,6 @@ fun BookingSummaryRow(label: String, value: String) {
     }
 }
 
-@Composable
-fun PaymentMethodChip(label: String, isSelected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Surface(
-        modifier = modifier.clickable(onClick = onClick),
-        color = if (isSelected) Color(0xFF2196F3) else Color(0xFF1E2836),
-        shape = RoundedCornerShape(12.dp)
-    ) {
-        Box(
-            modifier = Modifier.padding(vertical = 16.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = label,
-                fontSize = 12.sp,
-                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                color = if (isSelected) Color.White else Color.Gray,
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-}
-
-@Composable
-fun CreditCardForm(
-    cardNumber: String,
-    onCardNumberChange: (String) -> Unit,
-    expiryDate: String,
-    onExpiryDateChange: (String) -> Unit,
-    cvv: String,
-    onCvvChange: (String) -> Unit
-) {
-    Column {
-        LabeledField("Card Number")
-        OutlinedTextField(
-            value = cardNumber,
-            onValueChange = onCardNumberChange,
-            placeholder = { Text("XXXX XXXX XXXX XXXX", color = Color.Gray) },
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            colors = textFieldColors()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Column(modifier = Modifier.weight(1f)) {
-                LabeledField("Expiry Date")
-                OutlinedTextField(
-                    value = expiryDate,
-                    onValueChange = onExpiryDateChange,
-                    placeholder = { Text("MM/YY", color = Color.Gray) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    colors = textFieldColors()
-                )
-            }
-            Column(modifier = Modifier.weight(1f)) {
-                LabeledField("CVV")
-                OutlinedTextField(
-                    value = cvv,
-                    onValueChange = onCvvChange,
-                    placeholder = { Text("***", color = Color.Gray) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    colors = textFieldColors()
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun DigitalWalletOptions() {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Text("Select Digital Wallet", fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
-        Spacer(modifier = Modifier.height(16.dp))
-        WalletOption("ABA PayWay", "💳")
-        Spacer(modifier = Modifier.height(12.dp))
-        WalletOption("Wing Money", "🦅")
-        Spacer(modifier = Modifier.height(12.dp))
-        WalletOption("Pi Pay", "💰")
-        Spacer(modifier = Modifier.height(12.dp))
-        WalletOption("True Money", "💵")
-    }
-}
-
-@Composable
-fun WalletOption(name: String, icon: String) {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { /* TODO: handle wallet selection */ },
-        color = Color(0xFF1E2836),
-        shape = RoundedCornerShape(12.dp)
-    ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(icon, fontSize = 24.sp)
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(name, fontSize = 16.sp, fontWeight = FontWeight.Medium, color = Color.White)
-            }
-            Text("→", fontSize = 20.sp, color = Color.Gray)
-        }
-    }
-}
-
-@Composable
-fun MockPaymentInfo() {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF1E2836)),
-        shape = RoundedCornerShape(12.dp)
-    ) {
-        Column(modifier = Modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("🧪", fontSize = 48.sp)
-            Spacer(modifier = Modifier.height(16.dp))
-            Text("Mock Payment Mode", fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                "This is a test payment method. Your booking will be confirmed instantly without any actual payment.",
-                fontSize = 14.sp,
-                color = Color.Gray,
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-}
 
 @Composable
 fun LabeledField(label: String) {
@@ -377,20 +258,5 @@ fun isFormValid(paymentMethod: PaymentMethodType, cardNumber: String, expiryDate
         }
         PaymentMethodType.DIGITAL_WALLET,
         PaymentMethodType.MOCK_PAYMENT -> true
-    }
-}
-
-// ✅ Format helper functions
-fun formatCardNumber(input: String): String {
-    val digits = input.filter { it.isDigit() }.take(16)
-    return digits.chunked(4).joinToString(" ")
-}
-
-fun formatExpiryDate(input: String): String {
-    val digits = input.filter { it.isDigit() }.take(4)
-    return when {
-        digits.length >= 3 -> digits.substring(0, 2) + "/" + digits.substring(2)
-        digits.length >= 1 -> digits
-        else -> ""
     }
 }

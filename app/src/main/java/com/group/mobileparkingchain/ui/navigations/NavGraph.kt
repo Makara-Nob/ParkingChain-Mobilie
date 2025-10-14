@@ -20,6 +20,7 @@ import com.group.mobileparkingchain.ui.screens.welcome.WelcomeScreen
 @Composable
 fun NavGraph() {
     val navController = rememberNavController()
+    var showSavedToast by remember { mutableStateOf(false) }
 
     // Store user profile in a state that persists across navigation
     var userProfile by remember {

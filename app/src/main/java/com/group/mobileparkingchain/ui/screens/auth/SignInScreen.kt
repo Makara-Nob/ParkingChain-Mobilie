@@ -1,18 +1,39 @@
 package com.group.mobileparkingchain.ui.screens.signin
 
+import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -36,6 +57,9 @@ fun SignInScreen(
     var passwordVisible by remember { mutableStateOf(false) }
     var showError by remember { mutableStateOf(false) }
 
+    // ✅ Get the Android context (required for Toast)
+    val context = LocalContext.current
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -47,12 +71,9 @@ fun SignInScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Logo (smaller version)
             ParkingLogo(size = 250)
-
             Spacer(modifier = Modifier.height(5.dp))
 
-            // Welcome Back Title
             Text(
                 text = "Welcome Back!",
                 fontSize = 28.sp,
@@ -144,7 +165,6 @@ fun SignInScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
             )
 
-            // Error Message
             if (showError) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
@@ -156,7 +176,6 @@ fun SignInScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Forgot Password
             TextButton(
                 onClick = onForgotPassword,
                 modifier = Modifier.align(Alignment.End)
@@ -170,13 +189,14 @@ fun SignInScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Sign In Button
+            // ✅ Sign In Button with Toast
             Button(
                 onClick = {
-                    // Static validation - replace with API call later
                     if (email == "user@example.com" && password == "88889999") {
+                        Toast.makeText(context, "Sign in successful! 🎉", Toast.LENGTH_SHORT).show()
                         onSignInSuccess()
                     } else {
+                        Toast.makeText(context, "Invalid email or password ❌", Toast.LENGTH_SHORT).show()
                         showError = true
                     }
                 },
@@ -184,9 +204,7 @@ fun SignInScreen(
                     .fillMaxWidth()
                     .height(56.dp),
                 shape = RoundedCornerShape(28.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = PrimaryBlue
-                ),
+                colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue),
                 enabled = email.isNotEmpty() && password.isNotEmpty()
             ) {
                 Text(
@@ -199,7 +217,6 @@ fun SignInScreen(
 
             Spacer(modifier = Modifier.height(120.dp))
 
-            // Sign Up Link
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
