@@ -27,8 +27,8 @@ import com.group.mobileparkingchain.ui.components.home.ReservationSheet
 import com.group.mobileparkingchain.ui.components.home.SearchBar
 import com.group.mobileparkingchain.ui.screens.booking.BookingInfo
 import com.group.mobileparkingchain.ui.screens.booking.CompleteBookingScreen
-import com.group.mobileparkingchain.ui.screens.payment.PaymentScreen
-import com.group.mobileparkingchain.ui.screens.profile.UserProfile
+import com.group.mobileparkingchain.features.payment.presentation.view.PaymentScreen
+import com.group.mobileparkingchain.ui.screens.view.UserProfile
 
 @Composable
 fun HomeScreen(

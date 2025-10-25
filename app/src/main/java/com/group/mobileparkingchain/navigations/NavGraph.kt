@@ -12,9 +12,9 @@ import androidx.navigation.compose.rememberNavController
 import com.group.mobileparkingchain.enumuration.ParkingStatus
 import com.group.mobileparkingchain.model.ParkingSpot
 import com.group.mobileparkingchain.ui.navigations.Screen
-import com.group.mobileparkingchain.ui.screens.profile.EditProfileScreen
-import com.group.mobileparkingchain.ui.screens.profile.ProfileScreen
-import com.group.mobileparkingchain.ui.screens.profile.UserProfile
+import com.group.mobileparkingchain.features.profile.presentation.view.EditProfileScreen
+import com.group.mobileparkingchain.features.profile.presentation.view.ProfileScreen
+import com.group.mobileparkingchain.ui.screens.view.UserProfile
 import com.group.mobileparkingchain.ui.screens.signin.SignInScreen
 import com.group.mobileparkingchain.ui.screens.signup.SignUpScreen
 import com.group.mobileparkingchain.ui.screens.welcome.WelcomeScreen

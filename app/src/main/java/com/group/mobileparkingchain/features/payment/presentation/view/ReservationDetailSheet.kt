@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -161,7 +162,7 @@ fun ReservationDetailSheet(
                 ),
                 border = ButtonDefaults.outlinedButtonBorder.copy(
                     width = 1.dp,
-                    brush = androidx.compose.ui.graphics.SolidColor(Color.White.copy(alpha = 0.3f))
+                    brush = SolidColor(Color.White.copy(alpha = 0.3f))
                 ),
                 shape = RoundedCornerShape(12.dp)
             ) {

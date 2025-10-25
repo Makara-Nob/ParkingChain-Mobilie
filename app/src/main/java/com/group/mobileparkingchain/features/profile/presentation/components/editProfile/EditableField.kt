@@ -1,0 +1,50 @@
+package com.group.mobileparkingchain.features.profile.presentation.components
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+@Composable
+fun EditableField(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = label,
+            fontSize = 14.sp,
+            color = Color.White,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        OutlinedTextField(
+            value = value,
+            onValueChange = onValueChange,
+            placeholder = { Text(placeholder, color = Color.Gray) },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedContainerColor = Color(0xFF1E2836),
+                focusedContainerColor = Color(0xFF1E2836),
+                unfocusedBorderColor = Color.Transparent,
+                focusedBorderColor = Color(0xFF2196F3),
+                unfocusedTextColor = Color.White,
+                focusedTextColor = Color.White,
+                cursorColor = Color(0xFF2196F3)
+            ),
+            singleLine = true
+        )
+    }
+}

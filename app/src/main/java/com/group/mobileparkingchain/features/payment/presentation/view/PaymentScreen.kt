@@ -1,4 +1,4 @@
-package com.group.mobileparkingchain.ui.screens.payment
+package com.group.mobileparkingchain.features.payment
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

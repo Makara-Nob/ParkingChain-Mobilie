@@ -27,7 +27,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.group.mobileparkingchain.ui.screens.profile.UserProfile
+import com.group.mobileparkingchain.ui.screens.view.UserProfile
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

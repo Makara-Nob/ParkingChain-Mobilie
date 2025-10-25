@@ -15,8 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.group.mobileparkingchain.ui.screens.payment.LabeledField
-import com.group.mobileparkingchain.ui.screens.payment.textFieldColors
+import com.group.mobileparkingchain.features.payment.LabeledField
+import com.group.mobileparkingchain.features.payment.textFieldColors
 
 @Composable
 fun CreditCardForm(
