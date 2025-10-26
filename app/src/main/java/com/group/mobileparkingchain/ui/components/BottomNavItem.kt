@@ -1,0 +1,157 @@
+package com.group.mobileparkingchain.ui.components
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Place
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+// Navigation item data class
+data class BottomNavItem(
+    val icon: ImageVector,
+    val label: String,
+    val route: String
+)
+
+@Composable
+fun BottomNavigationBar(
+    selectedIndex: Int = 0,
+    onItemSelected: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val navItems = listOf(
+        BottomNavItem(Icons.Default.Home, "Home", "home"),
+        BottomNavItem(Icons.Default.Place, "Map", "map"),
+        BottomNavItem(Icons.Default.Notifications, "Notification", "notification"),
+        BottomNavItem(Icons.Default.AccountCircle, "Account", "account")
+    )
+
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        color = Color(0xFF1E2A3A),
+        shadowElevation = 8.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 12.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            navItems.forEachIndexed { index, item ->
+                BottomNavItemView(
+                    item = item,
+                    isSelected = selectedIndex == index,
+                    onClick = { onItemSelected(index) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun BottomNavItemView(
+    item: BottomNavItem,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    val iconColor = if (isSelected) Color(0xFF4A90E2) else Color(0xFF8A9BAE)
+    val textColor = if (isSelected) Color(0xFF4A90E2) else Color(0xFF8A9BAE)
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .width(80.dp)
+            .padding(horizontal = 4.dp)
+            .then(
+                if (isSelected) {
+                    Modifier.background(
+                        color = Color(0xFF2C3E50),
+                        shape = MaterialTheme.shapes.medium
+                    )
+                } else {
+                    Modifier
+                }
+            )
+            .padding(vertical = 8.dp)
+    ) {
+        IconButton(
+            onClick = onClick,
+            modifier = Modifier.size(32.dp)
+        ) {
+            Icon(
+                imageVector = item.icon,
+                contentDescription = item.label,
+                tint = iconColor,
+                modifier = Modifier.size(24.dp)
+            )
+        }
+        
+        Spacer(modifier = Modifier.height(4.dp))
+        
+        Text(
+            text = item.label,
+            color = textColor,
+            fontSize = 12.sp,
+            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
+        )
+        
+        // Underline indicator for selected item
+        if (isSelected) {
+            Spacer(modifier = Modifier.height(2.dp))
+            Box(
+                modifier = Modifier
+                    .width(40.dp)
+                    .height(2.dp)
+                    .background(Color(0xFF4A90E2))
+            )
+        }
+    }
+}
+
+// Preview usage example
+@Composable
+fun BottomNavigationBarPreview() {
+    var selectedIndex by remember { mutableStateOf(0) }
+    
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF121212))
+    ) {
+        BottomNavigationBar(
+            selectedIndex = selectedIndex,
+            onItemSelected = { selectedIndex = it },
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
+    }
+}

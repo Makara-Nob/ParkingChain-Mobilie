@@ -1,9 +1,10 @@
-package com.group.mobileparkingchain.features.auth.presentation.components
+package com.group.mobileparkingchain.features.auth.presentation.components.signin
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
@@ -23,7 +24,7 @@ fun EmailInput(email: String, onEmailChange: (String) -> Unit) {
         value = email,
         onValueChange = onEmailChange,
         label = { Text("Email Address", color = TextGray) },
-        leadingIcon = { Icon(imageVector = androidx.compose.material.icons.Icons.Default.Email, contentDescription = "Email", tint = TextGray) },
+        leadingIcon = { Icon(imageVector = Icons.Default.Email, contentDescription = "Email", tint = TextGray) },
         modifier = Modifier.fillMaxWidth().height(60.dp),
         shape = RoundedCornerShape(12.dp),
         colors = OutlinedTextFieldDefaults.colors(

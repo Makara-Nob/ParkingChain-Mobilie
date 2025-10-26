@@ -1,89 +1,74 @@
-package com.group.mobileparkingchain.ui.screens.profile
 
 import android.widget.Toast
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
+import com.group.mobileparkingchain.features.profile.data.UserProfile
+import com.group.mobileparkingchain.features.profile.presentation.components.profileScreen.ProfileImage
+import com.group.mobileparkingchain.features.profile.presentation.components.profileScreen.ProfileInfoCard
+import com.group.mobileparkingchain.features.profile.presentation.components.profileScreen.ProfileOptionsCard
+import com.group.mobileparkingchain.ui.components.BottomNavigationBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     userProfile: UserProfile,
-    onBackClick: () -> Unit,
     onEditClick: () -> Unit,
-    showSavedToast: Boolean = false  // <- pass this flag from NavGraph
-
+    onNavigateToHome: () -> Unit = {},
+    onNavigateToMap: () -> Unit = {},
+    onNavigateToNotification: () -> Unit = {},
+    onChangePassword: () -> Unit = {},
+    onBookingHistory: () -> Unit = {},
+    onPaymentMethods: () -> Unit = {},
+    onSettings: () -> Unit = {},
+    onLogout: () -> Unit = {},
+    showSavedToast: Boolean = false
 ) {
     val context = LocalContext.current
+    var selectedNavIndex by remember { mutableStateOf(3) } // Account tab selected
 
-    // Trigger toast when showSavedToast becomes true
     if (showSavedToast) {
         LaunchedEffect(showSavedToast) {
             Toast.makeText(context, "Profile updated successfully ✅", Toast.LENGTH_SHORT).show()
         }
     }
+
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        "Profile",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.ArrowBack, "Back", tint = Color.White)
+        bottomBar = {
+            BottomNavigationBar(
+                selectedIndex = selectedNavIndex,
+                onItemSelected = { index ->
+                    selectedNavIndex = index
+                    when (index) {
+                        0 -> onNavigateToHome()
+                        1 -> onNavigateToMap()
+                        2 -> onNavigateToNotification()
+                        3 -> { /* Already on Profile */ }
                     }
-                },
-                actions = {
-                    IconButton(onClick = onEditClick) {
-                        Icon(Icons.Default.Edit, "Edit Profile", tint = Color.White)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF1A1A1A),
-                    titleContentColor = Color.White
-                )
+                }
             )
         },
         containerColor = Color(0xFF121212)
@@ -93,40 +78,38 @@ fun ProfileScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
-                .padding(24.dp),
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Profile Image
-            Box(
-                modifier = Modifier
-                    .size(120.dp)
-                    .clip(CircleShape)
-                    .background(Color(0xFF2C2C2C))
-                    .border(3.dp, Color(0xFF2196F3), CircleShape),
-                contentAlignment = Alignment.Center
+            // Profile Image and Name with Edit Button
+            ProfileImage(userProfile.profileImageUrl)
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Edit Profile Button
+            androidx.compose.material3.TextButton(
+                onClick = onEditClick,
+                colors = androidx.compose.material3.ButtonDefaults.textButtonColors(
+                    contentColor = Color(0xFF4A90E2)
+                )
             ) {
-                if (userProfile.profileImageUrl != null) {
-                    AsyncImage(
-                        model = userProfile.profileImageUrl,
-                        contentDescription = "Profile Image",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "Profile",
-                        tint = Color.Gray,
-                        modifier = Modifier.size(60.dp)
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = "Edit",
+                    tint = Color(0xFF4A90E2),
+                    modifier = Modifier.padding(end = 4.dp)
+                )
+                Text(
+                    text = "Edit Profile",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium
+                )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-            // User Name
             Text(
                 text = "${userProfile.firstName} ${userProfile.lastName}",
                 fontSize = 24.sp,
@@ -144,105 +127,82 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Profile Information Cards
-            ProfileInfoCard(
-                label = "First Name",
-                value = userProfile.firstName
+            // Personal Information Section
+            Text(
+                text = "Personal Information",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.White,
+                modifier = Modifier.align(Alignment.Start)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            ProfileInfoCard(
-                label = "Last Name",
-                value = userProfile.lastName
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            ProfileInfoCard(
-                label = "Email",
-                value = userProfile.email
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            ProfileInfoCard(
-                label = "Phone Number",
-                value = userProfile.phoneNumber
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Additional Options
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF1E2836)
-                ),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    ProfileOption("Booking History")
-                    HorizontalDivider(
-                        modifier = Modifier.padding(vertical = 12.dp),
-                        color = Color(0xFF2C2C2C)
-                    )
-                    ProfileOption("Payment Methods")
-                    HorizontalDivider(
-                        modifier = Modifier.padding(vertical = 12.dp),
-                        color = Color(0xFF2C2C2C)
-                    )
-                    ProfileOption("Settings")
-                }
+            listOf(
+                "First Name" to userProfile.firstName,
+                "Last Name" to userProfile.lastName,
+                "Email" to userProfile.email,
+                "Phone Number" to userProfile.phoneNumber
+            ).forEach {
+                ProfileInfoCard(it.first, it.second)
+                Spacer(modifier = Modifier.height(12.dp))
             }
 
             Spacer(modifier = Modifier.height(24.dp))
-        }
-    }
-}
 
-@Composable
-fun ProfileInfoCard(label: String, value: String) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF1E2836)
-        ),
-        shape = RoundedCornerShape(12.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
+            // Account Management Section
             Text(
-                text = label,
-                fontSize = 12.sp,
-                color = Color.Gray,
-                fontWeight = FontWeight.Medium
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = value.ifEmpty { "Not set" },
-                fontSize = 16.sp,
+                text = "Account Management",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold,
                 color = Color.White,
-                fontWeight = FontWeight.Normal
+                modifier = Modifier.align(Alignment.Start)
             )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            ProfileOptionsCard(
+                options = listOf(
+                    "Change Password" to onChangePassword,
+                    "Booking History" to onBookingHistory,
+                    "Payment Methods" to onPaymentMethods,
+                    "Settings" to onSettings
+                )
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // App Information Section
+            Text(
+                text = "App Information",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.White,
+                modifier = Modifier.align(Alignment.Start)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            ProfileOptionsCard(
+                options = listOf(
+                    "Privacy Policy" to {},
+                    "Terms of Service" to {},
+                    "Help & Support" to {},
+                    "About" to {}
+                )
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Logout Section
+            ProfileOptionsCard(
+                options = listOf(
+                    "Logout" to onLogout
+                ),
+                isDangerZone = true
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
-}
-
-@Composable
-fun ProfileOption(text: String) {
-    Text(
-        text = text,
-        fontSize = 16.sp,
-        color = Color.White,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { /* TODO: Handle click */ }
-            .padding(vertical = 4.dp)
-    )
 }

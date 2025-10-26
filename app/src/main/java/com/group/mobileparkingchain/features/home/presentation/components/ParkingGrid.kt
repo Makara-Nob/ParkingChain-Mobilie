@@ -1,4 +1,4 @@
-package com.group.mobileparkingchain.ui.components.home
+package com.group.mobileparkingchain.features.home.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -10,7 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
-import com.group.mobileparkingchain.model.ParkingSpot
+import com.group.mobileparkingchain.features.home.data.ParkingSpot
 
 @Composable
 fun ParkingGrid(spots: List<ParkingSpot>, onSpotClick: (ParkingSpot) -> Unit) {

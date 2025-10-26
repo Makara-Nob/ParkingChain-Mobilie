@@ -1,4 +1,4 @@
-package com.group.mobileparkingchain.ui.components.home
+package com.group.mobileparkingchain.features.home.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -30,7 +30,7 @@ fun Legend() {
         shape = RoundedCornerShape(12.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Legend", fontSize = 18.sp, fontWeight = FontWeight.Medium, color = Color.White)
+            Text("Status", fontSize = 18.sp, fontWeight = FontWeight.Medium, color = Color.White)
             Spacer(Modifier.height(12.dp))
             LegendItem(Color(0xFF4CAF50), "Available")
             Spacer(Modifier.height(8.dp))

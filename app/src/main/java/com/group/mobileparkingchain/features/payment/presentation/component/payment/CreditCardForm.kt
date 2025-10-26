@@ -1,4 +1,4 @@
-package com.group.mobileparkingchain.ui.components.payment
+package com.group.mobileparkingchain.features.payment.presentation.component.payment
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,8 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.group.mobileparkingchain.features.payment.LabeledField
-import com.group.mobileparkingchain.features.payment.textFieldColors
+import com.group.mobileparkingchain.features.payment.presentation.view.LabeledField
+import com.group.mobileparkingchain.features.payment.presentation.view.textFieldColors
 
 @Composable
 fun CreditCardForm(

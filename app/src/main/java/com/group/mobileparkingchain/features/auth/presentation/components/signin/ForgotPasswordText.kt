@@ -1,4 +1,4 @@
-package com.group.mobileparkingchain.features.auth.presentation.components
+package com.group.mobileparkingchain.features.auth.presentation.components.signin
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Text

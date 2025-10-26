@@ -17,24 +17,27 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.group.mobileparkingchain.enumuration.FilterType
 import com.group.mobileparkingchain.enumuration.ParkingStatus
-import com.group.mobileparkingchain.model.ParkingSpot
-import com.group.mobileparkingchain.model.PaymentInfo
-import com.group.mobileparkingchain.ui.components.home.FilterChips
-import com.group.mobileparkingchain.ui.components.home.HomeTopBar
-import com.group.mobileparkingchain.ui.components.home.Legend
-import com.group.mobileparkingchain.ui.components.home.ParkingGrid
-import com.group.mobileparkingchain.ui.components.home.ReservationSheet
-import com.group.mobileparkingchain.ui.components.home.SearchBar
+import com.group.mobileparkingchain.features.home.data.ParkingSpot
+import com.group.mobileparkingchain.features.home.presentation.components.FilterChips
+import com.group.mobileparkingchain.features.home.presentation.components.HomeTopBar
+import com.group.mobileparkingchain.features.home.presentation.components.Legend
+import com.group.mobileparkingchain.features.home.presentation.components.ParkingGrid
+import com.group.mobileparkingchain.features.home.presentation.components.ReservationSheet
+import com.group.mobileparkingchain.features.home.presentation.components.SearchBar
+import com.group.mobileparkingchain.features.payment.data.PaymentInfo
+import com.group.mobileparkingchain.features.payment.presentation.view.PaymentScreen
+import com.group.mobileparkingchain.features.profile.data.UserProfile
+import com.group.mobileparkingchain.ui.components.BottomNavigationBar
 import com.group.mobileparkingchain.ui.screens.booking.BookingInfo
 import com.group.mobileparkingchain.ui.screens.booking.CompleteBookingScreen
-import com.group.mobileparkingchain.features.payment.presentation.view.PaymentScreen
-import com.group.mobileparkingchain.ui.screens.view.UserProfile
 
 @Composable
 fun HomeScreen(
     userProfile: UserProfile,
     parkingSpots: List<ParkingSpot>,
     onNavigateToProfile: () -> Unit = {},
+    onNavigateToMap: () -> Unit = {},
+    onNavigateToNotification: () -> Unit = {},
     onParkingSpotReserved: (String, ParkingStatus) -> Unit
 ) {
     // ----- UI State -----
@@ -44,6 +47,7 @@ fun HomeScreen(
     var showReservationSheet by remember { mutableStateOf(false) }
     var showCompleteBooking by remember { mutableStateOf(false) }
     var showPaymentScreen by remember { mutableStateOf(false) }
+    var selectedNavIndex by remember { mutableStateOf(0) }
 
     var bookingDuration by remember { mutableStateOf(0) }
     var bookingStartTime by remember { mutableStateOf(0L) }
@@ -121,9 +125,26 @@ fun HomeScreen(
 
         else -> {
             // ----- Home Content -----
-            Scaffold(topBar = {
-                HomeTopBar(userProfile, onNavigateToProfile)
-            }, containerColor = Color(0xFF121212)) { padding ->
+            Scaffold(
+                topBar = {
+                    HomeTopBar()
+                },
+                bottomBar = {
+                    BottomNavigationBar(
+                        selectedIndex = selectedNavIndex,
+                        onItemSelected = { index ->
+                            selectedNavIndex = index
+                            when (index) {
+                                0 -> { /* Already on Home */ }
+                                1 -> onNavigateToMap()
+                                2 -> onNavigateToNotification()
+                                3 -> onNavigateToProfile()
+                            }
+                        }
+                    )
+                },
+                containerColor = Color(0xFF121212)
+            ) { padding ->
                 Column(
                     modifier = Modifier
                         .fillMaxSize()

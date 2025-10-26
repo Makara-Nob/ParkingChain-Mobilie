@@ -1,4 +1,4 @@
-package com.group.mobileparkingchain.features.profile.presentation.components
+package com.group.mobileparkingchain.features.profile.presentation.components.editProfile
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

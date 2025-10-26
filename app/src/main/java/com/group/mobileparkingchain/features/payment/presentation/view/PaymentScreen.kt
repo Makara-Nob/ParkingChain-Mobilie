@@ -1,4 +1,4 @@
-package com.group.mobileparkingchain.features.payment
+package com.group.mobileparkingchain.features.payment.presentation.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -40,11 +40,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.group.mobileparkingchain.enumuration.PaymentMethodType
-import com.group.mobileparkingchain.model.PaymentInfo
-import com.group.mobileparkingchain.ui.components.payment.CreditCardForm
-import com.group.mobileparkingchain.ui.components.payment.DigitalWalletOptions
-import com.group.mobileparkingchain.ui.components.payment.MockPaymentInfo
-import com.group.mobileparkingchain.ui.components.payment.PaymentMethodChip
+import com.group.mobileparkingchain.features.payment.presentation.component.payment.CreditCardForm
+import com.group.mobileparkingchain.features.payment.presentation.component.payment.DigitalWalletOptions
+import com.group.mobileparkingchain.features.payment.presentation.component.payment.MockPaymentInfo
+import com.group.mobileparkingchain.features.payment.presentation.component.payment.PaymentMethodChip
+import com.group.mobileparkingchain.features.payment.data.PaymentInfo
 import com.group.mobileparkingchain.util.PaymentUtils
 import java.text.SimpleDateFormat
 import java.util.Date

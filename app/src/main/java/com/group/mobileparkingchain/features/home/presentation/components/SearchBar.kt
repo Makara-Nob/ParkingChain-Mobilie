@@ -1,4 +1,4 @@
-package com.group.mobileparkingchain.ui.components.home
+package com.group.mobileparkingchain.features.home.presentation.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape

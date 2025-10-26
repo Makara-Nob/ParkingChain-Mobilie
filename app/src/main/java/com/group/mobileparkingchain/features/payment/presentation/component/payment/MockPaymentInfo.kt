@@ -1,4 +1,4 @@
-package com.group.mobileparkingchain.ui.components.payment
+package com.group.mobileparkingchain.features.payment.presentation.component.payment
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

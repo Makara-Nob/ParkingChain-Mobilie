@@ -1,4 +1,4 @@
-package com.group.mobileparkingchain.ui.components.home
+package com.group.mobileparkingchain.features.home.presentation.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.group.mobileparkingchain.enumuration.ParkingStatus
-import com.group.mobileparkingchain.model.ParkingSpot
+import com.group.mobileparkingchain.features.home.data.ParkingSpot
 
 @Composable
 fun ParkingSpotCard(spot: ParkingSpot, onClick: () -> Unit) {

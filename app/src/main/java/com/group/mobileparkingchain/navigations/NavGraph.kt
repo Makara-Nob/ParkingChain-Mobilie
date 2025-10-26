@@ -1,6 +1,7 @@
 package com.group.mobileparkingchain.navigation
 
 import HomeScreen
+import ProfileScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -10,11 +11,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.group.mobileparkingchain.enumuration.ParkingStatus
-import com.group.mobileparkingchain.model.ParkingSpot
-import com.group.mobileparkingchain.ui.navigations.Screen
+import com.group.mobileparkingchain.features.home.data.ParkingSpot
+import com.group.mobileparkingchain.features.profile.data.UserProfile
 import com.group.mobileparkingchain.features.profile.presentation.view.EditProfileScreen
-import com.group.mobileparkingchain.features.profile.presentation.view.ProfileScreen
-import com.group.mobileparkingchain.ui.screens.view.UserProfile
+import com.group.mobileparkingchain.navigations.Screen
+import com.group.mobileparkingchain.ui.screens.NotificationPage
 import com.group.mobileparkingchain.ui.screens.signin.SignInScreen
 import com.group.mobileparkingchain.ui.screens.signup.SignUpScreen
 import com.group.mobileparkingchain.ui.screens.welcome.WelcomeScreen
@@ -126,7 +127,11 @@ fun NavGraph() {
                 onParkingSpotReserved = updateParkingSpotStatus,
                 onNavigateToProfile = {
                     navController.navigate(Screen.Profile.route)
+                },
+                onNavigateToNotification = {
+                    navController.navigate(Screen.notification.route)
                 }
+
             )
         }
 
@@ -134,11 +139,14 @@ fun NavGraph() {
         composable(Screen.Profile.route) {
             ProfileScreen(
                 userProfile = userProfile,
-                onBackClick = {
-                    navController.popBackStack()
-                },
                 onEditClick = {
                     navController.navigate(Screen.EditProfile.route)
+                },
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home.route)
+                },
+                onNavigateToNotification = {
+                    navController.navigate(Screen.notification.route)
                 }
             )
         }
@@ -159,6 +167,20 @@ fun NavGraph() {
 
                     // Navigate back to profile screen
                     navController.popBackStack()
+                }
+            )
+        }
+
+        composable(Screen.notification.route) {
+            NotificationPage(
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home.route)
+                },
+                onNavigateToProfile = {
+                    navController.navigate(Screen.Profile.route)
+                },
+                onNavigateToMap = {
+
                 }
             )
         }

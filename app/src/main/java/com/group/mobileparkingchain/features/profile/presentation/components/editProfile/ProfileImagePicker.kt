@@ -1,4 +1,4 @@
-package com.group.mobileparkingchain.features.profile.presentation.components
+package com.group.mobileparkingchain.features.profile.presentation.components.editProfile
 
 import android.Manifest
 import android.net.Uri

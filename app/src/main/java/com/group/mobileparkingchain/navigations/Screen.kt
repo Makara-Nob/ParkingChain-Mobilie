@@ -1,4 +1,4 @@
-package com.group.mobileparkingchain.ui.navigations
+package com.group.mobileparkingchain.navigations
 
 sealed class Screen(val route: String) {
     object Welcome : Screen("welcome")
@@ -7,4 +7,5 @@ sealed class Screen(val route: String) {
     object Home : Screen("home")
     object Profile : Screen("profile")
     object EditProfile : Screen("edit_profile")
+    object notification : Screen("notification")
 }

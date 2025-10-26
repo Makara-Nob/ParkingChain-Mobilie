@@ -1,8 +1,8 @@
-package com.group.mobileparkingchain.ui.components.home
+package com.group.mobileparkingchain.features.home.presentation.components
 
 import androidx.compose.runtime.Composable
-import com.group.mobileparkingchain.model.ParkingDetail
-import com.group.mobileparkingchain.model.ParkingSpot
+import com.group.mobileparkingchain.features.payment.data.ParkingDetail
+import com.group.mobileparkingchain.features.home.data.ParkingSpot
 import com.group.mobileparkingchain.ui.screens.reservation.ReservationDetailSheet
 
 @Composable

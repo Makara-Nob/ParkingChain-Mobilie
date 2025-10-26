@@ -1,4 +1,4 @@
-package com.group.mobileparkingchain.ui.components.payment
+package com.group.mobileparkingchain.features.payment.presentation.component.payment
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box

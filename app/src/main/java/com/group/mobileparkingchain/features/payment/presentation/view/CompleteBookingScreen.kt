@@ -50,6 +50,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.features.payment.presentation.component.payment.PriceRow
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -389,24 +390,3 @@ fun CompleteBookingScreen(
     }
 }
 
-@Composable
-fun PriceRow(label: String, value: String, isTotal: Boolean = false) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = label,
-            fontSize = if (isTotal) 18.sp else 16.sp,
-            fontWeight = if (isTotal) FontWeight.SemiBold else FontWeight.Normal,
-            color = if (isTotal) Color.White else Color.Gray
-        )
-        Text(
-            text = value,
-            fontSize = if (isTotal) 18.sp else 16.sp,
-            fontWeight = if (isTotal) FontWeight.Bold else FontWeight.Medium,
-            color = Color.White
-        )
-    }
-}
