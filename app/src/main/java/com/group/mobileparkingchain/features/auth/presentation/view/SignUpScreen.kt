@@ -1,40 +1,42 @@
 package com.group.mobileparkingchain.ui.screens.signup
 
+import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.group.mobileparkingchain.core.Resource
 import com.group.mobileparkingchain.features.auth.presentation.components.signin.EmailInput
 import com.group.mobileparkingchain.features.auth.presentation.components.signin.ErrorText
 import com.group.mobileparkingchain.features.auth.presentation.components.signup.NameInputField
 import com.group.mobileparkingchain.features.auth.presentation.components.signup.PasswordInput
 import com.group.mobileparkingchain.features.auth.presentation.components.signup.SignInRow
 import com.group.mobileparkingchain.features.auth.presentation.components.signup.SignUpButton
+import com.group.mobileparkingchain.features.auth.presentation.viewmodel.SignUpViewModel
+import com.group.mobileparkingchain.features.auth.presentation.viewmodel.SignUpViewModelFactory
 import com.group.mobileparkingchain.ui.components.ParkingLogo
 
 @Composable
 fun SignUpScreen(
     onSignUpSuccess: () -> Unit = {},
-    onNavigateToSignIn: () -> Unit = {},
+    onNavigateToSignIn: () -> Unit = {}
 ) {
+    val context = LocalContext.current
+
+    val viewModel: SignUpViewModel = viewModel(
+        factory = SignUpViewModelFactory(context)
+    )
+
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -42,8 +44,34 @@ fun SignUpScreen(
     var confirmPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
-    var showError by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    val registerState by viewModel.registerState.collectAsState()
+
+    LaunchedEffect(registerState) {
+        when (val state = registerState) {
+            is Resource.Success -> {
+                val userName = state.data?.firstName ?: ""
+                Toast.makeText(
+                    context,
+                    "Welcome $userName! 🎉",
+                    Toast.LENGTH_LONG
+                ).show()
+                viewModel.clearState()
+                onSignUpSuccess()
+            }
+            is Resource.Error -> {
+                val message = state.message ?: "Registration failed"
+                errorMessage = message
+                Toast.makeText(
+                    context,
+                    message,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            else -> Unit
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -69,62 +97,41 @@ fun SignUpScreen(
             )
             Spacer(modifier = Modifier.height(32.dp))
 
-            // ================= Subcomponents =================
-            NameInputField(label = "First Name", value = firstName, onValueChange = {
-                firstName = it; showError = false
-            })
-
+            NameInputField("First Name", firstName) { firstName = it; errorMessage = null }
+            Spacer(modifier = Modifier.height(16.dp))
+            NameInputField("Last Name", lastName) { lastName = it; errorMessage = null }
             Spacer(modifier = Modifier.height(16.dp))
 
-            NameInputField(label = "Last Name", value = lastName, onValueChange = {
-                lastName = it; showError = false
-            })
-
+            EmailInput(email) { email = it; errorMessage = null }
             Spacer(modifier = Modifier.height(16.dp))
 
-            EmailInput(email = email, onEmailChange = {
-                email = it; showError = false
-            })
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            PasswordInput(
-                label = "Password",
-                password = password,
-                passwordVisible = passwordVisible,
-                onPasswordChange = { password = it; showError = false },
+            PasswordInput("Password", password, passwordVisible,
+                onPasswordChange = { password = it; errorMessage = null },
                 onPasswordVisibilityToggle = { passwordVisible = !passwordVisible }
             )
-
             Spacer(modifier = Modifier.height(16.dp))
 
-            PasswordInput(
-                label = "Confirm Password",
-                password = confirmPassword,
-                passwordVisible = confirmPasswordVisible,
-                onPasswordChange = { confirmPassword = it; showError = false },
+            PasswordInput("Confirm Password", confirmPassword, confirmPasswordVisible,
+                onPasswordChange = { confirmPassword = it; errorMessage = null },
                 onPasswordVisibilityToggle = { confirmPasswordVisible = !confirmPasswordVisible }
             )
 
-            if (showError) {
+            if (errorMessage != null) {
                 Spacer(modifier = Modifier.height(8.dp))
-                ErrorText(message = errorMessage)
+                ErrorText(errorMessage!!)
             }
 
             Spacer(modifier = Modifier.height(32.dp))
 
             SignUpButton(
-                firstName = firstName,
-                lastName = lastName,
-                email = email,
-                password = password,
-                confirmPassword = confirmPassword,
-                onSuccess = onSignUpSuccess,
-                onFailure = { showError = true; errorMessage = it }
+                firstName, lastName, email, password, confirmPassword,
+                onClick = {
+                    viewModel.signUp(firstName, lastName, email, password, confirmPassword)
+                },
+                isLoading = registerState is Resource.Loading
             )
 
             Spacer(modifier = Modifier.height(40.dp))
-
             SignInRow(onNavigateToSignIn)
         }
     }

@@ -1,7 +1,6 @@
-package com.group.mobileparkingchain.core
-
-sealed class Resource<T> {
-    class Loading<T> : Resource<T>()
-    data class Success<T>(val data: T) : Resource<T>()
-    data class Error<T>(val message: String?, val code: Int? = null) : Resource<T>()
+sealed class Resource<out T> {
+    object Idle : Resource<Nothing>()
+    object Loading : Resource<Nothing>()
+    data class Success<out T>(val data: T) : Resource<T>()
+    data class Error(val message: String) : Resource<Nothing>()
 }
