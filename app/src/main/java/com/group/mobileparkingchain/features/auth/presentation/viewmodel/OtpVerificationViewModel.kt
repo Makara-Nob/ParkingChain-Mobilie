@@ -1,0 +1,34 @@
+package com.group.mobileparkingchain.features.auth.presentation.viewmodel
+
+import Resource
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.group.mobileparkingchain.features.auth.domain.VerifyEmailUseCase
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+
+class OtpVerificationViewModel(
+    private val verifyEmailUseCase: VerifyEmailUseCase
+) : ViewModel() {
+
+    private val _verificationState = MutableStateFlow<Resource<Boolean>>(Resource.Idle)
+    val verificationState: StateFlow<Resource<Boolean>> = _verificationState.asStateFlow()
+
+    fun verifyEmail(email: String, otp: String) {
+        viewModelScope.launch {
+            _verificationState.value = Resource.Loading
+            val result = verifyEmailUseCase(email, otp)
+            _verificationState.value = if (result.isSuccess) {
+                Resource.Success(true)
+            } else {
+                Resource.Error(result.exceptionOrNull()?.message ?: "Verification failed")
+            }
+        }
+    }
+
+    fun clearState() {
+        _verificationState.value = Resource.Idle
+    }
+}

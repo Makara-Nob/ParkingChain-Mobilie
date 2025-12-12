@@ -1,21 +1,36 @@
-package com.group.mobileparkingchain.navigation
+package com.group.mobileparkingchain.navigations
 
-import HomeScreen
 import ProfileScreen
+import Resource
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.group.mobileparkingchain.enumuration.ParkingStatus
-import com.group.mobileparkingchain.features.home.data.ParkingSpot
-import com.group.mobileparkingchain.features.profile.data.UserProfile
+import com.group.mobileparkingchain.features.auth.presentation.view.OtpVerificationScreen
+import com.group.mobileparkingchain.features.booking.presentation.view.BookingHistoryScreen
+import com.group.mobileparkingchain.features.booking.presentation.viewmodel.BookingViewModel
+import com.group.mobileparkingchain.features.booking.presentation.viewmodel.BookingViewModelFactory
+import com.group.mobileparkingchain.features.home.presentation.view.HomeScreen
+import com.group.mobileparkingchain.features.home.presentation.viewmodel.HomeViewModel
+import com.group.mobileparkingchain.features.home.presentation.viewmodel.HomeViewModelFactory
+import com.group.mobileparkingchain.features.parking.data.repository.ParkingRepository
+import com.group.mobileparkingchain.features.payment.data.repository.PaymentRepository
+import com.group.mobileparkingchain.features.payment.presentation.viewmodel.PaymentViewModel
 import com.group.mobileparkingchain.features.profile.presentation.view.EditProfileScreen
-import com.group.mobileparkingchain.navigations.Screen
-import com.group.mobileparkingchain.ui.screens.NotificationPage
+import com.group.mobileparkingchain.features.profile.data.UserProfile
+import com.group.mobileparkingchain.features.profile.presentation.viewmodel.ProfileViewModel
+import com.group.mobileparkingchain.features.profile.presentation.viewmodel.ProfileViewModelFactory
+import com.group.mobileparkingchain.network.RetrofitInstance
 import com.group.mobileparkingchain.ui.screens.signin.SignInScreen
 import com.group.mobileparkingchain.ui.screens.signup.SignUpScreen
 import com.group.mobileparkingchain.ui.screens.welcome.WelcomeScreen
@@ -23,58 +38,38 @@ import com.group.mobileparkingchain.ui.screens.welcome.WelcomeScreen
 @Composable
 fun NavGraph() {
     val navController = rememberNavController()
-    var showSavedToast by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
-    // Store user profile in a state that persists across navigation
-    var userProfile by remember {
-        mutableStateOf(
-            UserProfile(
-                firstName = "Sophia",
-                lastName = "Carter",
-                email = "Sophia.carter@gmail.com",
-                phoneNumber = "+1 123 334 4434",
-                profileImageUrl = null
-            )
-        )
+    // ----- Dependencies -----
+    val parkingRepository = remember { 
+        ParkingRepository(RetrofitInstance.parkingApi)
     }
 
-    // 🔥 LIFT PARKING SPOTS STATE HERE
-    var parkingSpots by remember {
-        mutableStateOf(
-            listOf(
-                ParkingSpot("P-123", "Car", ParkingStatus.AVAILABLE),
-                ParkingSpot("P-124", "Car", ParkingStatus.OCCUPIED),
-                ParkingSpot("P-125", "Motorcycle", ParkingStatus.AVAILABLE),
-                ParkingSpot("P-126", "Car", ParkingStatus.AVAILABLE),
-                ParkingSpot("P-127", "Car", ParkingStatus.RESERVED),
-                ParkingSpot("P-128", "Motorcycle", ParkingStatus.AVAILABLE),
-                ParkingSpot("P-129", "Car", ParkingStatus.AVAILABLE),
-                ParkingSpot("P-130", "Car", ParkingStatus.OCCUPIED),
-                ParkingSpot("P-131", "Motorcycle", ParkingStatus.AVAILABLE),
-                ParkingSpot("P-132", "Motorcycle", ParkingStatus.AVAILABLE),
-                ParkingSpot("P-133", "Motorcycle", ParkingStatus.AVAILABLE),
-                ParkingSpot("P-134", "Motorcycle", ParkingStatus.AVAILABLE),
-            )
-        )
+    val paymentRepository = remember {
+        PaymentRepository(RetrofitInstance.paymentApi)
     }
+    
+    val homeViewModel: HomeViewModel = viewModel(
+        factory = HomeViewModelFactory(parkingRepository, paymentRepository)
+    )
+    
+    val bookingViewModel: BookingViewModel = viewModel(
+        factory = BookingViewModelFactory(parkingRepository)
+    )
+    
+    val paymentViewModel: PaymentViewModel = viewModel()
 
-    // Function to update parking spot status
+    val profileViewModel: ProfileViewModel = viewModel(
+        factory = ProfileViewModelFactory(context)
+    )
+
+    // ----- UI State from ViewModel -----
+    val parkingSpots by homeViewModel.parkingSpots.collectAsState()
+    val profileState by profileViewModel.profileState.collectAsState()
+    
+    // Function to update parking spot status (Optimistic update)
     val updateParkingSpotStatus: (String, ParkingStatus) -> Unit = { spotId, newStatus ->
-        println("🔄 Updating spot $spotId to status: $newStatus")
-
-        parkingSpots = parkingSpots.map { spot ->
-            if (spot.id == spotId) {
-                println("✅ Found spot $spotId, changing status from ${spot.status} to $newStatus")
-                spot.copy(status = newStatus)
-            } else {
-                spot
-            }
-        }
-
-        println("📊 Updated parking spots list:")
-        parkingSpots.forEach { spot ->
-            println("   ${spot.id}: ${spot.status}")
-        }
+        homeViewModel.updateSpotStatus(spotId, newStatus)
     }
 
     NavHost(
@@ -102,7 +97,7 @@ fun NavGraph() {
                     navController.navigate(Screen.SignUp.route)
                 },
                 onForgotPassword = {
-                    // TODO: Navigate to forgot password screen
+                    navController.navigate(Screen.PasswordReset.route)
                 }
             )
         }
@@ -112,75 +107,131 @@ fun NavGraph() {
                 onNavigateToSignIn = {
                     navController.navigate(Screen.SignIn.route)
                 },
-                onSignUpSuccess = {
-                    navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.SignUp.route) { inclusive = true }
+                onSignUpSuccess = { email ->
+                    navController.navigate(Screen.OtpVerification.createRoute(email)) {
+                        popUpTo(Screen.SignUp.route) { inclusive = false }
                     }
                 }
             )
         }
 
+        composable(
+            route = Screen.OtpVerification.route,
+            arguments = listOf(navArgument("email") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val email = backStackEntry.arguments?.getString("email") ?: ""
+            OtpVerificationScreen(
+                email = email,
+                onVerificationSuccess = {
+                    navController.navigate(Screen.SignIn.route) {
+                        popUpTo(Screen.SignUp.route) { inclusive = true }
+                    }
+                },
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
         composable(Screen.Home.route) {
+            // Get user profile from ViewModel state
+            val userProfileForHome = when (val state = profileState) {
+                is Resource.Success -> state.data
+                else -> UserProfile("", "", "", "", null)
+            }
+            
             HomeScreen(
-                userProfile = userProfile,
+                userProfile = userProfileForHome,
                 parkingSpots = parkingSpots,
+                homeViewModel = homeViewModel,
                 onParkingSpotReserved = updateParkingSpotStatus,
                 onNavigateToProfile = {
                     navController.navigate(Screen.Profile.route)
                 },
-                onNavigateToNotification = {
-                    navController.navigate(Screen.notification.route)
+                onNavigateToMap = {
+                    navController.navigate(Screen.BookingHistory.route)
                 }
-
             )
         }
 
-        // Profile Screen (View Only)
+        composable(Screen.BookingHistory.route) {
+            BookingHistoryScreen(
+                bookingViewModel = bookingViewModel,
+                paymentViewModel = paymentViewModel,
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home.route)
+                },
+                onNavigateToProfile = {
+                    navController.navigate(Screen.Profile.route)
+                }
+            )
+        }
+
+        // Profile Screen
         composable(Screen.Profile.route) {
             ProfileScreen(
-                userProfile = userProfile,
                 onEditClick = {
                     navController.navigate(Screen.EditProfile.route)
                 },
                 onNavigateToHome = {
                     navController.navigate(Screen.Home.route)
                 },
-                onNavigateToNotification = {
-                    navController.navigate(Screen.notification.route)
+                onNavigateToMap = {
+                    navController.navigate(Screen.BookingHistory.route) // Keep map nav to Booking History for now if intended or fix later
+                },
+                onChangePassword = {
+                    navController.navigate(Screen.PasswordReset.route)
+                },
+                onBookingHistory = {
+                    navController.navigate(Screen.BookingHistory.route)
+                },
+                onTransactionHistory = {
+                    navController.navigate(Screen.TransactionHistory.route)
+                },
+                onLogout = {
+                    navController.navigate(Screen.SignIn.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
             )
         }
 
         // Edit Profile Screen
         composable(Screen.EditProfile.route) {
+            val currentProfile = when (val state = profileState) {
+                is Resource.Success -> state.data
+                else -> UserProfile("", "", "", "", null)
+            }
+
             EditProfileScreen(
-                userProfile = userProfile,
+                userProfile = currentProfile,
+                viewModel = profileViewModel,
                 onBackClick = {
-                    navController.popBackStack()
-                },
-                onSaveChanges = { updatedProfile ->
-                    // Update the user profile
-                    userProfile = updatedProfile
-
-                    // TODO: Save to backend/database
-                    println("Profile updated: $updatedProfile")
-
-                    // Navigate back to profile screen
+                    profileViewModel.loadUserProfile()
                     navController.popBackStack()
                 }
             )
         }
 
-        composable(Screen.notification.route) {
-            NotificationPage(
-                onNavigateToHome = {
-                    navController.navigate(Screen.Home.route)
+        // Password Reset Screen
+        composable(Screen.PasswordReset.route) {
+            com.group.mobileparkingchain.features.auth.presentation.view.PasswordResetScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
                 },
-                onNavigateToProfile = {
-                    navController.navigate(Screen.Profile.route)
-                },
-                onNavigateToMap = {
+                onSuccess = {
+                    navController.navigate(Screen.SignIn.route) {
+                        popUpTo(Screen.Welcome.route) { inclusive = false }
+                    }
+                }
+            )
+        }
 
+        // Transaction History Screen
+        composable(Screen.TransactionHistory.route) {
+            com.group.mobileparkingchain.features.payment.presentation.view.TransactionHistoryScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
                 }
             )
         }

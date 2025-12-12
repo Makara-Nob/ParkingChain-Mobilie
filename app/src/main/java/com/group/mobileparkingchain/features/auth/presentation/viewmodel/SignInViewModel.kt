@@ -1,10 +1,10 @@
 package com.group.mobileparkingchain.features.auth.presentation.viewmodel
 
-import com.group.mobileparkingchain.core.Resource
-import com.group.mobileparkingchain.features.auth.domain.LoginUseCase
-import com.group.mobileparkingchain.features.auth.domain.model.User
+import Resource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.group.mobileparkingchain.features.auth.domain.LoginUseCase
+import com.group.mobileparkingchain.features.auth.domain.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,8 +14,8 @@ class SignInViewModel(
     private val loginUseCase: LoginUseCase
 ) : ViewModel() {
 
-    private val _loginState = MutableStateFlow<Resource<User>?>(null)
-    val loginState: StateFlow<Resource<User>?> = _loginState.asStateFlow()
+    private val _loginState = MutableStateFlow<Resource<User>>(Resource.Idle)
+    val loginState: StateFlow<Resource<User>> = _loginState.asStateFlow()
 
     fun signIn(email: String, password: String) {
         viewModelScope.launch {
@@ -30,6 +30,6 @@ class SignInViewModel(
     }
 
     fun clearState() {
-        _loginState.value = null
+        _loginState.value = Resource.Idle
     }
 }

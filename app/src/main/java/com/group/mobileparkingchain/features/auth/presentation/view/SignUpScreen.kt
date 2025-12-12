@@ -1,5 +1,6 @@
 package com.group.mobileparkingchain.ui.screens.signup
 
+import Resource
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -15,7 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.group.mobileparkingchain.core.Resource
+import com.group.mobileparkingchain.features.auth.domain.model.User
 import com.group.mobileparkingchain.features.auth.presentation.components.signin.EmailInput
 import com.group.mobileparkingchain.features.auth.presentation.components.signin.ErrorText
 import com.group.mobileparkingchain.features.auth.presentation.components.signup.NameInputField
@@ -28,7 +29,7 @@ import com.group.mobileparkingchain.ui.components.ParkingLogo
 
 @Composable
 fun SignUpScreen(
-    onSignUpSuccess: () -> Unit = {},
+    onSignUpSuccess: (String) -> Unit = {},
     onNavigateToSignIn: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -46,22 +47,21 @@ fun SignUpScreen(
     var confirmPasswordVisible by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
-    val registerState by viewModel.registerState.collectAsState()
+    val registerState by viewModel.registerState.collectAsState<Resource<User>>()
 
     LaunchedEffect(registerState) {
         when (val state = registerState) {
             is Resource.Success -> {
-                val userName = state.data?.firstName ?: ""
                 Toast.makeText(
                     context,
-                    "Welcome $userName! 🎉",
+                    "Registration successful! Please check your email for the OTP.",
                     Toast.LENGTH_LONG
                 ).show()
                 viewModel.clearState()
-                onSignUpSuccess()
+                onSignUpSuccess(email)
             }
             is Resource.Error -> {
-                val message = state.message ?: "Registration failed"
+                val message = state.message
                 errorMessage = message
                 Toast.makeText(
                     context,

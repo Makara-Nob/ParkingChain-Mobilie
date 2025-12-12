@@ -1,5 +1,6 @@
 package com.group.mobileparkingchain.ui.screens.signin
 
+import Resource
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -15,6 +16,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.group.mobileparkingchain.features.auth.config.AuthConfig
+import com.group.mobileparkingchain.features.auth.domain.model.User
 import com.group.mobileparkingchain.features.auth.presentation.components.signin.*
 import com.group.mobileparkingchain.features.auth.presentation.viewmodel.SignInViewModel
 import com.group.mobileparkingchain.features.auth.presentation.viewmodel.SignInViewModelFactory
@@ -32,17 +35,22 @@ fun SignInScreen(
         factory = SignInViewModelFactory(context)
     )
 
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    // Pre-fill fields when using mock data (feature flag is false)
+    var email by remember { 
+        mutableStateOf(if (!AuthConfig.USE_API) AuthConfig.MOCK_EMAIL else "") 
+    }
+    var password by remember { 
+        mutableStateOf(if (!AuthConfig.USE_API) AuthConfig.MOCK_PASSWORD else "") 
+    }
     var passwordVisible by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
-    val loginState by viewModel.loginState.collectAsState()
+    val loginState by viewModel.loginState.collectAsState<Resource<User>>()
 
     LaunchedEffect(loginState) {
         when (val state = loginState) {
             is Resource.Success -> {
-                val userName = state.data?.firstName ?: ""
+                val userName = state.data.firstName
                 Toast.makeText(
                     context,
                     "Welcome back, $userName! 🎉",
@@ -52,7 +60,7 @@ fun SignInScreen(
                 onSignInSuccess()
             }
             is Resource.Error -> {
-                val message = state.message ?: "Login failed"
+                val message = state.message
                 errorMessage = message
                 Toast.makeText(
                     context,

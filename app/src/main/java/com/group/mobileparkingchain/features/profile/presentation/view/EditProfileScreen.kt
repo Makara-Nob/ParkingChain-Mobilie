@@ -1,6 +1,11 @@
 package com.group.mobileparkingchain.features.profile.presentation.view
 
+import Resource
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,6 +28,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,22 +45,76 @@ import com.group.mobileparkingchain.features.profile.presentation.components.edi
 import com.group.mobileparkingchain.features.profile.presentation.components.editProfile.ErrorCard
 import com.group.mobileparkingchain.features.profile.presentation.components.editProfile.ProfileImagePicker
 import com.group.mobileparkingchain.features.profile.data.UserProfile
+import com.group.mobileparkingchain.features.profile.presentation.viewmodel.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileScreen(
     userProfile: UserProfile,
-    onBackClick: () -> Unit,
-    onSaveChanges: (UserProfile) -> Unit
+    viewModel: ProfileViewModel,
+    onBackClick: () -> Unit
 ) {
     var firstName by remember { mutableStateOf(userProfile.firstName) }
     var lastName by remember { mutableStateOf(userProfile.lastName) }
-    var email by remember { mutableStateOf(userProfile.email) }
+    val email = userProfile.email // Read-only
     var phoneNumber by remember { mutableStateOf(userProfile.phoneNumber) }
     var currentImageUrl by remember { mutableStateOf(userProfile.profileImageUrl) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var isUploading by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
+    val updateProfileState by viewModel.updateProfileState.collectAsState()
+    val uploadImageState by viewModel.uploadImageState.collectAsState()
+
+    // Image picker launcher
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            isUploading = true
+            viewModel.uploadProfileImage(it)
+        }
+    }
+
+    // Handle update profile state
+    LaunchedEffect(updateProfileState) {
+        when (updateProfileState) {
+            is Resource.Success -> {
+                Toast.makeText(context, "Profile updated successfully ✅", Toast.LENGTH_SHORT).show()
+                viewModel.resetUpdateState()
+                onBackClick()
+            }
+            is Resource.Error -> {
+                errorMessage = (updateProfileState as Resource.Error).message
+                viewModel.resetUpdateState()
+            }
+            else -> {}
+        }
+    }
+
+    // Handle upload image state
+    LaunchedEffect(uploadImageState) {
+        when (uploadImageState) {
+            is Resource.Success -> {
+                val user = (uploadImageState as Resource.Success<com.group.mobileparkingchain.features.auth.domain.model.User>).data
+                currentImageUrl = user.profileImage?.let { "http://10.0.2.2:3001/$it" }
+                isUploading = false
+                Toast.makeText(context, "Image uploaded successfully ✅", Toast.LENGTH_SHORT).show()
+                viewModel.resetUploadState()
+            }
+            is Resource.Error -> {
+                errorMessage = (uploadImageState as Resource.Error).message
+                isUploading = false
+                viewModel.resetUploadState()
+            }
+            is Resource.Loading -> {
+                isUploading = true
+            }
+            else -> {
+                isUploading = false
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -71,53 +133,108 @@ fun EditProfileScreen(
         },
         containerColor = Color(0xFF121212)
     ) { padding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
-            errorMessage?.let { msg ->
-                ErrorCard(message = msg, onDismiss = { errorMessage = null })
+                errorMessage?.let { msg ->
+                    ErrorCard(message = msg, onDismiss = { errorMessage = null })
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
+
+                ProfileImagePicker(
+                    imageUrl = currentImageUrl,
+                    onImageSelected = {
+                        // Trigger image picker
+                        imagePickerLauncher.launch("image/*")
+                    },
+                    showError = { errorMessage = it }
+                )
+
+                if (isUploading) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    CircularProgressIndicator(
+                        modifier = Modifier.padding(8.dp),
+                        color = Color(0xFF4A90E2)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                EditableField("First Name", firstName, { firstName = it }, "Enter first name")
+                Spacer(modifier = Modifier.height(16.dp))
+                EditableField("Last Name", lastName, { lastName = it }, "Enter last name")
+                Spacer(modifier = Modifier.height(16.dp))
+                // Email is read-only
+                EditableField("Email", email, {}, "Email", enabled = false)
+                Spacer(modifier = Modifier.height(16.dp))
+                EditableField("Phone Number", phoneNumber, { phoneNumber = it }, "Enter phone number")
+                Spacer(modifier = Modifier.height(32.dp))
+
+                val isUpdateLoading = updateProfileState is Resource.Loading
+
+                Button(
+                    onClick = {
+                        // Validate inputs
+                        when {
+                            firstName.length < 2 || firstName.length > 50 -> {
+                                errorMessage = "First name must be between 2 and 50 characters"
+                            }
+                            lastName.length < 2 || lastName.length > 50 -> {
+                                errorMessage = "Last name must be between 2 and 50 characters"
+                            }
+                            phoneNumber.isNotBlank() && (phoneNumber.replace(Regex("[^0-9+]"), "").length < 9 
+                                    || phoneNumber.replace(Regex("[^0-9+]"), "").length > 15) -> {
+                                errorMessage = "Phone number must be between 9 and 15 digits"
+                            }
+                            else -> {
+                                // Check if anything changed
+                                val firstNameChanged = firstName != userProfile.firstName
+                                val lastNameChanged = lastName != userProfile.lastName
+                                val phoneChanged = phoneNumber != userProfile.phoneNumber
+                                
+                                if (firstNameChanged || lastNameChanged || phoneChanged) {
+                                    viewModel.updateProfile(
+                                        if (firstNameChanged) firstName else null,
+                                        if (lastNameChanged) lastName else null,
+                                        if (phoneChanged) phoneNumber.ifBlank { null } else null
+                                    )
+                                } else {
+                                    Toast.makeText(context, "No changes to save", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth().height(56.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3)),
+                    shape = RoundedCornerShape(12.dp),
+                    enabled = !isUpdateLoading && !isUploading
+                ) {
+                    if (isUpdateLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.padding(end = 8.dp),
+                            color = Color.White
+                        )
+                    }
+                    Text(
+                        text = if (isUpdateLoading) "Saving..." else "Save Changes",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(24.dp))
             }
-
-            ProfileImagePicker(
-                imageUrl = currentImageUrl,
-                onImageSelected = { currentImageUrl = it },
-                showError = { errorMessage = it }
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            EditableField("First Name", firstName, { firstName = it }, "Enter first name")
-            Spacer(modifier = Modifier.height(16.dp))
-            EditableField("Last Name", lastName, { lastName = it }, "Enter last name")
-            Spacer(modifier = Modifier.height(16.dp))
-            EditableField("Email", email, { email = it }, "Enter email")
-            Spacer(modifier = Modifier.height(16.dp))
-            EditableField("Phone Number", phoneNumber, { phoneNumber = it }, "Enter phone number")
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Button(
-                onClick = {
-                    val updatedProfile = UserProfile(
-                        firstName, lastName, email, phoneNumber, currentImageUrl
-                    )
-                    onSaveChanges(updatedProfile)
-                    Toast.makeText(context, "Profile updated successfully ✅", Toast.LENGTH_SHORT).show()
-                },
-                modifier = Modifier.fillMaxWidth().height(56.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3)),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text("Save Changes", fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }

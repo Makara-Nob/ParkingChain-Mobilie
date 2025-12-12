@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
@@ -82,6 +84,10 @@ fun CompleteBookingScreen(
     var selectedDateTime by remember { mutableStateOf<Long?>(null) }
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
+    
+    // Payment selection state
+    var selectedPaymentMethod by remember { mutableStateOf("khqr") }
+    var selectedCurrency by remember { mutableStateOf("KHR") }
 
     val dateFormat = SimpleDateFormat("MMM dd, yyyy 'at' hh:mm a", Locale.getDefault())
 
@@ -115,6 +121,7 @@ fun CompleteBookingScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .padding(horizontal = 16.dp)
+                .verticalScroll(rememberScrollState()) // Allow scrolling
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -237,6 +244,8 @@ fun CompleteBookingScreen(
             }
 
             Spacer(modifier = Modifier.height(24.dp))
+            
+            Spacer(modifier = Modifier.height(24.dp))
 
             // Price Calculation
             Text(
@@ -280,7 +289,7 @@ fun CompleteBookingScreen(
                 enabled = selectedDateTime != null
             ) {
                 Text(
-                    text = "Continue to payment",
+                    text = "Continue to Payment",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold
                 )

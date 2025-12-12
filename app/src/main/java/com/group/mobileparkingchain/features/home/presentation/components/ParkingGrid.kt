@@ -20,8 +20,8 @@ fun ParkingGrid(spots: List<ParkingSpot>, onSpotClick: (ParkingSpot) -> Unit) {
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(pagedSpots.size) { index ->
             ParkingSpotCard(pagedSpots[index]) { onSpotClick(pagedSpots[index]) }

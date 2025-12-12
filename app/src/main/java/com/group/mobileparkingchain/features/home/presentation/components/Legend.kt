@@ -1,23 +1,20 @@
 package com.group.mobileparkingchain.features.home.presentation.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,25 +24,66 @@ fun Legend() {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF1E2836)),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(16.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text("Status", fontSize = 18.sp, fontWeight = FontWeight.Medium, color = Color.White)
-            Spacer(Modifier.height(12.dp))
-            LegendItem(Color(0xFF4CAF50), "Available")
-            Spacer(Modifier.height(8.dp))
-            LegendItem(Color(0xFFE53935), "Occupied")
-            Spacer(Modifier.height(8.dp))
-            LegendItem(Color(0xFF2196F3), "Reserved")
+        Column(modifier = Modifier.padding(18.dp)) {
+            Text(
+                text = "Parking Status",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.White,
+                letterSpacing = 0.3.sp
+            )
+            Spacer(Modifier.height(14.dp))
+            LegendItem(
+                color = Color(0xFF4ADE80),
+                icon = Icons.Filled.CheckCircle,
+                label = "Available"
+            )
+            Spacer(Modifier.height(10.dp))
+            LegendItem(
+                color = Color(0xFFEF4444),
+                icon = Icons.Filled.Lock,
+                label = "Occupied"
+            )
+            Spacer(Modifier.height(10.dp))
+            LegendItem(
+                color = Color(0xFF3B82F6),
+                icon = Icons.Filled.Schedule,
+                label = "Reserved"
+            )
         }
     }
 }
 
 @Composable
-fun LegendItem(color: Color, label: String) {
-    Row (verticalAlignment = Alignment.CenterVertically) {
-        Box(modifier = Modifier.size(12.dp).background(color, shape = RoundedCornerShape(6.dp)))
+fun LegendItem(color: Color, icon: ImageVector, label: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        // Icon with background
+        Box(
+            modifier = Modifier
+                .size(32.dp)
+                .clip(CircleShape)
+                .background(color.copy(alpha = 0.15f)),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = label,
+                modifier = Modifier.size(18.dp),
+                tint = color
+            )
+        }
         Spacer(modifier = Modifier.width(12.dp))
-        Text(label, color = Color.White.copy(alpha = 0.7f), fontSize = 14.sp)
+        Text(
+            text = label,
+            color = Color.White.copy(alpha = 0.85f),
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+            letterSpacing = 0.2.sp
+        )
     }
 }

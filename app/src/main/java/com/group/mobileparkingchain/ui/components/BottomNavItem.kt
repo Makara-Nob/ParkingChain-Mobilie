@@ -15,8 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -50,8 +49,7 @@ fun BottomNavigationBar(
 ) {
     val navItems = listOf(
         BottomNavItem(Icons.Default.Home, "Home", "home"),
-        BottomNavItem(Icons.Default.Place, "Map", "map"),
-        BottomNavItem(Icons.Default.Notifications, "Notification", "notification"),
+        BottomNavItem(Icons.Default.History, "History", "booking_history"),
         BottomNavItem(Icons.Default.AccountCircle, "Account", "account")
     )
 

@@ -1,0 +1,179 @@
+package com.group.mobileparkingchain.features.payment.presentation.view
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.group.mobileparkingchain.features.auth.di.AuthModule
+import com.group.mobileparkingchain.features.payment.data.model.Payment
+import com.group.mobileparkingchain.features.payment.di.PaymentModule
+import com.group.mobileparkingchain.features.payment.presentation.viewmodel.TransactionHistoryState
+import com.group.mobileparkingchain.features.payment.presentation.viewmodel.TransactionHistoryViewModel
+import com.group.mobileparkingchain.features.payment.presentation.viewmodel.TransactionHistoryViewModelFactory
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TransactionHistoryScreen(
+    onNavigateBack: () -> Unit
+) {
+    val context = LocalContext.current
+    val paymentModule = remember { PaymentModule(context) }
+    val authModule = remember { AuthModule(context) }
+    
+    // Get userId from local storage
+    val userId by authModule.tokenDataStore.userId.collectAsState(initial = null)
+    
+    val viewModel: TransactionHistoryViewModel = viewModel(
+        factory = TransactionHistoryViewModelFactory(paymentModule)
+    )
+    
+    val uiState by viewModel.uiState.collectAsState()
+    
+    // Fetch transactions when userId is available
+    LaunchedEffect(userId) {
+        userId?.let { id ->
+            viewModel.loadTransactions(id)
+        }
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Transaction History", color = Color.White) },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF121212))
+            )
+        },
+        containerColor = Color(0xFF121212)
+    ) { padding ->
+        Box(modifier = Modifier.padding(padding).fillMaxSize()) {
+            when (val state = uiState) {
+                is TransactionHistoryState.Loading -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center),
+                        color = Color(0xFF4A90E2)
+                    )
+                }
+                is TransactionHistoryState.Error -> {
+                    Text(
+                        text = state.message,
+                        color = Color.Red,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+                is TransactionHistoryState.Success -> {
+                    if (state.payments.isEmpty()) {
+                        Text(
+                            text = "No transactions found",
+                            color = Color.Gray,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    } else {
+                        LazyColumn(
+                            contentPadding = PaddingValues(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            items(state.payments) { payment ->
+                                TransactionItem(payment)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun TransactionItem(payment: Payment) {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)),
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Payment", // Could be booking ID or Description
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
+                Text(
+                    text = "${payment.amount} ${payment.currency}",
+                    color = Color(0xFF4A90E2),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = payment.createdAt.take(19).replace("T", " "), // Simple formatting
+                    color = Color.Gray,
+                    fontSize = 12.sp
+                )
+                
+                // Status Pill
+                val statusColor = when(payment.status.uppercase()) {
+                    "PAID" -> Color.Green
+                    "PENDING" -> Color.Yellow
+                    "FAILED" -> Color.Red
+                    else -> Color.Gray
+                }
+                
+                Text(
+                    text = payment.status.uppercase(),
+                    color = statusColor,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+        }
+    }
+}

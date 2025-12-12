@@ -1,11 +1,5 @@
 package com.group.mobileparkingchain.features.profile.presentation.components.editProfile
 
-import android.Manifest
-import android.net.Uri
-import android.os.Build
-import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -23,41 +17,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 
 @Composable
 fun ProfileImagePicker(
     imageUrl: String?,
-    onImageSelected: (String) -> Unit,
+    onImageSelected: () -> Unit,
     showError: (String) -> Unit
 ) {
-    val context = LocalContext.current
-
-    val imagePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        uri?.let {
-            onImageSelected(it.toString())
-            Toast.makeText(context, "Profile photo updated 📸", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            try {
-                imagePickerLauncher.launch("image/*")
-            } catch (e: Exception) {
-                showError("Error opening gallery ⚠️")
-            }
-        } else {
-            showError("Permission denied ❌")
-        }
-    }
-
     Box(
         modifier = Modifier.size(120.dp),
         contentAlignment = Alignment.BottomEnd
@@ -92,17 +60,7 @@ fun ProfileImagePicker(
                 .size(36.dp)
                 .clip(CircleShape)
                 .background(Color(0xFF2196F3))
-                .clickable {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        permissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
-                    } else {
-                        try {
-                            imagePickerLauncher.launch("image/*")
-                        } catch (e: Exception) {
-                            showError("Error opening gallery ⚠️")
-                        }
-                    }
-                },
+                .clickable { onImageSelected() },
             contentAlignment = Alignment.Center
         ) {
             Icon(

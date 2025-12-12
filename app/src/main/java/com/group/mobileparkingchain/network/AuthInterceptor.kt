@@ -13,13 +13,17 @@ class AuthInterceptor(context: Context) : Interceptor {
     private val tokenDataStore = TokenDataStore(context)
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        // Get token synchronously (ok for small requests)
-        val token = runBlocking { tokenDataStore.token.map { it }.firstOrNull() }
+        val token = runBlocking {
+            tokenDataStore.token.map { it }.firstOrNull()
+        }
+
+        android.util.Log.d("AuthInterceptor", "Token found: ${token?.take(10)}")
 
         val requestBuilder = chain.request().newBuilder()
         token?.let {
             requestBuilder.addHeader("Authorization", "Bearer $it")
-        }
+            android.util.Log.d("AuthInterceptor", "Added Authorization header")
+        } ?: android.util.Log.e("AuthInterceptor", "Token is null, header not added")
 
         return chain.proceed(requestBuilder.build())
     }

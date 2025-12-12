@@ -2,12 +2,7 @@ package com.group.mobileparkingchain.features.home.presentation.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -31,17 +26,9 @@ fun HomeTopBar(
             ) {
                 Text("Smart Parking", fontWeight = FontWeight.SemiBold) }
             },
-        navigationIcon = {
-            IconButton(onClick = onMenuClick) {
-                Icon(Icons.Default.Menu, contentDescription = "Menu", tint = Color.White)
-            }
-        },
-        actions = {
-            IconButton(onClick = onNotificationsClick) {
-                Icon(Icons.Default.Notifications, "Notifications", tint = Color.White)
-            }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF1A1A1A))
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Color(0xFF1E2A3A)
+        )
     )
 }
 

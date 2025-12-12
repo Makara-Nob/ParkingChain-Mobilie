@@ -1,10 +1,10 @@
 package com.group.mobileparkingchain.features.auth.presentation.viewmodel
 
-import com.group.mobileparkingchain.core.Resource
-import com.group.mobileparkingchain.features.auth.domain.RegisterUseCase
-import com.group.mobileparkingchain.features.auth.domain.model.User
+import Resource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.group.mobileparkingchain.features.auth.domain.RegisterUseCase
+import com.group.mobileparkingchain.features.auth.domain.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

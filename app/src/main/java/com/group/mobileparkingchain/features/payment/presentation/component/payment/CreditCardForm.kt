@@ -9,14 +9,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.group.mobileparkingchain.features.payment.presentation.view.LabeledField
-import com.group.mobileparkingchain.features.payment.presentation.view.textFieldColors
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun CreditCardForm(
@@ -69,3 +70,19 @@ fun CreditCardForm(
         }
     }
 }
+
+@Composable
+private fun LabeledField(label: String) {
+    Text(label, fontSize = 14.sp, fontWeight = FontWeight.Medium, color = Color(0xFF2196F3))
+    Spacer(modifier = Modifier.height(8.dp))
+}
+
+@Composable
+private fun textFieldColors() = OutlinedTextFieldDefaults.colors(
+    unfocusedContainerColor = Color(0xFF1E2836),
+    focusedContainerColor = Color(0xFF1E2836),
+    unfocusedBorderColor = Color.Transparent,
+    focusedBorderColor = Color(0xFF2196F3),
+    unfocusedTextColor = Color.White,
+    focusedTextColor = Color.White
+)
