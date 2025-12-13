@@ -8,14 +8,21 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -26,19 +33,25 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.group.mobileparkingchain.enumuration.FilterType
 import com.group.mobileparkingchain.enumuration.ParkingStatus
 import com.group.mobileparkingchain.features.home.data.ParkingSpot
-import com.group.mobileparkingchain.features.home.presentation.components.*
+import com.group.mobileparkingchain.features.home.presentation.components.FilterChips
+import com.group.mobileparkingchain.features.home.presentation.components.HomeTopBar
+import com.group.mobileparkingchain.features.home.presentation.components.ParkingGrid
+import com.group.mobileparkingchain.features.home.presentation.components.ReservationSheet
+import com.group.mobileparkingchain.features.home.presentation.components.SearchBar
 import com.group.mobileparkingchain.features.home.presentation.viewmodel.HomeViewModel
 import com.group.mobileparkingchain.features.payment.data.PaymentInfo
 import com.group.mobileparkingchain.features.payment.presentation.view.BookingReceiptScreen
-import com.group.mobileparkingchain.features.payment.presentation.view.PaymentScreen
 import com.group.mobileparkingchain.features.payment.presentation.view.PaymentQrScreen
+import com.group.mobileparkingchain.features.payment.presentation.view.PaymentScreen
 import com.group.mobileparkingchain.features.profile.data.UserProfile
 import com.group.mobileparkingchain.ui.components.BottomNavigationBar
 import com.group.mobileparkingchain.ui.screens.booking.BookingInfo
-import com.group.mobileparkingchain.ui.screens.booking.CompleteBookingScreen
 import com.group.mobileparkingchain.ui.screens.booking.BookingPaymentScreen
+import com.group.mobileparkingchain.ui.screens.booking.CompleteBookingScreen
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 @Composable
 fun HomeScreen(
@@ -47,6 +60,7 @@ fun HomeScreen(
     homeViewModel: HomeViewModel,
     onNavigateToProfile: () -> Unit = {},
     onNavigateToMap: () -> Unit = {},
+    onNavigateToChat: () -> Unit = {},
     onParkingSpotReserved: (String, ParkingStatus) -> Unit
 ) {
     // ----- UI State -----
@@ -320,7 +334,19 @@ fun HomeScreen(
                         }
                     )
                 },
-                containerColor = Color(0xFF121212)
+                containerColor = Color(0xFF121212),
+                floatingActionButton = {
+                    androidx.compose.material3.FloatingActionButton(
+                        onClick = onNavigateToChat,
+                        containerColor = Color(0xFF2196F3),
+                        contentColor = Color.White
+                    ) {
+                        androidx.compose.material3.Icon(
+                            imageVector = androidx.compose.material.icons.Icons.Default.Info, // Using Info as placeholder for Chat
+                            contentDescription = "Chat"
+                        )
+                    }
+                }
             ) { padding ->
                 Column(
                     modifier = Modifier

@@ -23,6 +23,10 @@ import com.group.mobileparkingchain.features.booking.presentation.viewmodel.Book
 import com.group.mobileparkingchain.features.home.presentation.view.HomeScreen
 import com.group.mobileparkingchain.features.home.presentation.viewmodel.HomeViewModel
 import com.group.mobileparkingchain.features.home.presentation.viewmodel.HomeViewModelFactory
+import com.group.mobileparkingchain.features.chat.presentation.view.ChatScreen
+import com.group.mobileparkingchain.features.chat.presentation.viewmodel.ChatViewModel
+import com.group.mobileparkingchain.features.chat.presentation.viewmodel.ChatViewModelFactory
+import com.group.mobileparkingchain.features.chat.data.repository.ChatRepository
 import com.group.mobileparkingchain.features.parking.data.repository.ParkingRepository
 import com.group.mobileparkingchain.features.payment.data.repository.PaymentRepository
 import com.group.mobileparkingchain.features.payment.presentation.viewmodel.PaymentViewModel
@@ -48,6 +52,10 @@ fun NavGraph() {
     val paymentRepository = remember {
         PaymentRepository(RetrofitInstance.paymentApi)
     }
+
+    val chatRepository = remember {
+        ChatRepository(RetrofitInstance.chatApi)
+    }
     
     val homeViewModel: HomeViewModel = viewModel(
         factory = HomeViewModelFactory(parkingRepository, paymentRepository)
@@ -58,6 +66,10 @@ fun NavGraph() {
     )
     
     val paymentViewModel: PaymentViewModel = viewModel()
+
+    val chatViewModel: ChatViewModel = viewModel(
+        factory = ChatViewModelFactory(chatRepository)
+    )
 
     val profileViewModel: ProfileViewModel = viewModel(
         factory = ProfileViewModelFactory(context)
@@ -150,6 +162,9 @@ fun NavGraph() {
                 },
                 onNavigateToMap = {
                     navController.navigate(Screen.BookingHistory.route)
+                },
+                onNavigateToChat = {
+                    navController.navigate(Screen.Chat.route)
                 }
             )
         }
@@ -230,6 +245,16 @@ fun NavGraph() {
         // Transaction History Screen
         composable(Screen.TransactionHistory.route) {
             com.group.mobileparkingchain.features.payment.presentation.view.TransactionHistoryScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // Chat Screen
+        composable(Screen.Chat.route) {
+            ChatScreen(
+                viewModel = chatViewModel,
                 onNavigateBack = {
                     navController.popBackStack()
                 }

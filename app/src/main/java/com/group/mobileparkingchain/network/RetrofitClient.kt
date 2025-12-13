@@ -35,9 +35,9 @@ object RetrofitInstance {
     private val okHttpClient: OkHttpClient by lazy {
         val builder = OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(120, TimeUnit.SECONDS)
+            .readTimeout(120, TimeUnit.SECONDS)
+            .writeTimeout(120, TimeUnit.SECONDS)
         
         authInterceptor?.let {
             builder.addInterceptor(it)
@@ -65,5 +65,12 @@ object RetrofitInstance {
 
     val paymentApi: PaymentApiService by lazy {
         createService(PAYMENT_URL, PaymentApiService::class.java)
+    }
+
+    // TODO: Replace with your actual Ngrok/Colab URL
+    private const val CHAT_URL = "https://grouseless-nonphysically-craig.ngrok-free.dev/api/"
+    
+    val chatApi: com.group.mobileparkingchain.features.chat.data.remote.ChatApiService by lazy {
+        createService(CHAT_URL, com.group.mobileparkingchain.features.chat.data.remote.ChatApiService::class.java)
     }
 }
