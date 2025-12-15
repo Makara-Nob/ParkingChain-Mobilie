@@ -233,7 +233,7 @@ private fun ProfileContent(
         ProfileOptionsCard(
             options = listOf(
                 "Change Password" to onChangePassword,
-                "Booking History" to onBookingHistory,
+                "Payment History" to onTransactionHistory,
             )
         )
 

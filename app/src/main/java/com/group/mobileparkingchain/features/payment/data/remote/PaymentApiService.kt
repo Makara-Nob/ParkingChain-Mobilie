@@ -20,6 +20,6 @@ interface PaymentApiService {
     @POST("payments/{paymentId}/confirm")
     suspend fun confirmPayment(@retrofit2.http.Path("paymentId") paymentId: String): Response<ApiResponse<ConfirmPaymentResponse>>
 
-    @retrofit2.http.GET("user/{userId}")
-    suspend fun getUserTransactions(@retrofit2.http.Path("userId") userId: String): Response<List<Payment>>
+    @retrofit2.http.GET("payments/user/{userId}")
+    suspend fun getUserTransactions(@retrofit2.http.Path("userId") userId: String): Response<ApiResponse<List<Payment>>>
 }

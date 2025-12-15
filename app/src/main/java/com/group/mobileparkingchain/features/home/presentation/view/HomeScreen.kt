@@ -33,6 +33,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.group.mobileparkingchain.enumuration.FilterType
 import com.group.mobileparkingchain.enumuration.ParkingStatus
 import com.group.mobileparkingchain.features.home.data.ParkingSpot
+import com.group.mobileparkingchain.features.home.presentation.components.AnimatedChatButton
 import com.group.mobileparkingchain.features.home.presentation.components.FilterChips
 import com.group.mobileparkingchain.features.home.presentation.components.HomeTopBar
 import com.group.mobileparkingchain.features.home.presentation.components.ParkingGrid
@@ -336,16 +337,9 @@ fun HomeScreen(
                 },
                 containerColor = Color(0xFF121212),
                 floatingActionButton = {
-                    androidx.compose.material3.FloatingActionButton(
-                        onClick = onNavigateToChat,
-                        containerColor = Color(0xFF2196F3),
-                        contentColor = Color.White
-                    ) {
-                        androidx.compose.material3.Icon(
-                            imageVector = androidx.compose.material.icons.Icons.Default.Info, // Using Info as placeholder for Chat
-                            contentDescription = "Chat"
-                        )
-                    }
+                    AnimatedChatButton(
+                        onClick = onNavigateToChat
+                    )
                 }
             ) { padding ->
                 Column(

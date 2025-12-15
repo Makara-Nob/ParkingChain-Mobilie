@@ -10,6 +10,7 @@ import com.group.mobileparkingchain.features.payment.data.model.Payment
 import com.group.mobileparkingchain.features.payment.data.model.PaymentMethod
 import com.group.mobileparkingchain.features.payment.data.repository.PaymentRepository
 import com.group.mobileparkingchain.network.RetrofitInstance
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,13 +23,16 @@ class PaymentViewModel(application: Application) : AndroidViewModel(application)
     private val _paymentState = MutableStateFlow<PaymentState>(PaymentState.Idle)
     val paymentState: StateFlow<PaymentState> = _paymentState.asStateFlow()
 
+    private val _payments = MutableStateFlow<List<Payment>>(emptyList())
+    val payments: StateFlow<List<Payment>> = _payments.asStateFlow()
+
     fun initiatePayment(
         bookingId: String,
         amount: Double,
         currency: String = "USD",
         paymentMethod: String = PaymentMethod.ABA
     ) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _paymentState.value = PaymentState.Loading
             
             val result = repository.createPayment(
@@ -53,21 +57,28 @@ class PaymentViewModel(application: Application) : AndroidViewModel(application)
                         try {
                             getApplication<Application>().startActivity(intent)
                         } catch (e: ActivityNotFoundException) {
-                            android.widget.Toast.makeText(getApplication(), "ABA App not installed.", android.widget.Toast.LENGTH_SHORT).show()
+                            // Handler on UI side or show toast
                         }
                     } else {
                         // ABA Mobile app not installed
                         // For testing purposes, we treat this as success so the user can see the receipt flow
-                        // In production, you might want to show a dialog with the QR code or fallback
-                        android.widget.Toast.makeText(getApplication(), "ABA App not installed. Simulating success.", android.widget.Toast.LENGTH_LONG).show()
                     }
-                } else {
-                    // If no deep link, it might be a QR code only response or success without deep link
-                    // For now, we still treat it as success
                 }
             }.onFailure { error ->
                 _paymentState.value = PaymentState.Error(error.message ?: "Payment failed")
             }
+        }
+    }
+
+    fun fetchUserPayments(userId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getUserTransactions(userId)
+                .onSuccess { list ->
+                    _payments.value = list
+                }
+                .onFailure {
+                    // Handle error if needed
+                }
         }
     }
 

@@ -59,7 +59,7 @@ fun ChatScreen(
         }
     }
 
-    Scaffold (
+    Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("AI Assistant") },
@@ -69,20 +69,19 @@ fun ChatScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White,
-                    titleContentColor = Color.Black,
-                    navigationIconContentColor = Color.Black
-                ),
-                // elevation = 4.dp // Material 3 uses shadowElevation or similar if needed, but defaults are usually flat or tonal. 
-                // We'll rely on default behavior or add shadowModifier if strictly needed closer to design.
+                    containerColor = Color(0xFF1E1E1E),
+                    titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White
+                )
             )
-        }
+        },
+        containerColor = Color(0xFF121212)
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(Color(0xFFF5F5F5))
+                .background(Color(0xFF121212))
         ) {
             // Messages List
             LazyColumn(
@@ -95,15 +94,36 @@ fun ChatScreen(
                 items(messages) { message ->
                     MessageBubble(message)
                 }
-                
+
                 if (isLoading) {
                     item {
-                        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.padding(8.dp),
-                                strokeWidth = 2.dp,
-                                color = Color.Gray
-                            )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                            contentAlignment = Alignment.CenterStart
+                        ) {
+                            // Helper box for alignment and shape of the bot's "thinking" state
+                            Column(
+                                modifier = Modifier
+                                    .widthIn(max = 280.dp)
+                                    .clip(
+                                        RoundedCornerShape(
+                                            topStart = 16.dp,
+                                            topEnd = 16.dp,
+                                            bottomStart = 0.dp,
+                                            bottomEnd = 16.dp
+                                        )
+                                    )
+                                    .background(Color(0xFF2C2C2C))
+                                    .padding(12.dp)
+                            ) {
+                                TypingIndicator(
+                                    dotSize = 8.dp,
+                                    dotColor = Color.White,
+                                    modifier = Modifier.padding(horizontal = 4.dp)
+                                )
+                            }
                         }
                     }
                 }
@@ -113,7 +133,7 @@ fun ChatScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White)
+                    .background(Color(0xFF1E1E1E))
                     .padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -130,9 +150,9 @@ fun ChatScreen(
                         disabledContainerColor = Color.Transparent,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        focusedTextColor = Color.Black,
-                        unfocusedTextColor = Color.Black,
-                        cursorColor = Color.Black
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        cursorColor = Color.White
                     ),
                     maxLines = 3
                 )
@@ -177,12 +197,12 @@ fun MessageBubble(message: ChatMessage) {
                         bottomEnd = if (isUser) 0.dp else 16.dp
                     )
                 )
-                .background(if (isUser) Color(0xFF0066CC) else Color.White)
+                .background(if (isUser) Color(0xFF0066CC) else Color(0xFF2C2C2C))
                 .padding(12.dp)
         ) {
             Text(
                 text = message.content,
-                color = if (isUser) Color.White else Color.Black,
+                color = Color.White,
                 fontSize = 16.sp,
                 lineHeight = 22.sp
             )

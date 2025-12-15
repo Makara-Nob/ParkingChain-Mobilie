@@ -3,8 +3,10 @@ package com.group.mobileparkingchain.features.chat.data.repository
 import com.group.mobileparkingchain.features.chat.data.model.ChatRequest
 import com.group.mobileparkingchain.features.chat.data.model.ChatResponse
 import com.group.mobileparkingchain.features.chat.data.remote.ChatApiService
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -25,5 +27,5 @@ class ChatRepository(private val apiService: ChatApiService) {
         } catch (e: Exception) {
             emit(Result.failure(e))
         }
-    }
+    }.flowOn(Dispatchers.IO)
 }

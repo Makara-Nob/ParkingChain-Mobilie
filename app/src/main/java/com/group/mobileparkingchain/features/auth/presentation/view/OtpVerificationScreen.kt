@@ -26,6 +26,8 @@ import com.group.mobileparkingchain.network.RetrofitInstance
 import com.group.mobileparkingchain.features.auth.data.repository.AuthRepository
 import com.group.mobileparkingchain.features.auth.domain.VerifyEmailUseCase
 import com.group.mobileparkingchain.network.datastore.TokenDataStore
+import com.group.mobileparkingchain.features.auth.presentation.components.verification.OtpInputField
+
 
 @Composable
 fun OtpVerificationScreen(
@@ -115,33 +117,7 @@ fun OtpVerificationScreen(
             
             Spacer(modifier = Modifier.height(32.dp))
             
-            // OTP Input Field
-            OutlinedTextField(
-                value = otp,
-                onValueChange = { 
-                    if (it.length <= 6) otp = it 
-                },
-                label = { Text("Enter OTP", color = Color.Gray) },
-                placeholder = { Text("123456", color = Color.Gray) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedBorderColor = Color(0xFF00C853),
-                    unfocusedBorderColor = Color.Gray,
-                    cursorColor = Color(0xFF00C853)
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                textStyle = LocalTextStyle.current.copy(
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    letterSpacing = 8.sp
-                ),
-                singleLine = true
-            )
+
             
             Spacer(modifier = Modifier.height(32.dp))
             

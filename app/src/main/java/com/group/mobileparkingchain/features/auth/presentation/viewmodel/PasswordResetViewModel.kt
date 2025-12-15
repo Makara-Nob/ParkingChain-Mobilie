@@ -44,7 +44,7 @@ class PasswordResetViewModel(private val authRepository: IAuthRepository) : View
         }
         viewModelScope.launch {
             _uiState.value = PasswordResetState.Loading
-            val result = authRepository.requestPasswordReset(_email.value)
+            val result = authRepository.requestPasswordReset(_email.value.trim())
             if (result.isSuccess) {
                 _uiState.value = PasswordResetState.Success("OTP sent to your email")
                 _currentStep.value = ResetStep.VERIFY_OTP
@@ -61,7 +61,7 @@ class PasswordResetViewModel(private val authRepository: IAuthRepository) : View
         }
         viewModelScope.launch {
             _uiState.value = PasswordResetState.Loading
-            val result = authRepository.verifyResetOtp(_email.value, _otp.value)
+            val result = authRepository.verifyResetOtp(_email.value.trim(), _otp.value)
             if (result.isSuccess) {
                 _uiState.value = PasswordResetState.Success("OTP verified")
                 _currentStep.value = ResetStep.RESET_PASSWORD
@@ -78,7 +78,7 @@ class PasswordResetViewModel(private val authRepository: IAuthRepository) : View
         }
         viewModelScope.launch {
             _uiState.value = PasswordResetState.Loading
-            val result = authRepository.resetPassword(_email.value, _otp.value, newPassword)
+            val result = authRepository.resetPassword(_email.value.trim(), _otp.value, newPassword)
             if (result.isSuccess) {
                 _uiState.value = PasswordResetState.Success("Password reset successfully")
                 _currentStep.value = ResetStep.SUCCESS

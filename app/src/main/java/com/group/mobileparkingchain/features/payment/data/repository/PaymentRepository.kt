@@ -60,11 +60,11 @@ class PaymentRepository(
             try {
                 val response = paymentApiService.getUserTransactions(userId)
                 if (response.isSuccessful) {
-                    val payments = response.body()
-                    if (payments != null) {
-                        Result.success(payments)
+                    val apiResponse = response.body()
+                    if (apiResponse != null && apiResponse.success) {
+                        Result.success(apiResponse.data)
                     } else {
-                        Result.success(emptyList())
+                        Result.failure(Exception(apiResponse?.message ?: "Failed to fetch transactions"))
                     }
                 } else {
                     Result.failure(Exception("Failed to fetch transactions"))
