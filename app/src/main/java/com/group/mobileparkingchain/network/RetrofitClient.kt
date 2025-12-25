@@ -15,10 +15,10 @@ object RetrofitInstance {
     private const val HOST_IP = "10.0.2.2" 
     
     // Updated base URLs to match API specification
-    // Auth Service: port 3000
+    // Auth Service: port 3001
     // Parking Service: port 3002
     // Payment Service: port 3003
-    private const val AUTH_URL = "http://$HOST_IP:3000/api/v1/auth/"
+    private const val AUTH_URL = "http://$HOST_IP:3001/api/v1/auth/"
     private const val PARKING_URL = "http://$HOST_IP:3002/api/v1/"
     private const val PAYMENT_URL = "http://$HOST_IP:3003/api/v1/"
 

@@ -37,7 +37,17 @@ class AuthRepository(
                         Result.failure(Exception("No data received"))
                     }
                 } else {
-                    Result.failure(Exception(response.body()?.message ?: "Login failed"))
+                    val errorMessage = response.body()?.message 
+                        ?: response.errorBody()?.string()?.let { 
+                            try {
+                                val json = org.json.JSONObject(it)
+                                json.optString("message", "Login failed")
+                            } catch (e: Exception) {
+                                "Login failed"
+                            }
+                        } 
+                        ?: "Login failed"
+                    Result.failure(Exception(errorMessage))
                 }
             } catch (e: HttpException) {
                 Result.failure(Exception(e.message()))
@@ -72,7 +82,18 @@ class AuthRepository(
                         Result.failure(Exception("No data received"))
                     }
                 } else {
-                    Result.failure(Exception(response.body()?.message ?: "Registration failed"))
+                    val errorMessage = response.body()?.message 
+                        ?: response.errorBody()?.string()?.let { 
+                            // Try to parse error body as JSON
+                            try {
+                                val json = org.json.JSONObject(it)
+                                json.optString("message", "Registration failed")
+                            } catch (e: Exception) {
+                                "Registration failed"
+                            }
+                        } 
+                        ?: "Registration failed"
+                    Result.failure(Exception(errorMessage))
                 }
             } catch (e: HttpException) {
                 Result.failure(Exception(e.message()))

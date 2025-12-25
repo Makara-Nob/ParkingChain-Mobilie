@@ -29,7 +29,7 @@ fun SignUpButton(
     Button(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth().height(56.dp),
-        shape = RoundedCornerShape(28.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue),
         enabled = !isLoading && firstName.isNotEmpty() && lastName.isNotEmpty() &&
                 email.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty()
