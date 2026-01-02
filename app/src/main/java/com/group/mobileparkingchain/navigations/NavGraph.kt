@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.group.mobileparkingchain.enumuration.ParkingStatus
+import com.group.mobileparkingchain.features.auth.presentation.view.SplashScreen
 import com.group.mobileparkingchain.features.auth.presentation.view.OtpVerificationScreen
 import com.group.mobileparkingchain.features.booking.presentation.view.BookingHistoryScreen
 import com.group.mobileparkingchain.features.booking.presentation.viewmodel.BookingViewModel
@@ -86,8 +87,26 @@ fun NavGraph() {
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Welcome.route
+        startDestination = Screen.Splash.route
     ) {
+        // Splash Screen - Initial route for auth check
+        composable(Screen.Splash.route) {
+            SplashScreen(
+                onAuthenticated = {
+                    // Token is valid, navigate to Home
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Splash.route) { inclusive = true }
+                    }
+                },
+                onUnauthenticated = {
+                    // No token or invalid token, navigate to Welcome/SignIn
+                    navController.navigate(Screen.Welcome.route) {
+                        popUpTo(Screen.Splash.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
         composable(Screen.Welcome.route) {
             WelcomeScreen(
                 onNavigateToHome = {

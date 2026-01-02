@@ -2,6 +2,7 @@ package com.group.mobileparkingchain.navigations
 
 
 sealed class Screen(val route: String) {
+    object Splash : Screen("splash")
     object Welcome : Screen("welcome")
     object SignIn : Screen("signin")
     object SignUp : Screen("signup")

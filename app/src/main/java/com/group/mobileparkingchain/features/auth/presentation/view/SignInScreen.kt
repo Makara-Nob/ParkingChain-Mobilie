@@ -62,6 +62,7 @@ fun SignInScreen(
             is Resource.Error -> {
                 val message = state.message
                 errorMessage = message
+                // Show toast for immediate feedback (user might not see inline error)
                 Toast.makeText(
                     context,
                     message,

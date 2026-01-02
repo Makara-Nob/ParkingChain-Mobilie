@@ -63,6 +63,7 @@ fun SignUpScreen(
             is Resource.Error -> {
                 val message = state.message
                 errorMessage = message
+                // Show toast for immediate feedback
                 Toast.makeText(
                     context,
                     message,

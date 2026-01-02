@@ -300,7 +300,7 @@ fun HomeScreen(
                 onContinueToPayment = { duration, startTime, total ->
                     bookingDuration = duration
                     bookingStartTime = startTime
-                    bookingTotal = total
+                    bookingTotal = total // Keep for now (will be overridden by backend)
                     
                     showCompleteBooking = false
                     showBookingPayment = true
@@ -308,7 +308,39 @@ fun HomeScreen(
             )
         }
 
-        else -> {
+        showBookingPayment && selectedSpot != null -> {
+             BookingPaymentScreen(
+                 bookingInfo = BookingInfo(
+                    spotId = selectedSpot!!.id.removePrefix("P-"),
+                    spotLocation = "Mair Street Parking Lot",
+                    spotType = selectedSpot!!.type,
+                    ratePerHour = selectedSpot!!.pricePerHour ?: 5.0
+                ),
+                duration = bookingDuration,
+                startTime = bookingStartTime,
+                total = bookingTotal, // Placeholder; server will calculate
+                onBackClick = { showBookingPayment = false; showCompleteBooking = true },
+                onConfirm = { method, currency ->
+                    bookingCurrency = currency
+                    bookingPaymentMethod = method
+                    
+                    // Create booking first (server will compute totalPrice based on currency)
+                    val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+                    isoFormat.timeZone = TimeZone.getTimeZone("UTC")
+                    val startTimeIso = isoFormat.format(Date(bookingStartTime))
+                    
+                    homeViewModel.createBooking(
+                        spotId = selectedSpot!!.dbId,
+                        startTime = startTimeIso,
+                        durationHours = bookingDuration.toDouble(),
+                        paymentMethod = method,
+                        currency = currency // Server will convert and return correct totalPrice
+                    )
+                }
+             )
+        }
+
+        showCompleteBooking && selectedSpot != null -> {
             // ----- Home Content -----
             Scaffold(
                 topBar = {

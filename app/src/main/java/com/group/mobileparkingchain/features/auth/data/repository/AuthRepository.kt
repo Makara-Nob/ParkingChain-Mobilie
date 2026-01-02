@@ -145,7 +145,18 @@ class AuthRepository(
                         Result.failure(Exception("No data received"))
                     }
                 } else {
-                    Result.failure(Exception(response.body()?.message ?: "Failed to get user"))
+                    // Parse error message from response body (handles 403 Forbidden, etc.)
+                    val errorMessage = response.body()?.message 
+                        ?: response.errorBody()?.string()?.let { 
+                            try {
+                                val json = org.json.JSONObject(it)
+                                json.optString("message", "Failed to get user")
+                            } catch (e: Exception) {
+                                "Failed to get user"
+                            }
+                        } 
+                        ?: "Failed to get user"
+                    Result.failure(Exception(errorMessage))
                 }
             } catch (e: HttpException) {
                 Result.failure(Exception(e.message()))

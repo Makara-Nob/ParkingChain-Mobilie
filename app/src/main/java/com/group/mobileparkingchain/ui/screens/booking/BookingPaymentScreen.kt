@@ -190,15 +190,12 @@ fun BookingPaymentScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Price Calculation
-            // Live conversion logic
-            val exchangeRate = 4100.0
-            val displayTotal = if (selectedCurrency == "KHR") total * exchangeRate else total
+            // Price Calculation (use backend-provided total and currency)
             val displaySymbol = if (selectedCurrency == "KHR") "៛" else "$"
             val formattedTotal = if (selectedCurrency == "KHR") {
-                 "${String.format("%,.0f", displayTotal)} $displaySymbol"
+                 "${String.format("%,.0f", total)} $displaySymbol"
             } else {
-                 "$displaySymbol${String.format("%.2f", displayTotal)}"
+                 "$displaySymbol${String.format("%.2f", total)}"
             }
 
             Text(
