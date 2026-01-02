@@ -86,31 +86,40 @@ fun SignUpScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 40.dp)
+                .padding(vertical = 24.dp) // Reduced from 40dp
         ) {
-            ParkingLogo(size = 200)
-            Spacer(modifier = Modifier.height(16.dp))
+            ParkingLogo(size = 150) // Reduced from 200
+            Spacer(modifier = Modifier.height(12.dp)) // Reduced from 16dp
             Text(
                 text = "Join Us Now!",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp)) // Reduced from 32dp
 
-            NameInputField("First Name", firstName) { firstName = it; errorMessage = null }
-            Spacer(modifier = Modifier.height(16.dp))
-            NameInputField("Last Name", lastName) { lastName = it; errorMessage = null }
-            Spacer(modifier = Modifier.height(16.dp))
+            // First and Last Name side-by-side
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Box(modifier = Modifier.weight(1f)) {
+                    NameInputField("First Name", firstName) { firstName = it; errorMessage = null }
+                }
+                Box(modifier = Modifier.weight(1f)) {
+                    NameInputField("Last Name", lastName) { lastName = it; errorMessage = null }
+                }
+            }
+            Spacer(modifier = Modifier.height(12.dp)) // Reduced from 16dp
 
             EmailInput(email) { email = it; errorMessage = null }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp)) // Reduced from 16dp
 
             PasswordInput("Password", password, passwordVisible,
                 onPasswordChange = { password = it; errorMessage = null },
                 onPasswordVisibilityToggle = { passwordVisible = !passwordVisible }
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp)) // Reduced from 16dp
 
             PasswordInput("Confirm Password", confirmPassword, confirmPasswordVisible,
                 onPasswordChange = { confirmPassword = it; errorMessage = null },
@@ -122,7 +131,7 @@ fun SignUpScreen(
                 ErrorText(errorMessage!!)
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp)) // Reduced from 32dp
 
             SignUpButton(
                 firstName, lastName, email, password, confirmPassword,
@@ -132,7 +141,7 @@ fun SignUpScreen(
                 isLoading = registerState is Resource.Loading
             )
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(24.dp)) // Reduced from 40dp
             SignInRow(onNavigateToSignIn)
         }
     }

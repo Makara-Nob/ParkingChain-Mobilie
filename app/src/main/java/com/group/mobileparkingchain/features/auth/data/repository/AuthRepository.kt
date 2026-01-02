@@ -175,8 +175,23 @@ class AuthRepository(
                 if (response.isSuccessful && response.body()?.success == true) {
                     Result.success(true)
                 } else {
-                    Result.failure(Exception(response.body()?.message ?: "Failed to request password reset"))
+                    // Parse error message from response body or errorBody
+                    val errorMessage = response.body()?.message 
+                        ?: response.errorBody()?.string()?.let { 
+                            try {
+                                val json = org.json.JSONObject(it)
+                                json.optString("message", "Failed to request password reset")
+                            } catch (e: Exception) {
+                                "Failed to request password reset"
+                            }
+                        } 
+                        ?: "Failed to request password reset"
+                    Result.failure(Exception(errorMessage))
                 }
+            } catch (e: HttpException) {
+                Result.failure(Exception(e.message()))
+            } catch (e: IOException) {
+                Result.failure(Exception("Network error"))
             } catch (e: Exception) {
                 Result.failure(e)
             }
@@ -190,8 +205,23 @@ class AuthRepository(
                 if (response.isSuccessful && response.body()?.success == true) {
                     Result.success(true)
                 } else {
-                    Result.failure(Exception(response.body()?.message ?: "Invalid OTP"))
+                    // Parse error message from response body or errorBody
+                    val errorMessage = response.body()?.message 
+                        ?: response.errorBody()?.string()?.let { 
+                            try {
+                                val json = org.json.JSONObject(it)
+                                json.optString("message", "Invalid OTP")
+                            } catch (e: Exception) {
+                                "Invalid OTP"
+                            }
+                        } 
+                        ?: "Invalid OTP"
+                    Result.failure(Exception(errorMessage))
                 }
+            } catch (e: HttpException) {
+                Result.failure(Exception(e.message()))
+            } catch (e: IOException) {
+                Result.failure(Exception("Network error"))
             } catch (e: Exception) {
                 Result.failure(e)
             }
@@ -205,8 +235,23 @@ class AuthRepository(
                 if (response.isSuccessful && response.body()?.success == true) {
                     Result.success(true)
                 } else {
-                    Result.failure(Exception(response.body()?.message ?: "Failed to reset password"))
+                    // Parse error message from response body or errorBody
+                    val errorMessage = response.body()?.message 
+                        ?: response.errorBody()?.string()?.let { 
+                            try {
+                                val json = org.json.JSONObject(it)
+                                json.optString("message", "Failed to reset password")
+                            } catch (e: Exception) {
+                                "Failed to reset password"
+                            }
+                        } 
+                        ?: "Failed to reset password"
+                    Result.failure(Exception(errorMessage))
                 }
+            } catch (e: HttpException) {
+                Result.failure(Exception(e.message()))
+            } catch (e: IOException) {
+                Result.failure(Exception("Network error"))
             } catch (e: Exception) {
                 Result.failure(e)
             }
