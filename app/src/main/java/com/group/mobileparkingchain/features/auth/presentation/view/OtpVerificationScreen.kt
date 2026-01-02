@@ -51,6 +51,13 @@ fun OtpVerificationScreen(
     var otp by remember { mutableStateOf("") }
     val verificationState by viewModel.verificationState.collectAsState()
 
+    // Auto-submit when OTP is complete (6 digits)
+    LaunchedEffect(otp) {
+        if (otp.length == 6 && verificationState !is Resource.Loading) {
+            viewModel.verifyEmail(email, otp)
+        }
+    }
+
     LaunchedEffect(verificationState) {
         when (val state = verificationState) {
             is Resource.Success -> {
@@ -68,6 +75,8 @@ fun OtpVerificationScreen(
                     state.message,
                     Toast.LENGTH_SHORT
                 ).show()
+                // Clear OTP on error for retry
+                otp = ""
             }
             else -> Unit
         }
