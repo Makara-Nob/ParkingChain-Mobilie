@@ -33,7 +33,7 @@ fun PasswordInput(
     OutlinedTextField(
         value = password,
         onValueChange = onPasswordChange,
-        label = { Text(label, color = TextGray) },
+        placeholder = { Text(label, color = TextGray) },
         leadingIcon = { Icon(imageVector = androidx.compose.material.icons.Icons.Default.Lock, contentDescription = label, tint = TextGray) },
         trailingIcon = {
             IconButton(onClick = onPasswordVisibilityToggle) {

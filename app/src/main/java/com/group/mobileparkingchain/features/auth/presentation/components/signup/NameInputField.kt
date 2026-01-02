@@ -20,7 +20,7 @@ fun NameInputField(label: String, value: String, onValueChange: (String) -> Unit
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        label = { Text(label, color = TextGray) },
+        placeholder = { Text(label, color = TextGray) }, // Changed from label to placeholder
         leadingIcon = { Icon(imageVector = androidx.compose.material.icons.Icons.Default.Person, contentDescription = label, tint = TextGray) },
         modifier = Modifier.fillMaxWidth().height(60.dp),
         shape = RoundedCornerShape(12.dp),

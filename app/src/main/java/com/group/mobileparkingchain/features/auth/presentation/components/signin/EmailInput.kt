@@ -23,7 +23,7 @@ fun EmailInput(email: String, onEmailChange: (String) -> Unit) {
     OutlinedTextField(
         value = email,
         onValueChange = onEmailChange,
-        label = { Text("Email Address", color = TextGray) },
+        placeholder = { Text("Email Address", color = TextGray) },
         leadingIcon = { Icon(imageVector = Icons.Default.Email, contentDescription = "Email", tint = TextGray) },
         modifier = Modifier.fillMaxWidth().height(60.dp),
         shape = RoundedCornerShape(12.dp),

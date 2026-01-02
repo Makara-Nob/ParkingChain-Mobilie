@@ -33,7 +33,7 @@ fun PasswordInput(
     OutlinedTextField(
         value = password,
         onValueChange = onPasswordChange,
-        label = { Text("Password", color = TextGray) },
+        placeholder = { Text("Password", color = TextGray) },
         leadingIcon = { Icon(imageVector = Icons.Default.Lock, contentDescription = "Password", tint = TextGray) },
         trailingIcon = {
             IconButton(onClick = onPasswordVisibilityToggle) {
