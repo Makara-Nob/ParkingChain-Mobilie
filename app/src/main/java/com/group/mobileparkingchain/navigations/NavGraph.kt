@@ -98,6 +98,12 @@ fun NavGraph() {
                         popUpTo(Screen.Splash.route) { inclusive = true }
                     }
                 },
+                onUnverified = { email ->
+                    // Token valid but email not verified → navigate to OTP
+                    navController.navigate(Screen.OtpVerification.createRoute(email)) {
+                        popUpTo(Screen.Splash.route) { inclusive = true }
+                    }
+                },
                 onUnauthenticated = {
                     // No token or invalid token, navigate to Welcome/SignIn
                     navController.navigate(Screen.Welcome.route) {

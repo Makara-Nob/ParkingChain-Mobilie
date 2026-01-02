@@ -44,7 +44,8 @@ import com.group.mobileparkingchain.ui.components.ParkingLogo
 @Composable
 fun SplashScreen(
     onAuthenticated: () -> Unit,
-    onUnauthenticated: () -> Unit
+    onUnauthenticated: () -> Unit,
+    onUnverified: (String) -> Unit  // Navigate to OTP with email
 ) {
     val context = LocalContext.current
     val viewModel: SplashViewModel = viewModel(
@@ -67,10 +68,14 @@ fun SplashScreen(
 
     // Navigate based on auth state
     LaunchedEffect(authState) {
-        when (authState) {
+        when (val state = authState) {
             is AuthState.Authenticated -> {
-                // Token is valid, user is authenticated
+                // Token is valid, user is verified
                 onAuthenticated()
+            }
+            is AuthState.Unverified -> {
+                // Token valid but email not verified - navigate to OTP
+                onUnverified(state.email)
             }
             is AuthState.Unauthenticated -> {
                 // No token or token invalid, need to login

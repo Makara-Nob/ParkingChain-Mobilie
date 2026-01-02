@@ -12,11 +12,18 @@ sealed class AuthState {
     object Loading : AuthState()
 
     /**
-     * User is authenticated with valid token.
+     * User is authenticated with valid token and verified email.
      * @param user Current authenticated user profile
      * @param token JWT access token (optional, already stored in DataStore)
      */
     data class Authenticated(val user: User, val token: String? = null) : AuthState()
+
+    /**
+     * User has registered but email not verified yet.
+     * @param user User profile (with isVerified = false)
+     * @param email Email address for OTP verification
+     */
+    data class Unverified(val user: User, val email: String) : AuthState()
 
     /**
      * User is not authenticated or token is invalid/expired.

@@ -286,7 +286,8 @@ class AuthRepository(
             lastName = this.lastName,
             email = this.email,
             phone = this.phone ?: "",
-            profileImage = this.profileImage
+            profileImage = this.profileImage,
+            isVerified = this.isVerified
         )
     }
 }

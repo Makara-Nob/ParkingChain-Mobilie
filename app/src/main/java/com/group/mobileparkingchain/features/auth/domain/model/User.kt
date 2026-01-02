@@ -7,6 +7,7 @@ data class User(
     val lastName: String,
     val email: String,
     val phone: String,
-    val profileImage: String? = null
+    val profileImage: String? = null,
+    val isVerified: Boolean = false
 )
 

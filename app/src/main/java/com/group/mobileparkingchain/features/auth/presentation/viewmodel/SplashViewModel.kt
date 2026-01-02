@@ -69,7 +69,14 @@ class SplashViewModel(
                 if (result.isSuccess) {
                     val user = result.getOrNull()
                     if (user != null) {
-                        _authState.value = AuthState.Authenticated(user, token)
+                        // Check if email is verified
+                        if (user.isVerified) {
+                            // Fully authenticated and verified
+                            _authState.value = AuthState.Authenticated(user, token)
+                        } else {
+                            // Registered but not verified - navigate to OTP screen
+                            _authState.value = AuthState.Unverified(user, user.email)
+                        }
                     } else {
                         // Shouldn't happen, but handle gracefully
                         _authState.value = AuthState.Unauthenticated("Invalid user data")
