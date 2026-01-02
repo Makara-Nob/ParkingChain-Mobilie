@@ -1,11 +1,12 @@
 package com.group.mobileparkingchain.features.auth.domain
 
+import com.group.mobileparkingchain.features.auth.domain.model.User
 import com.group.mobileparkingchain.features.auth.domain.repository.IAuthRepository
 
 class VerifyEmailUseCase(
     private val repository: IAuthRepository
 ) {
-    suspend operator fun invoke(email: String, otp: String): Result<Boolean> {
+    suspend operator fun invoke(email: String, otp: String): Result<User> {
         if (email.isBlank() || otp.isBlank()) {
             return Result.failure(IllegalArgumentException("Email and OTP cannot be empty"))
         }

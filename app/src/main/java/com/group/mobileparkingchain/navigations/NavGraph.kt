@@ -154,8 +154,9 @@ fun NavGraph() {
             OtpVerificationScreen(
                 email = email,
                 onVerificationSuccess = {
-                    navController.navigate(Screen.SignIn.route) {
-                        popUpTo(Screen.SignUp.route) { inclusive = true }
+                    // Auto-login after OTP verification (backend returns token)
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Splash.route) { inclusive = true }
                     }
                 },
                 onNavigateBack = {

@@ -117,11 +117,19 @@ fun OtpVerificationScreen(
             
             Spacer(modifier = Modifier.height(32.dp))
             
-
+            // OTP Input Field
+            OtpInputField(
+                otp = otp,
+                onOtpChange = { newOtp ->
+                    if (newOtp.length <= 6) {
+                        otp = newOtp
+                    }
+                }
+            )
             
             Spacer(modifier = Modifier.height(32.dp))
             
-            // Verify Button
+            // Verify Button (matching PasswordReset style)
             Button(
                 onClick = {
                     if (otp.length == 6) {
@@ -137,7 +145,7 @@ fun OtpVerificationScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00C853)),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3)), // Changed to blue to match PrimaryBlue
                 enabled = verificationState !is Resource.Loading
             ) {
                 if (verificationState is Resource.Loading) {
@@ -148,8 +156,8 @@ fun OtpVerificationScreen(
                 } else {
                     Text(
                         text = "Verify Email",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
                         color = Color.White
                     )
                 }
@@ -157,13 +165,34 @@ fun OtpVerificationScreen(
             
             Spacer(modifier = Modifier.height(24.dp))
             
-            // Back to Sign In
-            TextButton(onClick = onNavigateBack) {
+            // Resend OTP
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Text(
-                    text = "Back to Sign In",
+                    text = "Didn't receive the code? ",
                     color = Color.Gray,
                     fontSize = 14.sp
                 )
+                TextButton(
+                    onClick = {
+                        // TODO: Implement resend OTP logic
+                        Toast.makeText(
+                            context,
+                            "OTP resent to $email",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                ) {
+                    Text(
+                        text = "Resend",
+                        color = Color(0xFF2196F3),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
             }
         }
     }

@@ -109,16 +109,36 @@ class AuthRepository(
         tokenDataStore.clearToken()
     }
 
-    override suspend fun verifyEmail(email: String, otp: String): Result<Boolean> {
+    override suspend fun verifyEmail(email: String, otp: String): Result<User> {
         return withContext(Dispatchers.IO) {
             try {
                 val request = VerifyEmailRequest(email, otp)
                 val response = authApiService.verifyEmail(request)
 
                 if (response.isSuccessful && response.body()?.success == true) {
-                    Result.success(true)
+                    val authResponse = response.body()!!
+                    val authData = authResponse.data
+
+                    // Backend now returns token + user on successful verification
+                    if (authData != null) {
+                        tokenDataStore.saveToken(authData.token)
+                        tokenDataStore.saveUserId(authData.user.id)
+                        Result.success(authData.user.toDomain())
+                    } else {
+                        Result.failure(Exception("No data received"))
+                    }
                 } else {
-                    Result.failure(Exception(response.body()?.message ?: "Verification failed"))
+                    val errorMessage = response.body()?.message 
+                        ?: response.errorBody()?.string()?.let { 
+                            try {
+                                val json = org.json.JSONObject(it)
+                                json.optString("message", "Verification failed")
+                            } catch (e: Exception) {
+                                "Verification failed"
+                            }
+                        } 
+                        ?: "Verification failed"
+                    Result.failure(Exception(errorMessage))
                 }
             } catch (e: HttpException) {
                 Result.failure(Exception(e.message()))
