@@ -104,73 +104,34 @@ fun ParkingSpotCard(spot: ParkingSpot, onClick: () -> Unit) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(14.dp),
+                    .padding(12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                // Spot ID
+                // Spot ID at top
                 Text(
                     text = spot.id,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    letterSpacing = 0.5.sp
+                    color = Color.White
                 )
 
-                // Vehicle icon with background
-                Box(
-                    modifier = Modifier
-                        .size(56.dp)
-                        .clip(CircleShape)
-                        .background(Color.White.copy(alpha = 0.1f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = vehicleIcon,
-                        contentDescription = spot.type,
-                        modifier = Modifier.size(32.dp),
-                        tint = accentColor
-                    )
-                }
+                // Center: Vehicle icon
+                Icon(
+                    imageVector = vehicleIcon,
+                    contentDescription = spot.type,
+                    modifier = Modifier.size(40.dp),
+                    tint = accentColor
+                )
 
-                // Bottom section with type and status
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    // Vehicle type
-                    Text(
-                        text = spot.type,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.White.copy(alpha = 0.7f),
-                        letterSpacing = 0.8.sp
-                    )
-
-                    // Status indicator with icon
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(accentColor.copy(alpha = 0.2f))
-                            .padding(horizontal = 8.dp, vertical = 4.dp)
-                    ) {
-                        Icon(
-                            imageVector = statusIcon,
-                            contentDescription = statusText,
-                            modifier = Modifier.size(12.dp),
-                            tint = accentColor
-                        )
-                        Text(
-                            text = statusText,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = accentColor,
-                            letterSpacing = 0.3.sp
-                        )
-                    }
-                }
+                // Bottom: Vehicle type text
+                Text(
+                    text = spot.type,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.White.copy(alpha = 0.9f),
+                    maxLines = 1
+                )
             }
 
             // Overlay for non-available spots

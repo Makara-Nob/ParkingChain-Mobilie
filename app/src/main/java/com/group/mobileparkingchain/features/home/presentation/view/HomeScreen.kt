@@ -8,6 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -340,8 +342,8 @@ fun HomeScreen(
              )
         }
 
-        showCompleteBooking && selectedSpot != null -> {
-            // ----- Home Content -----
+        else -> {
+            // ----- Home Content (Default State) -----
             Scaffold(
                 topBar = {
                     HomeTopBar()
@@ -366,11 +368,19 @@ fun HomeScreen(
                     )
                 }
             ) { padding ->
+                val focusManager = androidx.compose.ui.platform.LocalFocusManager.current
+                
+                // DEBUG: Show parking spots count
                 Column(
                     modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
                     .padding(16.dp)
+                    .pointerInput(Unit) {
+                        detectTapGestures(onTap = {
+                            focusManager.clearFocus()
+                        })
+                    }
                 ) {
                     Spacer(Modifier.height(16.dp))
                     SearchBar(searchQuery) { searchQuery = it }
