@@ -16,6 +16,7 @@ object PaymentMethod {
 data class Payment(
     val paymentId: String,
     val qrString: String,
+    val qrImage: String? = null,
     val deeplinkUrl: String,
     val md5: String,
     val amount: Double,

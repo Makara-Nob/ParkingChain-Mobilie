@@ -123,19 +123,11 @@ fun HomeScreen(
                     } catch (e: Exception) {
                         Toast.makeText(context, "Could not open payment app", Toast.LENGTH_SHORT).show()
                     }
-                } else if (bookingPaymentMethod == "khqr" && !state.qrImage.isNullOrEmpty()) {
+                } else if (bookingPaymentMethod == "khqr") {
+                    // For Bakong/KHQR prefer showing QR code (even if deeplink exists). Ensure QR is displayed.
                     showCompleteBooking = false
                     showBookingPayment = false
                     showQrScreen = true
-                } else if (!deeplink.isNullOrEmpty()) {
-                    // Fallback to deeplink if QR not available or method unknown but deeplink works
-                    try {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(deeplink))
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        context.startActivity(intent)
-                    } catch (e: Exception) {
-                         // Ignore or show error
-                    }
                 }
             }
             is HomeViewModel.PaymentState.PaymentConfirmed -> {
@@ -270,7 +262,7 @@ fun HomeScreen(
                     spotId = selectedSpot!!.id.removePrefix("P-"),
                     spotLocation = "Mair Street Parking Lot",
                     spotType = selectedSpot!!.type,
-                    ratePerHour = 5.0
+                    ratePerHour = selectedSpot!!.pricePerHour ?: 5.0
                 ),
                 duration = bookingDuration,
                 startTime = bookingStartTime,
@@ -302,7 +294,7 @@ fun HomeScreen(
                     spotId = selectedSpot!!.id.removePrefix("P-"),
                     spotLocation = "Mair Street Parking Lot",
                     spotType = selectedSpot!!.type,
-                    ratePerHour = 5.0
+                    ratePerHour = selectedSpot!!.pricePerHour ?: 5.0
                 ),
                 onBackClick = { showCompleteBooking = false; selectedSpot = null },
                 onContinueToPayment = { duration, startTime, total ->

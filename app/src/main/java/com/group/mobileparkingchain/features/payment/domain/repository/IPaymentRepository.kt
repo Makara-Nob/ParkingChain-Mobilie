@@ -14,6 +14,9 @@ interface IPaymentRepository {
 
     suspend fun checkPaymentStatus(md5: String): Result<PaymentStatusData>
 
+    // New: fetch payment by id (used for polling Bakong/KHQR status)
+    suspend fun getPaymentStatus(paymentId: String): Result<Payment>
+
     suspend fun confirmPayment(paymentId: String): Result<Boolean>
     
     suspend fun getUserTransactions(userId: String): Result<List<Payment>>

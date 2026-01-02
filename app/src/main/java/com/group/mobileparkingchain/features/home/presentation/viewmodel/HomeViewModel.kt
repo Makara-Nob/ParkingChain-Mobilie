@@ -53,7 +53,8 @@ class HomeViewModel(
                             SpotType.CAR -> "Car"
                             SpotType.MOTORCYCLE -> "Motorcycle"
                         },
-                        status = if (apiSpot.isAvailable) ParkingStatus.AVAILABLE else ParkingStatus.OCCUPIED
+                        status = if (apiSpot.isAvailable) ParkingStatus.AVAILABLE else ParkingStatus.OCCUPIED,
+                        pricePerHour = apiSpot.pricePerHour
                     )
                 }
 
@@ -92,31 +93,46 @@ class HomeViewModel(
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
-            
+
             val result = parkingRepository.createBooking(spotId, startTime, null, durationHours, paymentMethod, currency)
             _bookingResult.value = result
-            
+
             result.onSuccess { bookingResponse ->
-                // Extract separated booking and payment
+                // Booking created (RESERVED). Now create Bakong/KHQR payment separately.
                 val booking = bookingResponse.booking
-                val payment = bookingResponse.payment
-                
-                // Automatically handle payment state
-                payment?.let { paymentData ->
-                    _paymentState.value = PaymentState.PaymentCreated(
-                        deeplink = paymentData.deeplinkUrl,
-                        qrString = paymentData.qrString,
-                        qrImage = paymentData.qrImage,
-                        paymentId = paymentData.paymentId,
-                        md5 = paymentData.md5,
-                        amount = paymentData.amount,
-                        currency = paymentData.currency
+                val amount = booking.totalPrice ?: 0.0
+                val currencyToUse = booking.currency ?: currency
+                try {
+                    val payResult = paymentRepository.createPayment(
+                        bookingId = booking.id,
+                        amount = amount,
+                        currency = currencyToUse,
+                        description = "Parking payment",
+                        paymentMethod = com.group.mobileparkingchain.features.payment.data.model.PaymentMethod.KHQR
                     )
+
+                    payResult.onSuccess { payment ->
+                        // Map payment model to UI state. qrImage may be null depending on API.
+                        _paymentState.value = PaymentState.PaymentCreated(
+                            deeplink = payment.deeplinkUrl,
+                            qrString = payment.qrString,
+                            qrImage = payment.qrImage,
+                            paymentId = payment.paymentId,
+                            md5 = payment.md5,
+                            amount = payment.amount,
+                            currency = payment.currency
+                        )
+                    }.onFailure { ex ->
+                        _error.value = ex.message ?: "Payment init failed"
+                    }
+                } catch (e: Exception) {
+                    _error.value = e.message ?: "Payment init failed"
                 }
+
             }.onFailure { exception ->
                 _error.value = exception.message ?: "Failed to create booking"
             }
-            
+
             _isLoading.value = false
         }
     }
@@ -151,25 +167,39 @@ class HomeViewModel(
     }
 
     fun confirmPayment(paymentId: String) {
+        // For Bakong/KHQR flow: poll GET /payments/{id} until status is PAID/COMPLETED or timeout.
         viewModelScope.launch {
             _paymentState.value = PaymentState.Loading
-            
-            // Wait for 2 seconds as recommended
-            kotlinx.coroutines.delay(2000)
-            
-            val result = paymentRepository.confirmPayment(paymentId)
-            
-            result.onSuccess { confirmed ->
-                if (confirmed) {
-                    _paymentState.value = PaymentState.PaymentConfirmed
-                    // Refresh active booking or spots if needed
-                    fetchParkingSpots() 
-                } else {
-                    _paymentState.value = PaymentState.Error("Payment confirmation failed")
+
+            val maxAttempts = 40
+            var attempt = 0
+            var delayMs = 2000L
+
+            while (attempt < maxAttempts) {
+                try {
+                    kotlinx.coroutines.delay(delayMs)
+                    val statusRes = paymentRepository.getPaymentStatus(paymentId)
+                    statusRes.onSuccess { payment ->
+                        val st = payment.status.uppercase()
+                        if (st == "PAID" || st == "COMPLETED") {
+                            _paymentState.value = PaymentState.PaymentConfirmed
+                            fetchParkingSpots()
+                            return@launch
+                        } else if (st == "FAILED" || st == "CANCELLED" || st == "EXPIRED") {
+                            _paymentState.value = PaymentState.Error("Payment ${'$'}{payment.status}")
+                            return@launch
+                        }
+                    }.onFailure {
+                        // ignore and continue polling
+                    }
+                } catch (e: Exception) {
+                    // continue/try again
                 }
-            }.onFailure { exception ->
-                _paymentState.value = PaymentState.Error(exception.message ?: "Payment confirmation failed")
+                attempt++
+                delayMs = kotlin.math.min(delayMs * 2, 8000L)
             }
+
+            _paymentState.value = PaymentState.Error("Payment timeout")
         }
     }
 

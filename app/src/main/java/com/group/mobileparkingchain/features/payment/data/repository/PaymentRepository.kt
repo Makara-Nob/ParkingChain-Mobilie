@@ -40,6 +40,11 @@ class PaymentRepository(
         it.data ?: throw Exception("Payment status data is missing")
     }
 
+    // New: pollable GET /payments/{id}
+    override suspend fun getPaymentStatus(paymentId: String): Result<Payment> = safeApiCall {
+        paymentApiService.getPayment(paymentId)
+    }.mapCatching { it.data }
+
     override suspend fun confirmPayment(paymentId: String): Result<Boolean> {
         return withContext(Dispatchers.IO) {
             try {

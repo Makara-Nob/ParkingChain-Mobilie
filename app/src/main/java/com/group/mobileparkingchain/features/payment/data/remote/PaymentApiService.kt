@@ -9,6 +9,8 @@ import com.group.mobileparkingchain.features.payment.data.model.PaymentStatusApi
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
+import retrofit2.http.GET
+import retrofit2.http.Path
 
 interface PaymentApiService {
     @POST("payments")
@@ -18,8 +20,11 @@ interface PaymentApiService {
     suspend fun checkPaymentStatus(@Body request: CheckPaymentRequest): Response<PaymentStatusApiResponse>
 
     @POST("payments/{paymentId}/confirm")
-    suspend fun confirmPayment(@retrofit2.http.Path("paymentId") paymentId: String): Response<ApiResponse<ConfirmPaymentResponse>>
+    suspend fun confirmPayment(@Path("paymentId") paymentId: String): Response<ApiResponse<ConfirmPaymentResponse>>
 
-    @retrofit2.http.GET("payments/user/{userId}")
-    suspend fun getUserTransactions(@retrofit2.http.Path("userId") userId: String): Response<ApiResponse<List<Payment>>>
+    @GET("payments/{id}")
+    suspend fun getPayment(@Path("id") id: String): Response<ApiResponse<Payment>>
+
+    @GET("payments/user/{userId}")
+    suspend fun getUserTransactions(@Path("userId") userId: String): Response<ApiResponse<List<Payment>>>
 }
