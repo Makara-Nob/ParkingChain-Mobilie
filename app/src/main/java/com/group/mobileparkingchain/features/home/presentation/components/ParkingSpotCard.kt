@@ -94,7 +94,7 @@ fun ParkingSpotCard(spot: ParkingSpot, onClick: () -> Unit) {
             Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(10.dp)
+                    .padding(6.dp)
                     .size(8.dp)
                     .clip(CircleShape)
                     .background(accentColor)
@@ -108,12 +108,13 @@ fun ParkingSpotCard(spot: ParkingSpot, onClick: () -> Unit) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                // Spot ID at top
+                // Spot ID at top (left-aligned to avoid dot)
                 Text(
                     text = spot.id,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = Color.White,
+                    modifier = Modifier.align(Alignment.Start)
                 )
 
                 // Center: Vehicle icon
