@@ -3,6 +3,7 @@ package com.group.mobileparkingchain.features.auth.data.repository
 import com.group.mobileparkingchain.features.auth.data.model.LoginRequest
 import com.group.mobileparkingchain.features.auth.data.model.PasswordResetRequestRequest
 import com.group.mobileparkingchain.features.auth.data.model.RegisterRequest
+import com.group.mobileparkingchain.features.auth.data.model.ChangePasswordRequest
 import com.group.mobileparkingchain.features.auth.data.model.ResetPasswordRequest
 import com.group.mobileparkingchain.features.auth.data.model.VerifyEmailRequest
 import com.group.mobileparkingchain.features.auth.data.model.VerifyResetRequest
@@ -266,6 +267,35 @@ class AuthRepository(
                             }
                         } 
                         ?: "Failed to reset password"
+                    Result.failure(Exception(errorMessage))
+                }
+            } catch (e: HttpException) {
+                Result.failure(Exception(e.message()))
+            } catch (e: IOException) {
+                Result.failure(Exception("Network error"))
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    }
+
+    override suspend fun changePassword(currentPassword: String, newPassword: String): Result<Boolean> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = authApiService.changePassword(ChangePasswordRequest(currentPassword, newPassword))
+                if (response.isSuccessful && response.body()?.success == true) {
+                    Result.success(true)
+                } else {
+                    val errorMessage = response.body()?.message
+                        ?: response.errorBody()?.string()?.let {
+                            try {
+                                val json = org.json.JSONObject(it)
+                                json.optString("message", "Failed to change password")
+                            } catch (e: Exception) {
+                                "Failed to change password"
+                            }
+                        }
+                        ?: "Failed to change password"
                     Result.failure(Exception(errorMessage))
                 }
             } catch (e: HttpException) {

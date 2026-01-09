@@ -18,6 +18,7 @@ import androidx.navigation.navArgument
 import com.group.mobileparkingchain.enumuration.ParkingStatus
 import com.group.mobileparkingchain.features.auth.presentation.view.SplashScreen
 import com.group.mobileparkingchain.features.auth.presentation.view.OtpVerificationScreen
+import com.group.mobileparkingchain.features.auth.presentation.view.ChangePasswordScreen
 import com.group.mobileparkingchain.features.booking.presentation.view.BookingHistoryScreen
 import com.group.mobileparkingchain.features.booking.presentation.viewmodel.BookingViewModel
 import com.group.mobileparkingchain.features.booking.presentation.viewmodel.BookingViewModelFactory
@@ -211,6 +212,7 @@ fun NavGraph() {
         // Profile Screen
         composable(Screen.Profile.route) {
             ProfileScreen(
+                viewModel = profileViewModel,
                 onEditClick = {
                     navController.navigate(Screen.EditProfile.route)
                 },
@@ -221,7 +223,7 @@ fun NavGraph() {
                     navController.navigate(Screen.BookingHistory.route) // Keep map nav to Booking History for now if intended or fix later
                 },
                 onChangePassword = {
-                    navController.navigate(Screen.PasswordReset.route)
+                    navController.navigate(Screen.ChangePassword.route)
                 },
                 onBookingHistory = {
                     navController.navigate(Screen.BookingHistory.route)
@@ -265,6 +267,14 @@ fun NavGraph() {
                         popUpTo(Screen.Welcome.route) { inclusive = false }
                     }
                 }
+            )
+        }
+
+        // Change Password Screen (authenticated)
+        composable(Screen.ChangePassword.route) {
+            ChangePasswordScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onSuccess = { navController.popBackStack() }
             )
         }
 

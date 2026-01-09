@@ -219,16 +219,10 @@ fun BookingHistoryItem(
             ) {
                 Column {
                     Text(
-                        text = "Spot ${booking.spot?.section ?: booking.spotId}",
+                        text = booking.spot?.spotName ?: "Spot ${booking.spotId}",
                         color = Color.White,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Level ${booking.spot?.level ?: "-"}",
-                        color = Color(0xFF8A9BAE),
-                        fontSize = 14.sp
                     )
                 }
                 

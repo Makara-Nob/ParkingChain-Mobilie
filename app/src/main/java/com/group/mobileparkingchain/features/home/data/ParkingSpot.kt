@@ -7,5 +7,6 @@ data class ParkingSpot(
     val dbId: String,
     val type: String,
     val status: ParkingStatus,
-    val pricePerHour: Double? = null
+    val pricePerHour: Double? = null,
+    val lastUpdated: String? = null
 )

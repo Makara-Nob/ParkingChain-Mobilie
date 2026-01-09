@@ -59,6 +59,11 @@ data class ResetPasswordRequest(
     val newPassword: String
 )
 
+data class ChangePasswordRequest(
+    val currentPassword: String,
+    val newPassword: String
+)
+
 data class TokenVerifyRequest(
     val token: String
 )

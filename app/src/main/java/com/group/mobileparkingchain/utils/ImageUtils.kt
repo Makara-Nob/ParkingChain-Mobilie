@@ -21,7 +21,7 @@ object ImageUtils {
      */
     fun uriToMultipartBodyPart(context: Context, uri: Uri, partName: String = "image"): MultipartBody.Part? {
         return try {
-            val file = uriToFile(context, uri) ?: return null
+            val file = uriToCacheFile(context, uri) ?: return null
             val compressedFile = compressImage(file)
             
             // Verify file exists and has content
@@ -44,7 +44,7 @@ object ImageUtils {
     /**
      * Convert Uri to File
      */
-    private fun uriToFile(context: Context, uri: Uri): File? {
+    fun uriToCacheFile(context: Context, uri: Uri): File? {
         return try {
             val inputStream: InputStream = context.contentResolver.openInputStream(uri) ?: return null
             val file = File(context.cacheDir, "profile_image_${System.currentTimeMillis()}.jpg")

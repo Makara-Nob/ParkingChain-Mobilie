@@ -10,11 +10,11 @@ fun ReservationSheet(spot: ParkingSpot, onReserve: () -> Unit, onDismiss: () -> 
     ReservationDetailSheet(
         parkingDetail = ParkingDetail(
             id = spot.id,
-            location = "Level 1, Section A",
-            type = spot.type + " Parking",
-            lastUpdated = "2 minutes ago",
-            pricePerHour = 2.0,
-            status = "Available"
+            location = null,
+            type = "${spot.type} Parking",
+            lastUpdated = spot.lastUpdated,
+            pricePerHour = spot.pricePerHour,
+            status = spot.status.name
         ),
         onDismiss = onDismiss,
         onReserve = onReserve

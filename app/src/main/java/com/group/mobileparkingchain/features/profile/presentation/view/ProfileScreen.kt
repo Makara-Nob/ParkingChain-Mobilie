@@ -29,18 +29,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.group.mobileparkingchain.features.profile.data.UserProfile
 import com.group.mobileparkingchain.features.profile.presentation.components.profileScreen.ProfileImage
 import com.group.mobileparkingchain.features.profile.presentation.components.profileScreen.ProfileInfoCard
 import com.group.mobileparkingchain.features.profile.presentation.components.profileScreen.ProfileOptionsCard
 import com.group.mobileparkingchain.features.profile.presentation.viewmodel.ProfileViewModel
-import com.group.mobileparkingchain.features.profile.presentation.viewmodel.ProfileViewModelFactory
 import com.group.mobileparkingchain.ui.components.BottomNavigationBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
+    viewModel: ProfileViewModel,
     onEditClick: () -> Unit,
     onNavigateToHome: () -> Unit = {},
     onNavigateToMap: () -> Unit = {},
@@ -52,11 +51,7 @@ fun ProfileScreen(
 ) {
     val context = LocalContext.current
     var selectedNavIndex by remember { mutableStateOf(2) } // Account tab selected
-    
-    val viewModel: ProfileViewModel = viewModel(
-        factory = ProfileViewModelFactory(context)
-    )
-    
+
     val profileState by viewModel.profileState.collectAsState()
 
     if (showSavedToast) {
@@ -234,26 +229,6 @@ private fun ProfileContent(
             options = listOf(
                 "Change Password" to onChangePassword,
                 "Payment History" to onTransactionHistory,
-            )
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // App Information Section
-        Text(
-            text = "App Information",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = Color.White,
-            modifier = Modifier.align(Alignment.Start)
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        ProfileOptionsCard(
-            options = listOf(
-                "Help & Support" to {},
-                "About" to {}
             )
         )
 

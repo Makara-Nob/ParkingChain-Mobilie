@@ -32,6 +32,9 @@ interface AuthApiService {
     @POST("password/reset")
     suspend fun resetPassword(@Body request: ResetPasswordRequest): Response<AuthResponse>
 
+    @POST("password/change")
+    suspend fun changePassword(@Body request: com.group.mobileparkingchain.features.auth.data.model.ChangePasswordRequest): Response<AuthResponse>
+
     @GET("me")
     suspend fun getCurrentUser(): Response<AuthResponse>
 

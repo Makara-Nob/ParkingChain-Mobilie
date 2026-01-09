@@ -6,12 +6,12 @@ enum class BookingStatus { RESERVED, ACTIVE, COMPLETED, CANCELLED }
 
 data class ParkingSpot(
     val id: String,
-    val level: Int,
-    val section: String,
+    val spotName: String,
     val spotType: SpotType,
     val isAvailable: Boolean,
-    val pricePerHour: Double,
-    val lastUpdated: String
+    val pricePerHour: String,
+    val lastUpdated: String,
+    val createdAt: String
 )
 
 data class Booking(
@@ -70,7 +70,7 @@ data class ApiResponse<T>(
 
 data class SpotsData(
     val spots: List<ParkingSpot>,
-    val count: Int
+    val count: Int? = null
 )
 
 data class BookingResponse(

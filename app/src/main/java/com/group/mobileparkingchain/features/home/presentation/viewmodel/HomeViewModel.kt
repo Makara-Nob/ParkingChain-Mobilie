@@ -47,14 +47,15 @@ class HomeViewModel(
             result.onSuccess { apiSpots ->
                 var uiSpots = apiSpots.map { apiSpot ->
                     ParkingSpot(
-                        id = "P-${apiSpot.id}", // Add P- prefix to match UI design
+                        id = apiSpot.spotName.ifBlank { apiSpot.id },
                         dbId = apiSpot.id,
                         type = when (apiSpot.spotType) {
                             SpotType.CAR -> "Car"
                             SpotType.MOTORCYCLE -> "Motorcycle"
                         },
                         status = if (apiSpot.isAvailable) ParkingStatus.AVAILABLE else ParkingStatus.OCCUPIED,
-                        pricePerHour = apiSpot.pricePerHour
+                        pricePerHour = apiSpot.pricePerHour.toDoubleOrNull(),
+                        lastUpdated = apiSpot.lastUpdated
                     )
                 }
 

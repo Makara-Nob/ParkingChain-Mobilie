@@ -18,5 +18,5 @@ interface IAuthRepository {
     suspend fun requestPasswordReset(email: String): Result<Boolean>
     suspend fun verifyResetOtp(email: String, otp: String): Result<Boolean>
     suspend fun resetPassword(email: String, otp: String, newPassword: String): Result<Boolean>
+    suspend fun changePassword(currentPassword: String, newPassword: String): Result<Boolean>
 }
-

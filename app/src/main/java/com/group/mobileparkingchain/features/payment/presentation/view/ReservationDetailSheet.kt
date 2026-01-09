@@ -21,6 +21,9 @@ import com.group.mobileparkingchain.features.payment.presentation.component.rese
 import com.group.mobileparkingchain.features.payment.presentation.component.reservation.InfoRow
 import com.group.mobileparkingchain.features.payment.presentation.component.reservation.SheetHeader
 import com.group.mobileparkingchain.features.payment.data.ParkingDetail
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.TimeZone
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,18 +58,24 @@ fun ReservationDetailSheet(
             Spacer(modifier = Modifier.height(24.dp))
 
             // Info Rows
-            InfoRow(label = "Location", value = parkingDetail.location)
-            Spacer(modifier = Modifier.height(16.dp))
+            parkingDetail.location?.takeIf { it.isNotBlank() }?.let { location ->
+                InfoRow(label = "Location", value = location)
+                Spacer(modifier = Modifier.height(16.dp))
+            }
             InfoRow(label = "Type", value = parkingDetail.type)
             Spacer(modifier = Modifier.height(16.dp))
-            InfoRow(label = "Last Updated", value = parkingDetail.lastUpdated)
-            Spacer(modifier = Modifier.height(24.dp))
+            parkingDetail.lastUpdated?.takeIf { it.isNotBlank() }?.let { updated ->
+                InfoRow(label = "Last Updated", value = formatLastUpdated(updated))
+                Spacer(modifier = Modifier.height(24.dp))
+            }
 
             Divider(color = Color.White.copy(alpha = 0.1f))
             Spacer(modifier = Modifier.height(24.dp))
 
-            InfoRow(label = "Pricing", value = "$${String.format("%.2f", parkingDetail.pricePerHour)}/hr")
-            Spacer(modifier = Modifier.height(24.dp))
+            parkingDetail.pricePerHour?.let { price ->
+                InfoRow(label = "Pricing", value = "$${String.format("%.2f", price)}/hr")
+                Spacer(modifier = Modifier.height(24.dp))
+            }
 
             ActionButton("Reserve Now", onClick = onReserve)
             Spacer(modifier = Modifier.height(12.dp))
@@ -77,5 +86,16 @@ fun ReservationDetailSheet(
     }
 }
 
-
+private fun formatLastUpdated(raw: String): String {
+    return try {
+        val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }
+        val formatter = SimpleDateFormat("MMM d, yyyy h:mm a", Locale.getDefault())
+        val date = parser.parse(raw) ?: return raw
+        formatter.format(date)
+    } catch (e: Exception) {
+        raw
+    }
+}
 

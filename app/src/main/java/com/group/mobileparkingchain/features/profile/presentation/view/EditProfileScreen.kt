@@ -1,6 +1,8 @@
 package com.group.mobileparkingchain.features.profile.presentation.view
 
 import Resource
+import android.graphics.Bitmap
+import android.graphics.Color as AndroidColor
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -41,6 +43,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
+import com.canhub.cropper.CropImageView
 import com.group.mobileparkingchain.features.profile.presentation.components.editProfile.EditableField
 import com.group.mobileparkingchain.features.profile.presentation.components.editProfile.ErrorCard
 import com.group.mobileparkingchain.features.profile.presentation.components.editProfile.ProfileImagePicker
@@ -66,13 +72,45 @@ fun EditProfileScreen(
     val updateProfileState by viewModel.updateProfileState.collectAsState()
     val uploadImageState by viewModel.uploadImageState.collectAsState()
 
+    val cropLauncher = rememberLauncherForActivityResult(
+        contract = CropImageContract()
+    ) { result ->
+        if (result.isSuccessful) {
+            val resultUri = result.uriContent
+            if (resultUri != null) {
+                if (!com.group.mobileparkingchain.utils.ImageUtils.isImageSizeValid(context, resultUri)) {
+                    errorMessage = "Image is too large. Please choose a smaller photo."
+                    return@rememberLauncherForActivityResult
+                }
+                isUploading = true
+                viewModel.uploadProfileImage(resultUri)
+            } else {
+                errorMessage = "Image crop failed. Please try again."
+            }
+        } else {
+            errorMessage = result.error?.message ?: "Image crop failed. Please try again."
+        }
+    }
+
     // Image picker launcher
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
-            isUploading = true
-            viewModel.uploadProfileImage(it)
+            val options = CropImageOptions().apply {
+                guidelines = CropImageView.Guidelines.ON
+                cropShape = CropImageView.CropShape.OVAL
+                fixAspectRatio = true
+                aspectRatioX = 1
+                aspectRatioY = 1
+                outputCompressFormat = Bitmap.CompressFormat.JPEG
+                outputCompressQuality = 90
+                activityTitle = "Crop Photo"
+                toolbarColor = AndroidColor.BLACK
+                activityMenuIconColor = AndroidColor.WHITE
+                toolbarBackButtonColor = AndroidColor.WHITE
+            }
+            cropLauncher.launch(CropImageContractOptions(it, options))
         }
     }
 
@@ -80,9 +118,12 @@ fun EditProfileScreen(
     LaunchedEffect(updateProfileState) {
         when (updateProfileState) {
             is Resource.Success -> {
-                Toast.makeText(context, "Profile updated successfully ✅", Toast.LENGTH_SHORT).show()
+                val user = (updateProfileState as Resource.Success<com.group.mobileparkingchain.features.auth.domain.model.User>).data
+                firstName = user.firstName
+                lastName = user.lastName
+                phoneNumber = user.phone
+                Toast.makeText(context, "Profile updated successfully", Toast.LENGTH_SHORT).show()
                 viewModel.resetUpdateState()
-                onBackClick()
             }
             is Resource.Error -> {
                 errorMessage = (updateProfileState as Resource.Error).message
@@ -97,9 +138,9 @@ fun EditProfileScreen(
         when (uploadImageState) {
             is Resource.Success -> {
                 val user = (uploadImageState as Resource.Success<com.group.mobileparkingchain.features.auth.domain.model.User>).data
-                currentImageUrl = user.profileImage?.let { "http://10.0.2.2:3001/$it" }
+                currentImageUrl = com.group.mobileparkingchain.utils.ImageUtils.getFullImageUrl(user.profileImage)
                 isUploading = false
-                Toast.makeText(context, "Image uploaded successfully ✅", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Image uploaded successfully", Toast.LENGTH_SHORT).show()
                 viewModel.resetUploadState()
             }
             is Resource.Error -> {
@@ -238,4 +279,3 @@ fun EditProfileScreen(
         }
     }
 }
-

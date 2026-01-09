@@ -13,13 +13,9 @@ class UploadProfileImageUseCase(
     private val context: Context
 ) {
     suspend operator fun invoke(imageUri: Uri): Result<User> = withContext(Dispatchers.IO) {
-        // Convert to base64
-        val base64Image = ImageUtils.uriToBase64(context, imageUri)
-            ?: return@withContext Result.failure(Exception("Failed to convert image to base64"))
-        
-        // Upload using base64
-        (profileRepository as? com.group.mobileparkingchain.features.profile.data.repository.ProfileRepositoryImpl)
-            ?.uploadProfileImageBase64(base64Image)
-            ?: Result.failure(Exception("Repository not available"))
+        val imagePart = ImageUtils.uriToMultipartBodyPart(context, imageUri)
+            ?: return@withContext Result.failure(Exception("Failed to prepare image for upload"))
+
+        profileRepository.uploadProfileImage(imagePart)
     }
 }
