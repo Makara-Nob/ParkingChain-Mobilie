@@ -1,6 +1,7 @@
 package com.group.mobileparkingchain.features.home.presentation.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -20,7 +21,9 @@ fun SearchBar(searchQuery: String, onQueryChange: (String) -> Unit) {
         onValueChange = onQueryChange,
         placeholder = { Text("Search", color = Color.Gray) },
         leadingIcon = { Icon(Icons.Default.Search, "Search", tint = Color.Gray) },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp),
         shape = RoundedCornerShape(12.dp),
         colors = OutlinedTextFieldDefaults.colors(
             unfocusedContainerColor = Color(0xFF1E2836),

@@ -125,7 +125,7 @@ private fun BottomNavItemView(
         
         // Underline indicator for selected item
         if (isSelected) {
-            Spacer(modifier = Modifier.height(2.dp))
+            Spacer(modifier = Modifier.height(6.dp))
             Box(
                 modifier = Modifier
                     .width(40.dp)

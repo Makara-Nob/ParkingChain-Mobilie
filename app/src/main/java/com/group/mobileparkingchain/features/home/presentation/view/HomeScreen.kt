@@ -93,15 +93,8 @@ fun HomeScreen(
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
-                // If we have a payment created (deeplink opened), confirm it on resume
-                if (paymentState is HomeViewModel.PaymentState.PaymentCreated) {
-                    // Only auto-confirm if method is ABA (since it requires app switch)
-                    // For KHQR, user stays in app or scans elsewhere, so no auto-confirm on resume
-                    if (bookingPaymentMethod == "aba") {
-                        val paymentId = (paymentState as HomeViewModel.PaymentState.PaymentCreated).paymentId
-                        homeViewModel.confirmPayment(paymentId)
-                    }
-                }
+                // KHQR flow: User stays in app to view QR, no auto-confirm on resume needed
+                // Payment confirmation happens via polling when user taps "I have paid"
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -113,24 +106,10 @@ fun HomeScreen(
     LaunchedEffect(paymentState) {
         when (paymentState) {
             is HomeViewModel.PaymentState.PaymentCreated -> {
-                val state = paymentState as HomeViewModel.PaymentState.PaymentCreated
-                val deeplink = state.deeplink
-                
-                // Prioritize based on selected method
-                if (bookingPaymentMethod == "aba" && !deeplink.isNullOrEmpty()) {
-                     try {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(deeplink))
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        context.startActivity(intent)
-                    } catch (e: Exception) {
-                        Toast.makeText(context, "Could not open payment app", Toast.LENGTH_SHORT).show()
-                    }
-                } else if (bookingPaymentMethod == "khqr") {
-                    // For Bakong/KHQR prefer showing QR code (even if deeplink exists). Ensure QR is displayed.
-                    showCompleteBooking = false
-                    showBookingPayment = false
-                    showQrScreen = true
-                }
+                // For KHQR, always show QR screen (no deeplink auto-open)
+                showCompleteBooking = false
+                showBookingPayment = false
+                showQrScreen = true
             }
             is HomeViewModel.PaymentState.PaymentConfirmed -> {
                 // Payment successful - close QR and show receipt with animation
@@ -256,38 +235,6 @@ fun HomeScreen(
                     isProcessing = paymentState is HomeViewModel.PaymentState.Loading
                 )
             }
-        }
-
-        showBookingPayment && selectedSpot != null -> {
-             BookingPaymentScreen(
-                 bookingInfo = BookingInfo(
-                    spotId = selectedSpot!!.id.removePrefix("P-"),
-                    spotLocation = "Mair Street Parking Lot",
-                    spotType = selectedSpot!!.type,
-                    ratePerHour = selectedSpot!!.pricePerHour ?: 5.0
-                ),
-                duration = bookingDuration,
-                startTime = bookingStartTime,
-                total = bookingTotal,
-                onBackClick = { showBookingPayment = false; showCompleteBooking = true },
-                onConfirm = { method, currency ->
-                    bookingCurrency = currency
-                    bookingPaymentMethod = method
-                    
-                    // Create booking first
-                    val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-                    isoFormat.timeZone = TimeZone.getTimeZone("UTC")
-                    val startTimeIso = isoFormat.format(Date(bookingStartTime))
-                    
-                    homeViewModel.createBooking(
-                        spotId = selectedSpot!!.dbId,
-                        startTime = startTimeIso,
-                        durationHours = bookingDuration.toDouble(),
-                        paymentMethod = method,
-                        currency = currency
-                    )
-                }
-             )
         }
 
         showCompleteBooking && selectedSpot != null -> {

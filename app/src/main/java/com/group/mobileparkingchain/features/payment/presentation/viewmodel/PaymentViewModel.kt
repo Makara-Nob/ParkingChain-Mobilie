@@ -1,13 +1,9 @@
 package com.group.mobileparkingchain.features.payment.presentation.viewmodel
 
 import android.app.Application
-import android.content.ActivityNotFoundException
-import android.content.Intent
-import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.group.mobileparkingchain.features.payment.data.model.Payment
-import com.group.mobileparkingchain.features.payment.data.model.PaymentMethod
 import com.group.mobileparkingchain.features.payment.data.repository.PaymentRepository
 import com.group.mobileparkingchain.network.RetrofitInstance
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +26,7 @@ class PaymentViewModel(application: Application) : AndroidViewModel(application)
         bookingId: String,
         amount: Double,
         currency: String = "USD",
-        paymentMethod: String = PaymentMethod.ABA
+        paymentMethod: String = "khqr"
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             _paymentState.value = PaymentState.Loading
@@ -45,25 +41,7 @@ class PaymentViewModel(application: Application) : AndroidViewModel(application)
 
             result.onSuccess { response ->
                 _paymentState.value = PaymentState.Success(response)
-                
-                val deepLink = response.deeplinkUrl
-                
-                if (deepLink.isNotEmpty()) {
-                    // Check if ABA app is installed first to prevent app switching/flickering on emulator
-                    val abaPackage = "com.paygo24.ibank"
-                    if (isPackageInstalled(abaPackage)) {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(deepLink))
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        try {
-                            getApplication<Application>().startActivity(intent)
-                        } catch (e: ActivityNotFoundException) {
-                            // Handler on UI side or show toast
-                        }
-                    } else {
-                        // ABA Mobile app not installed
-                        // For testing purposes, we treat this as success so the user can see the receipt flow
-                    }
-                }
+                // KHQR flow: No deeplink opening, QR is displayed in app
             }.onFailure { error ->
                 _paymentState.value = PaymentState.Error(error.message ?: "Payment failed")
             }
@@ -79,15 +57,6 @@ class PaymentViewModel(application: Application) : AndroidViewModel(application)
                 .onFailure {
                     // Handle error if needed
                 }
-        }
-    }
-
-    private fun isPackageInstalled(packageName: String): Boolean {
-        return try {
-            getApplication<Application>().packageManager.getPackageInfo(packageName, 0)
-            true
-        } catch (e: Exception) {
-            false
         }
     }
 }

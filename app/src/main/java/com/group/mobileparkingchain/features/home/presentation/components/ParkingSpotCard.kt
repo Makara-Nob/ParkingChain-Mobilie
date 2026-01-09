@@ -90,16 +90,6 @@ fun ParkingSpotCard(spot: ParkingSpot, onClick: () -> Unit) {
                     )
                 )
         ) {
-            // Status indicator badge (top-right)
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(6.dp)
-                    .size(8.dp)
-                    .clip(CircleShape)
-                    .background(accentColor)
-            )
-
             // Main content
             Column(
                 modifier = Modifier

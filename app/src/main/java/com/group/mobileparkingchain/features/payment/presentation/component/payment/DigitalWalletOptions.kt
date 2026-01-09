@@ -22,19 +22,19 @@ import com.group.mobileparkingchain.R
 
 @Composable
 fun DigitalWalletOptions(onOptionSelected: (String) -> Unit) {
-    var selectedOption by remember { mutableStateOf("ABA_PAYWAY") }
+    var selectedOption by remember { mutableStateOf("KHQR") }
     
     Column(modifier = Modifier.fillMaxWidth()) {
-        // ABA PayWay Option Card
+        // KHQR (Bakong) Option Card
         Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
-                    selectedOption = "ABA_PAYWAY"
-                    onOptionSelected("ABA_PAYWAY")
+                    selectedOption = "KHQR"
+                    onOptionSelected("KHQR")
                 },
             colors = CardDefaults.cardColors(
-                containerColor = if (selectedOption == "ABA_PAYWAY") 
+                containerColor = if (selectedOption == "KHQR") 
                     Color(0xFF2196F3).copy(alpha = 0.1f) 
                 else 
                     Color(0xFF1E2836)
@@ -52,10 +52,10 @@ fun DigitalWalletOptions(onOptionSelected: (String) -> Unit) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    // ABA Logo
+                    // KHQR Logo
                     Image(
-                        painter = painterResource(id = R.drawable.aba_logo),
-                        contentDescription = "ABA Logo",
+                        painter = painterResource(id = R.drawable.khqr_logo),
+                        contentDescription = "KHQR Logo",
                         modifier = Modifier
                             .size(48.dp),
                         contentScale = ContentScale.Fit
@@ -63,14 +63,14 @@ fun DigitalWalletOptions(onOptionSelected: (String) -> Unit) {
                     
                     Column {
                         Text(
-                            text = "ABA Payment",
+                            text = "KHQR Payment",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color.White
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Pay with ABA PayWay",
+                            text = "Pay with Bakong KHQR",
                             fontSize = 12.sp,
                             color = Color.Gray
                         )
@@ -79,10 +79,10 @@ fun DigitalWalletOptions(onOptionSelected: (String) -> Unit) {
                 
                 // Radio Button
                 RadioButton(
-                    selected = selectedOption == "ABA_PAYWAY",
+                    selected = selectedOption == "KHQR",
                     onClick = {
-                        selectedOption = "ABA_PAYWAY"
-                        onOptionSelected("ABA_PAYWAY")
+                        selectedOption = "KHQR"
+                        onOptionSelected("KHQR")
                     },
                     colors = RadioButtonDefaults.colors(
                         selectedColor = Color(0xFF2196F3),

@@ -62,9 +62,9 @@ fun BookingPaymentScreen(
     onBackClick: () -> Unit,
     onConfirm: (String, String) -> Unit
 ) {
-    // Payment selection state
-    var selectedPaymentMethod by remember { mutableStateOf("khqr") }
-    var selectedCurrency by remember { mutableStateOf("KHR") }
+    // Payment method fixed to KHQR, currency fixed to USD (backend will handle)
+    val selectedPaymentMethod = "khqr"
+    val selectedCurrency = "USD" // Backend default (KHQR_CURRENCY=USD)
     
     val dateFormat = SimpleDateFormat("MMM dd, yyyy 'at' hh:mm a", Locale.getDefault())
 
@@ -155,48 +155,20 @@ fun BookingPaymentScreen(
                 modifier = Modifier.fillMaxWidth(), 
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // KHQR Option
+                // KHQR Option (Only payment method available - always selected)
                 PaymentMethodRow(
-                    title = "KHQR",
+                    title = "KHQR (Bakong)",
                     logoResId = R.drawable.khqr_logo,
-                    isSelected = selectedPaymentMethod == "khqr",
-                    onClick = { selectedPaymentMethod = "khqr" }
-                )
-
-                // ABA Option
-                PaymentMethodRow(
-                    title = "ABA PayWay",
-                    logoResId = R.drawable.aba_logo,
-                    isSelected = selectedPaymentMethod == "aba",
-                    onClick = { selectedPaymentMethod = "aba" }
+                    isSelected = true,
+                    onClick = { /* No-op: only one option */ }
                 )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Currency Selection
-            Text(
-                "Currency",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color.White
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            CurrencySelector(
-                selectedCurrency = selectedCurrency,
-                onCurrencySelected = { selectedCurrency = it }
-            )
-
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Price Calculation (use backend-provided total and currency)
-            val displaySymbol = if (selectedCurrency == "KHR") "៛" else "$"
-            val formattedTotal = if (selectedCurrency == "KHR") {
-                 "${String.format("%,.0f", total)} $displaySymbol"
-            } else {
-                 "$displaySymbol${String.format("%.2f", total)}"
-            }
+            // Price Calculation (use backend-provided total)
+            val displaySymbol = "$"
+            val formattedTotal = "$displaySymbol${String.format("%.2f", total)}"
 
             Text(
                 "Total Amount",
@@ -240,64 +212,6 @@ fun BookingPaymentScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
         }
-    }
-}
-
-@Composable
-fun CurrencySelector(
-    selectedCurrency: String,
-    onCurrencySelected: (String) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .background(Color(0xFF1E2836), RoundedCornerShape(12.dp))
-            .padding(4.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        // KHR Option
-        CurrencyOption(
-            text = "KHR (៛)",
-            isSelected = selectedCurrency == "KHR",
-            onClick = { onCurrencySelected("KHR") },
-            modifier = Modifier.weight(1f)
-        )
-        
-        Spacer(modifier = Modifier.width(4.dp))
-        
-        // USD Option
-        CurrencyOption(
-            text = "USD ($)",
-            isSelected = selectedCurrency == "USD",
-            onClick = { onCurrencySelected("USD") },
-            modifier = Modifier.weight(1f)
-        )
-    }
-}
-
-@Composable
-fun CurrencyOption(
-    text: String,
-    isSelected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .fillMaxHeight()
-            .background(
-                color = if (isSelected) Color(0xFF2196F3) else Color.Transparent, 
-                shape = RoundedCornerShape(8.dp)
-            )
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = text,
-            color = if (isSelected) Color.White else Color.Gray,
-            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
-        )
     }
 }
 
