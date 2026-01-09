@@ -48,9 +48,9 @@ class PaymentViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun fetchUserPayments(userId: String) {
+    fun fetchUserPayments() {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.getUserTransactions(userId)
+            repository.getMyTransactions()
                 .onSuccess { list ->
                     _payments.value = list
                 }

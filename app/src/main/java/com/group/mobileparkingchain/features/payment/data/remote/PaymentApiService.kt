@@ -27,4 +27,7 @@ interface PaymentApiService {
 
     @GET("payments/user/{userId}")
     suspend fun getUserTransactions(@Path("userId") userId: String): Response<ApiResponse<List<Payment>>>
+
+    @GET("payments/me")
+    suspend fun getMyTransactions(): Response<ApiResponse<List<Payment>>>
 }

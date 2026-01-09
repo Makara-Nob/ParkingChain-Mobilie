@@ -20,4 +20,6 @@ interface IPaymentRepository {
     suspend fun confirmPayment(paymentId: String): Result<Boolean>
     
     suspend fun getUserTransactions(userId: String): Result<List<Payment>>
+
+    suspend fun getMyTransactions(): Result<List<Payment>>
 }

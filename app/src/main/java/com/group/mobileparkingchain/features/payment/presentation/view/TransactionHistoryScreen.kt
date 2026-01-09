@@ -26,7 +26,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -38,7 +37,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.group.mobileparkingchain.features.auth.di.AuthModule
 import com.group.mobileparkingchain.features.payment.data.model.Payment
 import com.group.mobileparkingchain.features.payment.di.PaymentModule
 import com.group.mobileparkingchain.features.payment.presentation.viewmodel.TransactionHistoryState
@@ -52,22 +50,14 @@ fun TransactionHistoryScreen(
 ) {
     val context = LocalContext.current
     val paymentModule = remember { PaymentModule(context) }
-    val authModule = remember { AuthModule(context) }
-    
-    // Get userId from local storage
-    val userId by authModule.tokenDataStore.userId.collectAsState(initial = null)
-    
     val viewModel: TransactionHistoryViewModel = viewModel(
         factory = TransactionHistoryViewModelFactory(paymentModule)
     )
     
     val uiState by viewModel.uiState.collectAsState()
     
-    // Fetch transactions when userId is available
-    LaunchedEffect(userId) {
-        userId?.let { id ->
-            viewModel.loadTransactions(id)
-        }
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        viewModel.loadTransactions()
     }
 
     Scaffold(
@@ -154,7 +144,7 @@ fun TransactionItem(payment: Payment) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = payment.createdAt.take(19).replace("T", " "), // Simple formatting
+                    text = formatPaymentDate(payment.createdAt),
                     color = Color.Gray,
                     fontSize = 12.sp
                 )
@@ -175,5 +165,18 @@ fun TransactionItem(payment: Payment) {
                 )
             }
         }
+    }
+}
+
+private fun formatPaymentDate(raw: String): String {
+    return try {
+        val parser = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", java.util.Locale.US).apply {
+            timeZone = java.util.TimeZone.getTimeZone("UTC")
+        }
+        val formatter = java.text.SimpleDateFormat("MMM d, yyyy h:mm a", java.util.Locale.getDefault())
+        val date = parser.parse(raw) ?: return raw
+        formatter.format(date)
+    } catch (e: Exception) {
+        raw
     }
 }

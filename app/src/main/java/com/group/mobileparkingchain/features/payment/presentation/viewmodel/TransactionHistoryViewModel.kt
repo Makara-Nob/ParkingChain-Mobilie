@@ -23,10 +23,10 @@ class TransactionHistoryViewModel(
     private val _uiState = MutableStateFlow<TransactionHistoryState>(TransactionHistoryState.Loading)
     val uiState: StateFlow<TransactionHistoryState> = _uiState
 
-    fun loadTransactions(userId: String) {
+    fun loadTransactions() {
         viewModelScope.launch {
             _uiState.value = TransactionHistoryState.Loading
-            val result = paymentRepository.getUserTransactions(userId)
+            val result = paymentRepository.getMyTransactions()
             if (result.isSuccess) {
                 _uiState.value = TransactionHistoryState.Success(result.getOrDefault(emptyList()))
             } else {

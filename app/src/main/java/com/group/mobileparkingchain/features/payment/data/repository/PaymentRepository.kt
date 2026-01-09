@@ -80,6 +80,26 @@ class PaymentRepository(
         }
     }
 
+    override suspend fun getMyTransactions(): Result<List<Payment>> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = paymentApiService.getMyTransactions()
+                if (response.isSuccessful) {
+                    val apiResponse = response.body()
+                    if (apiResponse != null && apiResponse.success) {
+                        Result.success(apiResponse.data)
+                    } else {
+                        Result.failure(Exception(apiResponse?.message ?: "Failed to fetch transactions"))
+                    }
+                } else {
+                    Result.failure(Exception("Failed to fetch transactions"))
+                }
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    }
+
     private suspend fun <T> safeApiCall(apiCall: suspend () -> retrofit2.Response<T>): Result<T> {
         return withContext(Dispatchers.IO) {
             try {
