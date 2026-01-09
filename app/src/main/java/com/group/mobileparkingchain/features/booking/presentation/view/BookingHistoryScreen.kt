@@ -1,5 +1,6 @@
 package com.group.mobileparkingchain.features.booking.presentation.view
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,8 +23,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -40,6 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.group.mobileparkingchain.features.booking.presentation.components.BookingFilterChips
 import com.group.mobileparkingchain.features.booking.presentation.viewmodel.BookingViewModel
+import com.group.mobileparkingchain.features.home.presentation.components.HomeTopBar
+import com.group.mobileparkingchain.features.home.presentation.components.SearchBar
 import com.group.mobileparkingchain.features.parking.data.model.Booking
 import com.group.mobileparkingchain.features.parking.data.model.BookingStatus
 import com.group.mobileparkingchain.features.payment.presentation.viewmodel.PaymentState
@@ -86,22 +88,11 @@ fun BookingHistoryScreen(
 
     var selectedNavIndex by remember { mutableStateOf(1) } // Booking History tab selected
     var selectedFilter by remember { mutableStateOf<BookingStatus?>(null) }
+    var searchQuery by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Booking History",
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
-                    )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF1E2A3A)
-                )
-            )
+            HomeTopBar()
         },
         bottomBar = {
             BottomNavigationBar(
@@ -122,21 +113,54 @@ fun BookingHistoryScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .padding(16.dp)
         ) {
-            // Filter Chips
-
-            // Filter Chips
-            BookingFilterChips(
-                selectedStatus = selectedFilter,
-                onStatusSelected = { status ->
-                    selectedFilter = status
-                    bookingViewModel.filterByStatus(status?.name) 
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Booking History",
+                        color = Color.White,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 18.sp
+                    )
+                    TextButton(onClick = { bookingViewModel.refreshBookings() }) {
+                        Text(text = "Refresh", color = Color(0xFF4A90E2))
+                    }
                 }
-            )
+                Spacer(modifier = Modifier.height(12.dp))
+                SearchBar(searchQuery) { searchQuery = it }
+                Spacer(modifier = Modifier.height(12.dp))
+                BookingFilterChips(
+                    selectedStatus = selectedFilter,
+                    onStatusSelected = { status ->
+                        selectedFilter = status
+                        bookingViewModel.filterByStatus(status?.name)
+                    }
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+            }
 
             // Booking History List
             // Using bookings directly as filtering is now handled by server
-            val filteredBookings = bookings
+            val filteredBookings = remember(searchQuery, bookings) {
+                if (searchQuery.isBlank()) {
+                    bookings
+                } else {
+                    bookings.filter { booking ->
+                        val spotName = booking.spot?.spotName ?: ""
+                        val spotId = booking.spotId ?: ""
+                        spotName.contains(searchQuery, ignoreCase = true) ||
+                            spotId.contains(searchQuery, ignoreCase = true)
+                    }
+                }
+            }
 
             if (filteredBookings.isEmpty()) {
                 Box(
@@ -145,11 +169,20 @@ fun BookingHistoryScreen(
                         .padding(32.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = "No bookings found",
-                        color = Color(0xFF8A9BAE),
-                        fontSize = 16.sp
-                    )
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "No bookings yet",
+                            color = Color.White,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Reserve a spot to see it here.",
+                            color = Color(0xFF8A9BAE),
+                            fontSize = 14.sp
+                        )
+                    }
                 }
             } else {
                 LazyColumn(
@@ -201,9 +234,7 @@ fun BookingHistoryItem(
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF1E2A3A)
-        ),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF1B2430)),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
@@ -331,13 +362,13 @@ fun BookingHistoryItem(
                     )
                 }
                 
-                if (booking.status == BookingStatus.RESERVED || booking.status == BookingStatus.ACTIVE) {
+                if (booking.status == BookingStatus.RESERVED) {
                      Button(
                         onClick = onPayClick,
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF006C84)),
                         shape = RoundedCornerShape(8.dp)
                     ) {
-                        Text("Pay with ABA", color = Color.White)
+                        Text("Pay Now", color = Color.White)
                     }
                 }
             }

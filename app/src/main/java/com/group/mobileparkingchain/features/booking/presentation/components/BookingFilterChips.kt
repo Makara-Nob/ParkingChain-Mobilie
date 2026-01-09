@@ -45,7 +45,7 @@ fun BookingFilterChips(
             val containerColor = if (isSelected) {
                  item.color ?: Color(0xFF2196F3) 
             } else {
-                 Color(0xFF1E2A3A) // Darker card color
+                 Color(0xFF1E2836)
             }
             
             FilterChip(
@@ -65,7 +65,7 @@ fun BookingFilterChips(
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = containerColor,
                     selectedLabelColor = Color.White,
-                    containerColor = Color(0xFF1E2A3A),
+                    containerColor = Color(0xFF1E2836),
                     labelColor = if (item.color != null && !isSelected) item.color else Color.Gray
                 ),
                 border = if (isSelected) null else FilterChipDefaults.filterChipBorder(
