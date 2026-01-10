@@ -72,7 +72,8 @@ data class CreatePaymentRequest(
     val amount: Double,
     val currency: String = "USD",
     val description: String? = null,
-    val paymentMethod: String = PaymentMethod.KHQR
+    val paymentMethod: String = PaymentMethod.KHQR,
+    val qrImageTemplate: String? = "template3_color"
 )
 
 data class CheckPaymentRequest(

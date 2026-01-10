@@ -162,7 +162,6 @@ fun HomeScreen(
         bookingResult?.onSuccess { bookingResponse ->
             // Booking created successfully, payment state will handle navigation
             showCompleteBooking = false
-            showBookingPayment = false
             // Wait for PaymentState to trigger nav
         }?.onFailure { exception ->
             Toast.makeText(

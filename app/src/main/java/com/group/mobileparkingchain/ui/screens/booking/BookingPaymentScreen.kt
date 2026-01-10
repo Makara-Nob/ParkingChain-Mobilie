@@ -1,6 +1,5 @@
 package com.group.mobileparkingchain.ui.screens.booking
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -42,12 +41,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.group.mobileparkingchain.R
 import com.group.mobileparkingchain.features.payment.presentation.component.payment.PriceRow
+import coil.compose.AsyncImage
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -99,48 +100,6 @@ fun BookingPaymentScreen(
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Summary Card
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF1E2836)),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Column(modifier = Modifier.padding(20.dp)) {
-                    Text(
-                        "BOOKING SUMMARY",
-                        fontSize = 12.sp,
-                        color = Color.Gray,
-                        fontWeight = FontWeight.Medium
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text("Parking Spot", fontSize = 14.sp, color = Color.Gray)
-                        Text("P-${bookingInfo.spotId}", fontSize = 14.sp, color = Color.White, fontWeight = FontWeight.Medium)
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text("Start Time", fontSize = 14.sp, color = Color.Gray)
-                        Text(dateFormat.format(Date(startTime)), fontSize = 14.sp, color = Color.White, fontWeight = FontWeight.Medium)
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text("Duration", fontSize = 14.sp, color = Color.Gray)
-                        Text("$duration hrs", fontSize = 14.sp, color = Color.White, fontWeight = FontWeight.Medium)
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-            
             // Payment Method Selection
             Text(
                 "Payment Method",
@@ -157,35 +116,16 @@ fun BookingPaymentScreen(
             ) {
                 // PayWay Option (Only payment method available - always selected)
                 PaymentMethodRow(
-                    title = "PayWay",
-                    logoResId = R.drawable.khqr_logo,
+                    title = "ABA KHQR",
+                    description = "Scan to pay with any banking app",
+                    logoAssetPath = "file:///android_asset/images/payway-icon.svg",
                     isSelected = true,
                     onClick = { /* No-op: only one option */ }
                 )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Price Calculation (use backend-provided total)
             val displaySymbol = "$"
             val formattedTotal = "$displaySymbol${String.format("%.2f", total)}"
-
-            Text(
-                "Total Amount",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color.White
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Divider(color = Color.White.copy(alpha = 0.1f))
-            Spacer(modifier = Modifier.height(12.dp))
-            PriceRow(
-                "Total",
-                formattedTotal,
-                isTotal = true
-            )
 
             Spacer(modifier = Modifier.weight(1f))
 
@@ -204,7 +144,7 @@ fun BookingPaymentScreen(
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text(
-                    text = "Confirm & Pay",
+                    text = "Confirm & Pay ($formattedTotal)",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -218,11 +158,13 @@ fun BookingPaymentScreen(
 @Composable
 fun PaymentMethodRow(
     title: String,
-    logoResId: Int,
+    description: String,
+    logoAssetPath: String,
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -242,18 +184,32 @@ fun PaymentMethodRow(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                 Image(
-                    painter = painterResource(id = logoResId),
+                AsyncImage(
+                    model = ImageRequest.Builder(context)
+                        .data(logoAssetPath)
+                        .decoderFactory(SvgDecoder.Factory())
+                        .build(),
                     contentDescription = title,
-                    modifier = Modifier.width(40.dp).height(40.dp).padding(end = 16.dp),
+                    modifier = Modifier
+                        .width(40.dp)
+                        .height(40.dp)
+                        .padding(end = 16.dp),
                     contentScale = ContentScale.Fit
                 )
-                Text(
-                    text = title,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = if (isSelected) Color.White else Color.Gray
-                )
+                Column {
+                    Text(
+                        text = title,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = if (isSelected) Color.White else Color.Gray
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = description,
+                        fontSize = 12.sp,
+                        color = Color(0xFF8A9BAE)
+                    )
+                }
             }
             
             RadioButton(
