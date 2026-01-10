@@ -1,10 +1,12 @@
 package com.group.mobileparkingchain.features.payment.data.repository
 
+import android.util.Log
 import com.group.mobileparkingchain.features.payment.data.model.ApiResponse
 import com.group.mobileparkingchain.features.payment.data.model.CheckPaymentRequest
 import com.group.mobileparkingchain.features.payment.data.model.CreatePaymentRequest
 import com.group.mobileparkingchain.features.payment.data.model.Payment
 import com.group.mobileparkingchain.features.payment.data.model.PaymentStatusData
+import com.group.mobileparkingchain.features.payment.data.model.PaywayStatusData
 import com.group.mobileparkingchain.features.payment.data.remote.PaymentApiService
 import com.group.mobileparkingchain.features.payment.domain.repository.IPaymentRepository
 import kotlinx.coroutines.Dispatchers
@@ -40,9 +42,10 @@ class PaymentRepository(
         it.data ?: throw Exception("Payment status data is missing")
     }
 
-    // New: pollable GET /payments/{id}
-    override suspend fun getPaymentStatus(paymentId: String): Result<Payment> = safeApiCall {
-        paymentApiService.getPayment(paymentId)
+    // Pollable GET /payments/payway/{paymentId}/status
+    override suspend fun getPaymentStatus(paymentId: String): Result<PaywayStatusData> = safeApiCall {
+        Log.d("PaymentRepo", "GET /payments/payway/$paymentId/status")
+        paymentApiService.getPaymentStatus(paymentId)
     }.mapCatching { it.data }
 
     override suspend fun confirmPayment(paymentId: String): Result<Boolean> {

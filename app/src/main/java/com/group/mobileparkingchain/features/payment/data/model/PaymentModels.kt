@@ -7,7 +7,7 @@ enum class Currency { USD, KHR }
 // Payment methods supported by the API
 object PaymentMethod {
     const val ABA = "aba"
-    const val KHQR = "khqr"
+    const val KHQR = "payway"
     const val CASH = "cash"
     const val CARD = "card"
 }
@@ -18,7 +18,7 @@ data class Payment(
     val qrString: String,
     val qrImage: String? = null,
     val deeplinkUrl: String,
-    val md5: String,
+    val md5: String? = null,
     val amount: Double,
     val currency: String,
     val status: String,
@@ -54,6 +54,16 @@ data class PaymentStatusApiResponse(
     val success: Boolean,
     val message: String,
     val data: PaymentStatusData?
+)
+
+data class PaywayStatusData(
+    val paymentId: String,
+    val status: String,
+    val amount: Double,
+    val currency: String,
+    val paidAt: String?,
+    val createdAt: String?,
+    val expiresAt: String?
 )
 
 // Request models

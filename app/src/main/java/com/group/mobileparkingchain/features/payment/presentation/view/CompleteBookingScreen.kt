@@ -1,9 +1,12 @@
 package com.group.mobileparkingchain.ui.screens.booking
 
+import android.graphics.BitmapFactory
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,11 +14,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -31,6 +37,7 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -48,6 +55,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -57,10 +67,11 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.time.LocalDate
+import java.time.ZoneId
 
 data class BookingInfo(
     val spotId: String,
-    val spotLocation: String,
     val spotType: String,
     val ratePerHour: Double
 )
@@ -86,8 +97,24 @@ fun CompleteBookingScreen(
     var showTimePicker by remember { mutableStateOf(false) }
     
     // Payment selection state
-    var selectedPaymentMethod by remember { mutableStateOf("khqr") }
+    var selectedPaymentMethod by remember { mutableStateOf("payway") }
     var selectedCurrency by remember { mutableStateOf("KHR") }
+
+    val context = LocalContext.current
+    val assetPath = remember(bookingInfo.spotType) {
+        if (bookingInfo.spotType.contains("car", ignoreCase = true)) {
+            "images/car-parking.png"
+        } else {
+            "images/motorcycle-parking.png"
+        }
+    }
+    val parkingImage = remember(assetPath) {
+        runCatching {
+            context.assets.open(assetPath).use { stream ->
+                BitmapFactory.decodeStream(stream)?.asImageBitmap()
+            }
+        }.getOrNull()
+    }
 
     val dateFormat = SimpleDateFormat("MMM dd, yyyy 'at' hh:mm a", Locale.getDefault())
 
@@ -149,15 +176,16 @@ fun CompleteBookingScreen(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            "Spot ${bookingInfo.spotId}",
+                            bookingInfo.spotId,
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White
                         )
+                        Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            bookingInfo.spotLocation,
+                            text = "${bookingInfo.spotType} Parking",
                             fontSize = 14.sp,
-                            color = Color.Gray
+                            color = Color(0xFF8A9BAE)
                         )
                     }
 
@@ -170,15 +198,26 @@ fun CompleteBookingScreen(
                             ),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            "🅿️",
-                            fontSize = 48.sp
-                        )
+                        if (parkingImage != null) {
+                            Image(
+                                bitmap = parkingImage,
+                                contentDescription = null,
+                                modifier = Modifier.size(48.dp),
+                                contentScale = ContentScale.Fit
+                            )
+                        } else {
+                            Text(
+                                "P",
+                                fontSize = 32.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        }
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Time Selector
             Text(
@@ -188,29 +227,75 @@ fun CompleteBookingScreen(
                 color = Color.White
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 DurationOption.values().forEach { option ->
+                    val isSelected = selectedDuration == option
                     FilterChip(
-                        selected = selectedDuration == option,
+                        selected = isSelected,
                         onClick = { selectedDuration = option },
                         label = { Text(option.label) },
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier
+                            .height(36.dp),
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = Color(0xFF2196F3),
                             selectedLabelColor = Color.White,
                             containerColor = Color(0xFF1E2836),
-                            labelColor = Color.Gray
+                            labelColor = Color(0xFF8A9BAE)
+                        ),
+                        border = if (isSelected) null else FilterChipDefaults.filterChipBorder(
+                            enabled = true,
+                            selected = false,
+                            borderColor = Color(0xFF3A4A5E)
                         )
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            if (selectedDuration == DurationOption.CUSTOM) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Custom Hours",
+                        fontSize = 14.sp,
+                        color = Color(0xFF8A9BAE)
+                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        OutlinedButton(
+                            onClick = { if (customHours > 1) customHours -= 1 },
+                            shape = RoundedCornerShape(10.dp),
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Icon(Icons.Default.Remove, contentDescription = "Decrease")
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "$customHours hrs",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        OutlinedButton(
+                            onClick = { if (customHours < 12) customHours += 1 },
+                            shape = RoundedCornerShape(10.dp),
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Icon(Icons.Default.Add, contentDescription = "Increase")
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Start Time
             Text(
@@ -220,13 +305,13 @@ fun CompleteBookingScreen(
                 color = Color.White
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             OutlinedButton(
                 onClick = { showDatePicker = true },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .height(50.dp),
                 colors = ButtonDefaults.outlinedButtonColors(
                     containerColor = Color(0xFF1E2836),
                     contentColor = if (selectedDateTime != null) Color.White else Color.Gray
@@ -243,9 +328,7 @@ fun CompleteBookingScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Price Calculation
             Text(
@@ -255,7 +338,7 @@ fun CompleteBookingScreen(
                 color = Color.White
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             PriceRow("Duration", "$duration hrs")
             Spacer(modifier = Modifier.height(12.dp))
@@ -301,8 +384,19 @@ fun CompleteBookingScreen(
 
     // Date Picker Dialog
     if (showDatePicker) {
+        val todayStartMillis = remember {
+            LocalDate.now()
+                .atStartOfDay(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli()
+        }
         val datePickerState = rememberDatePickerState(
-            initialSelectedDateMillis = selectedDateTime ?: System.currentTimeMillis()
+            initialSelectedDateMillis = selectedDateTime ?: System.currentTimeMillis(),
+            selectableDates = object : SelectableDates {
+                override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                    return utcTimeMillis >= todayStartMillis
+                }
+            }
         )
 
         DatePickerDialog(
@@ -398,4 +492,3 @@ fun CompleteBookingScreen(
         )
     }
 }
-

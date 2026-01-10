@@ -17,11 +17,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,11 +38,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.group.mobileparkingchain.R
+import androidx.core.net.toUri
 
 @OptIn(ExperimentalMaterial3Api::class)
 
@@ -51,9 +53,10 @@ fun PaymentQrScreen(
     qrCodeBase64: String?,
     total: Double,
     currency: String,
-    onDone: () -> Unit,
+    deeplink: String?,
     onBack: () -> Unit
 ) {
+    val context = LocalContext.current
     // Decode bitmap
     val bitmap = remember(qrCodeBase64) {
         try {
@@ -193,7 +196,34 @@ fun PaymentQrScreen(
                             )
                             // Optional: Center logo in QR if needed, but the bitmap usually has it
                         } else {
-                            CircularProgressIndicator(color = Color(0xFFE60000))
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                CircularProgressIndicator(color = Color(0xFFE60000))
+                                if (!deeplink.isNullOrBlank()) {
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Button(
+                                        onClick = {
+                                            try {
+                                                val intent = android.content.Intent(
+                                                    android.content.Intent.ACTION_VIEW,
+                                                    deeplink.toUri()
+                                                )
+                                                context.startActivity(intent)
+                                            } catch (_: Exception) {
+                                            }
+                                        },
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = Color(0xFFE60000)
+                                        ),
+                                        shape = RoundedCornerShape(12.dp)
+                                    ) {
+                                        Text(
+                                            "Open PayWay",
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = Color.White
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -202,23 +232,12 @@ fun PaymentQrScreen(
         
         Spacer(modifier = Modifier.height(32.dp))
         
-        Button(
-            onClick = onDone,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFFE60000)
-            ),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Text(
-                "I have paid",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-        }
+        Text(
+            text = "Waiting for payment confirmation...",
+            fontSize = 14.sp,
+            color = Color.Gray,
+            fontWeight = FontWeight.Medium
+        )
         }
     }
 }

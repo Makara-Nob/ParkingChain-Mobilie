@@ -64,6 +64,7 @@ fun HomeScreen(
     onNavigateToProfile: () -> Unit = {},
     onNavigateToMap: () -> Unit = {},
     onNavigateToChat: () -> Unit = {},
+    onNavigateToBookingHistory: () -> Unit = {},
     onParkingSpotReserved: (String, ParkingStatus) -> Unit
 ) {
     // ----- UI State -----
@@ -81,8 +82,10 @@ fun HomeScreen(
     var bookingStartTime by remember { mutableStateOf(0L) }
     var bookingTotal by remember { mutableStateOf(0.0) }
     var bookingCurrency by remember { mutableStateOf("USD") }
-    var bookingPaymentMethod by remember { mutableStateOf("khqr") }
+    var bookingPaymentMethod by remember { mutableStateOf("payway") }
     var showQrScreen by remember { mutableStateOf(false) }
+    var lastPaymentCreated by remember { mutableStateOf<HomeViewModel.PaymentState.PaymentCreated?>(null) }
+    var pollingPaymentId by remember { mutableStateOf<String?>(null) }
 
     val context = LocalContext.current
     val bookingResult by homeViewModel.bookingResult.collectAsState()
@@ -106,26 +109,46 @@ fun HomeScreen(
     LaunchedEffect(paymentState) {
         when (paymentState) {
             is HomeViewModel.PaymentState.PaymentCreated -> {
+                lastPaymentCreated = paymentState as HomeViewModel.PaymentState.PaymentCreated
                 // For KHQR, always show QR screen (no deeplink auto-open)
                 showCompleteBooking = false
                 showBookingPayment = false
                 showQrScreen = true
+                pollingPaymentId = lastPaymentCreated?.paymentId
             }
             is HomeViewModel.PaymentState.PaymentConfirmed -> {
                 // Payment successful - close QR and show receipt with animation
                 selectedSpot?.let { spot ->
                     onParkingSpotReserved(spot.id, ParkingStatus.OCCUPIED)
                 }
+                Toast.makeText(context, "Payment successful", Toast.LENGTH_SHORT).show()
                 showQrScreen = false
                 showPaymentScreen = false
-                showReceipt = true
+                showReceipt = false
+                pollingPaymentId = null
                 homeViewModel.resetPaymentState()
+                onNavigateToBookingHistory()
             }
             is HomeViewModel.PaymentState.Error -> {
                 Toast.makeText(context, (paymentState as HomeViewModel.PaymentState.Error).message, Toast.LENGTH_LONG).show()
+                pollingPaymentId = null
                 homeViewModel.resetPaymentState()
             }
             else -> {}
+        }
+    }
+
+    LaunchedEffect(showQrScreen, paymentState, lastPaymentCreated) {
+        val id = (paymentState as? HomeViewModel.PaymentState.PaymentCreated)?.paymentId
+            ?: lastPaymentCreated?.paymentId
+        if (showQrScreen && !id.isNullOrBlank() && pollingPaymentId != id) {
+            pollingPaymentId = id
+        }
+    }
+
+    LaunchedEffect(pollingPaymentId) {
+        pollingPaymentId?.let { id ->
+            homeViewModel.confirmPayment(id)
         }
     }
     
@@ -184,7 +207,7 @@ fun HomeScreen(
                             bookingStartTime = 0L
                             bookingTotal = 0.0
                             bookingCurrency = "USD"
-                            bookingPaymentMethod = "khqr"
+                    bookingPaymentMethod = "payway"
                         }
                     )
                 }
@@ -192,20 +215,16 @@ fun HomeScreen(
         }
         
         showQrScreen -> {
-            val state = paymentState as? HomeViewModel.PaymentState.PaymentCreated
+            val state = (paymentState as? HomeViewModel.PaymentState.PaymentCreated) ?: lastPaymentCreated
             if (state != null) {
                 PaymentQrScreen(
                     qrCodeBase64 = state.qrImage,
                     total = state.amount,
                     currency = state.currency,
-                    onDone = {
-                        homeViewModel.confirmPayment(state.paymentId)
-                        // showQrScreen = false // Keep showing until success or manual close? 
-                        // Usually wait for conf. We can close and show loading/receipt.
-                        // For now let's assume it confirms.
-                    },
+                    deeplink = state.deeplink,
                     onBack = {
                         showQrScreen = false
+                        pollingPaymentId = null
                         homeViewModel.resetPaymentState() // Reset state when manually backing out
                         showBookingPayment = true 
                     }
@@ -241,7 +260,6 @@ fun HomeScreen(
             CompleteBookingScreen(
                 bookingInfo = BookingInfo(
                     spotId = selectedSpot!!.id.removePrefix("P-"),
-                    spotLocation = "Mair Street Parking Lot",
                     spotType = selectedSpot!!.type,
                     ratePerHour = selectedSpot!!.pricePerHour ?: 5.0
                 ),
@@ -261,7 +279,6 @@ fun HomeScreen(
              BookingPaymentScreen(
                  bookingInfo = BookingInfo(
                     spotId = selectedSpot!!.id.removePrefix("P-"),
-                    spotLocation = "Mair Street Parking Lot",
                     spotType = selectedSpot!!.type,
                     ratePerHour = selectedSpot!!.pricePerHour ?: 5.0
                 ),

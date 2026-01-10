@@ -135,14 +135,14 @@ fun PaymentScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Only ABA PayWay option
+            // Only PayWay option
             DigitalWalletOptions(
                 onOptionSelected = { wallet ->
                     if (wallet == "ABA_PAYWAY") {
                         onInitiatePayment(
                             paymentInfo.bookingId,
                             paymentInfo.total,
-                            "aba"
+                            "payway"
                         )
                     }
                 }

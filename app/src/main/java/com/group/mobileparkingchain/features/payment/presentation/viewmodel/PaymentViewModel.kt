@@ -26,7 +26,7 @@ class PaymentViewModel(application: Application) : AndroidViewModel(application)
         bookingId: String,
         amount: Double,
         currency: String = "USD",
-        paymentMethod: String = "khqr"
+        paymentMethod: String = "payway"
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             _paymentState.value = PaymentState.Loading

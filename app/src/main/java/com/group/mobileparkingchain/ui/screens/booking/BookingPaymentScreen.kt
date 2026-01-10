@@ -62,8 +62,8 @@ fun BookingPaymentScreen(
     onBackClick: () -> Unit,
     onConfirm: (String, String) -> Unit
 ) {
-    // Payment method fixed to KHQR, currency fixed to USD (backend will handle)
-    val selectedPaymentMethod = "khqr"
+    // Payment method fixed to PayWay/KHQR, currency fixed to USD (backend will handle)
+    val selectedPaymentMethod = "payway"
     val selectedCurrency = "USD" // Backend default (KHQR_CURRENCY=USD)
     
     val dateFormat = SimpleDateFormat("MMM dd, yyyy 'at' hh:mm a", Locale.getDefault())
@@ -155,9 +155,9 @@ fun BookingPaymentScreen(
                 modifier = Modifier.fillMaxWidth(), 
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // KHQR Option (Only payment method available - always selected)
+                // PayWay Option (Only payment method available - always selected)
                 PaymentMethodRow(
-                    title = "KHQR (Bakong)",
+                    title = "PayWay",
                     logoResId = R.drawable.khqr_logo,
                     isSelected = true,
                     onClick = { /* No-op: only one option */ }

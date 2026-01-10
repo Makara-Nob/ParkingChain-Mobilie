@@ -1,6 +1,7 @@
 package com.group.mobileparkingchain.features.home.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.group.mobileparkingchain.enumuration.ParkingStatus
 import com.group.mobileparkingchain.features.home.data.ParkingSpot
@@ -119,7 +120,7 @@ class HomeViewModel(
                             qrString = payment.qrString,
                             qrImage = payment.qrImage,
                             paymentId = payment.paymentId,
-                            md5 = payment.md5,
+                            md5 = payment.md5 ?: "",
                             amount = payment.amount,
                             currency = payment.currency
                         )
@@ -168,20 +169,21 @@ class HomeViewModel(
     }
 
     fun confirmPayment(paymentId: String) {
-        // For Bakong/KHQR flow: poll GET /payments/{id} until status is PAID/COMPLETED or timeout.
+        // For KHQR flow: poll GET /payments/payway/{id}/status until PAID/COMPLETED or timeout.
         viewModelScope.launch {
+            Log.d("PaymentPoll", "Start polling paymentId=$paymentId")
             _paymentState.value = PaymentState.Loading
 
             val maxAttempts = 40
             var attempt = 0
-            var delayMs = 2000L
+            val delayMs = 3000L
 
             while (attempt < maxAttempts) {
                 try {
-                    kotlinx.coroutines.delay(delayMs)
                     val statusRes = paymentRepository.getPaymentStatus(paymentId)
                     statusRes.onSuccess { payment ->
-                        val st = payment.status.uppercase()
+                        val st = payment.status.trim().uppercase()
+                        Log.d("PaymentPoll", "Status=${'$'}st for paymentId=$paymentId")
                         if (st == "PAID" || st == "COMPLETED") {
                             _paymentState.value = PaymentState.PaymentConfirmed
                             fetchParkingSpots()
@@ -191,13 +193,15 @@ class HomeViewModel(
                             return@launch
                         }
                     }.onFailure {
+                        Log.d("PaymentPoll", "Status check failed for paymentId=$paymentId: ${'$'}{it.message}")
                         // ignore and continue polling
                     }
                 } catch (e: Exception) {
+                    Log.d("PaymentPoll", "Polling exception for paymentId=$paymentId: ${'$'}{e.message}")
                     // continue/try again
                 }
                 attempt++
-                delayMs = kotlin.math.min(delayMs * 2, 8000L)
+                kotlinx.coroutines.delay(delayMs)
             }
 
             _paymentState.value = PaymentState.Error("Payment timeout")

@@ -192,6 +192,9 @@ fun NavGraph() {
                 },
                 onNavigateToChat = {
                     navController.navigate(Screen.Chat.route)
+                },
+                onNavigateToBookingHistory = {
+                    navController.navigate(Screen.BookingHistory.route)
                 }
             )
         }

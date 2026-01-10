@@ -34,7 +34,7 @@ data class CreateBookingRequest(
     val startTime: String? = null,
     val endTime: String? = null,
     val durationHours: Double? = null,
-    val paymentMethod: String = "khqr",
+    val paymentMethod: String = "payway",
     val currency: String = "KHR"
 )
 
@@ -54,7 +54,7 @@ data class PaymentDetails(
     val qrImage: String?,
     val qrString: String?,
     val deeplinkUrl: String?,
-    val md5: String,
+    val md5: String? = null,
     val amount: Double,
     val currency: String,
     val status: String,

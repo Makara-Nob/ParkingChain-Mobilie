@@ -20,7 +20,7 @@ interface IParkingRepository {
         startTime: String? = null, 
         endTime: String? = null, 
         durationHours: Double? = null,
-        paymentMethod: String = "khqr",
+        paymentMethod: String = "payway",
         currency: String = "KHR"
     ): Result<BookingResponse>
     suspend fun getUserBookings(request: BookingHistoryRequest = BookingHistoryRequest()): Result<BookingsData>

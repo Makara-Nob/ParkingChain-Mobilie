@@ -2,6 +2,7 @@ package com.group.mobileparkingchain.features.payment.domain.repository
 
 import com.group.mobileparkingchain.features.payment.data.model.Payment
 import com.group.mobileparkingchain.features.payment.data.model.PaymentStatusData
+import com.group.mobileparkingchain.features.payment.data.model.PaywayStatusData
 
 interface IPaymentRepository {
     suspend fun createPayment(
@@ -15,7 +16,7 @@ interface IPaymentRepository {
     suspend fun checkPaymentStatus(md5: String): Result<PaymentStatusData>
 
     // New: fetch payment by id (used for polling Bakong/KHQR status)
-    suspend fun getPaymentStatus(paymentId: String): Result<Payment>
+    suspend fun getPaymentStatus(paymentId: String): Result<PaywayStatusData>
 
     suspend fun confirmPayment(paymentId: String): Result<Boolean>
     
