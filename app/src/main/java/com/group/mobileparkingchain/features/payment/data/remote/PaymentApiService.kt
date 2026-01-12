@@ -23,6 +23,9 @@ interface PaymentApiService {
     @POST("payments/{paymentId}/confirm")
     suspend fun confirmPayment(@Path("paymentId") paymentId: String): Response<ApiResponse<ConfirmPaymentResponse>>
 
+    @POST("payments/{paymentId}/cancel")
+    suspend fun cancelPayment(@Path("paymentId") paymentId: String): Response<ApiResponse<ConfirmPaymentResponse>>
+
     @GET("payments/payway/{paymentId}/status")
     suspend fun getPaymentStatus(@Path("paymentId") paymentId: String): Response<ApiResponse<PaywayStatusData>>
 

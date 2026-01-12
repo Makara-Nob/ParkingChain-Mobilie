@@ -19,6 +19,8 @@ interface IPaymentRepository {
     suspend fun getPaymentStatus(paymentId: String): Result<PaywayStatusData>
 
     suspend fun confirmPayment(paymentId: String): Result<Boolean>
+
+    suspend fun cancelPayment(paymentId: String): Result<Boolean>
     
     suspend fun getUserTransactions(userId: String): Result<List<Payment>>
 

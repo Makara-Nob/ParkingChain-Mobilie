@@ -63,6 +63,21 @@ class PaymentRepository(
         }
     }
 
+    override suspend fun cancelPayment(paymentId: String): Result<Boolean> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = paymentApiService.cancelPayment(paymentId)
+                if (response.isSuccessful && response.body()?.success == true) {
+                    Result.success(true)
+                } else {
+                    Result.failure(Exception(response.body()?.message ?: "Failed to cancel payment"))
+                }
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    }
+
     override suspend fun getUserTransactions(userId: String): Result<List<Payment>> {
         return withContext(Dispatchers.IO) {
             try {
