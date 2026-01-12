@@ -289,8 +289,9 @@ fun HomeScreen(
         }
 
         showBookingPayment && selectedSpot != null -> {
-             BookingPaymentScreen(
-                 bookingInfo = BookingInfo(
+            val isLoading = false
+            BookingPaymentScreen(
+                bookingInfo = BookingInfo(
                     spotId = selectedSpot!!.id.removePrefix("P-"),
                     spotType = selectedSpot!!.type,
                     ratePerHour = selectedSpot!!.pricePerHour ?: 5.0
@@ -298,6 +299,7 @@ fun HomeScreen(
                 duration = bookingDuration,
                 startTime = bookingStartTime,
                 total = bookingTotal, // Placeholder; server will calculate
+                isProcessing = isLoading,
                 onBackClick = { showBookingPayment = false; showCompleteBooking = true },
                 onConfirm = { method, currency ->
                     bookingCurrency = currency

@@ -22,6 +22,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -62,7 +63,8 @@ fun BookingPaymentScreen(
     startTime: Long,
     total: Double,
     onBackClick: () -> Unit,
-    onConfirm: (String, String) -> Unit
+    onConfirm: (String, String) -> Unit,
+    isProcessing: Boolean
 ) {
     // Payment method fixed to PayWay/KHQR, currency fixed to USD (backend will handle)
     val selectedPaymentMethod = "payway"
@@ -75,9 +77,18 @@ fun BookingPaymentScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "Payment Details",
+                        "Complete",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold
+                    )
+                },
+                actions = {
+                    Text(
+                        text = "2 of 3",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White,
+                        modifier = Modifier.padding(end = 16.dp)
                     )
                 },
                 navigationIcon = {
@@ -133,22 +144,35 @@ fun BookingPaymentScreen(
             // Continue Button
             Button(
                 onClick = {
-                     onConfirm(selectedPaymentMethod, selectedCurrency)
+                    if (!isProcessing) {
+                        onConfirm(selectedPaymentMethod, selectedCurrency)
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
+                enabled = !isProcessing,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF2196F3),
                     disabledContainerColor = Color(0xFF2196F3).copy(alpha = 0.5f)
                 ),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text(
-                    text = "Confirm & Pay ($formattedTotal)",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
+                if (isProcessing) {
+                    CircularProgressIndicator(
+                        color = Color.White,
+                        strokeWidth = 2.dp,
+                        modifier = Modifier
+                            .width(20.dp)
+                            .height(20.dp)
+                    )
+                } else {
+                    Text(
+                        text = "Confirm & Pay ($formattedTotal)",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(24.dp))

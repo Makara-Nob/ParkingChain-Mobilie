@@ -127,9 +127,18 @@ fun CompleteBookingScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "Complete Booking",
+                        "Complete",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold
+                    )
+                },
+                actions = {
+                    Text(
+                        text = "1 of 3",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White,
+                        modifier = Modifier.padding(end = 16.dp)
                     )
                 },
                 navigationIcon = {

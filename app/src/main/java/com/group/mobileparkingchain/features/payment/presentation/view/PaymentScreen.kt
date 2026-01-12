@@ -39,9 +39,18 @@ fun PaymentScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "Payment Method",
+                        "Complete",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold
+                    )
+                },
+                actions = {
+                    Text(
+                        text = "2 of 3",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White,
+                        modifier = Modifier.padding(end = 16.dp)
                     )
                 },
                 navigationIcon = {
@@ -135,7 +144,7 @@ fun PaymentScreen(
                 color = Color.White
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             // Only PayWay option
             DigitalWalletOptions(

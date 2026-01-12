@@ -135,10 +135,19 @@ fun PaymentQrScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "ABA KHQR",
-                        fontSize = 16.sp,
+                        text = "Complete",
+                        fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White
+                    )
+                },
+                actions = {
+                    Text(
+                        text = "3 of 3",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White,
+                        modifier = Modifier.padding(end = 16.dp)
                     )
                 },
                 navigationIcon = {

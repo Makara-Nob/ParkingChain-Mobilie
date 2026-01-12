@@ -125,7 +125,7 @@ class HomeViewModel(
                             currency = payment.currency,
                             expiresAt = payment.expiresAt
                         )
-                        _paymentStatus.value = payment.status
+                        _paymentStatus.value = normalizePaymentStatus(payment.status)
                     }.onFailure { ex ->
                         _error.value = ex.message ?: "Payment init failed"
                     }
@@ -169,6 +169,12 @@ class HomeViewModel(
     private val _paymentStatus = MutableStateFlow("PENDING")
     val paymentStatus: StateFlow<String> = _paymentStatus.asStateFlow()
 
+    private fun normalizePaymentStatus(rawStatus: String): String {
+        return rawStatus.trim().uppercase().let { status ->
+            if (status == "RESERVED") "PENDING" else status
+        }
+    }
+
     // Deprecated: merged into createBooking
     fun createPayment(bookingId: String, amount: Double) {
         // No-op or legacy support if needed
@@ -188,7 +194,7 @@ class HomeViewModel(
                 try {
                     val statusRes = paymentRepository.getPaymentStatus(paymentId)
                     statusRes.onSuccess { payment ->
-                        val st = payment.status.trim().uppercase()
+                        val st = normalizePaymentStatus(payment.status)
                         _paymentStatus.value = st
                         Log.d("PaymentPoll", "Status=${'$'}st for paymentId=$paymentId")
                         if (st == "PAID" || st == "COMPLETED") {
