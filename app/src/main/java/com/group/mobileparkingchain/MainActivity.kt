@@ -7,6 +7,7 @@ import androidx.core.view.WindowCompat
 import com.group.mobileparkingchain.navigations.NavGraph
 import com.group.mobileparkingchain.ui.theme.SmartParkingTheme
 import android.graphics.Color as AndroidColor
+import androidx.core.graphics.toColorInt
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,8 +17,8 @@ class MainActivity : ComponentActivity() {
         com.group.mobileparkingchain.network.RetrofitInstance.initialize(applicationContext)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        window.statusBarColor = AndroidColor.parseColor("#1E2A3A")
-        window.navigationBarColor = AndroidColor.parseColor("#E0E0E0")
+        window.statusBarColor = "#1E2A3A".toColorInt()
+        window.navigationBarColor = "#E0E0E0".toColorInt()
         
         setContent {
             SmartParkingTheme {

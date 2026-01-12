@@ -1,5 +1,6 @@
 package com.group.mobileparkingchain.network
 
+import android.annotation.SuppressLint
 import android.content.Context
 import com.group.mobileparkingchain.features.auth.data.remote.AuthApiService
 import com.group.mobileparkingchain.features.parking.data.remote.ParkingApiService
@@ -22,6 +23,7 @@ object RetrofitInstance {
     private const val PARKING_URL = "http://$HOST_IP:3002/api/v1/"
     private const val PAYMENT_URL = "http://$HOST_IP:3003/api/v1/"
 
+    @SuppressLint("StaticFieldLeak")
     private var authInterceptor: AuthInterceptor? = null
 
     fun initialize(context: Context) {

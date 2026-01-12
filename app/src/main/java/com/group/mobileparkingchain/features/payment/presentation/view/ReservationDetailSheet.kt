@@ -1,4 +1,4 @@
-package com.group.mobileparkingchain.ui.screens.reservation
+package com.group.mobileparkingchain.features.payment.presentation.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -17,10 +17,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.group.mobileparkingchain.features.payment.data.ParkingDetail
 import com.group.mobileparkingchain.features.payment.presentation.component.reservation.ActionButton
 import com.group.mobileparkingchain.features.payment.presentation.component.reservation.InfoRow
 import com.group.mobileparkingchain.features.payment.presentation.component.reservation.SheetHeader
-import com.group.mobileparkingchain.features.payment.data.ParkingDetail
 import com.group.mobileparkingchain.utils.Formatters
 import java.text.SimpleDateFormat
 import java.util.Locale
