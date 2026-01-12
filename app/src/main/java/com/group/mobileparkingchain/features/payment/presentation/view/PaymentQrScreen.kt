@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -114,77 +115,101 @@ fun PaymentQrScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(Color(0xFFE0E0E0)) // Light background
-                .padding(horizontal = 0.dp, vertical = 0.dp),
+                .background(Color(0xFFE0E0E0)),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
+            verticalArrangement = Arrangement.Center
         ) {
 
             if (bitmap != null) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        bitmap = bitmap,
-                        contentDescription = "ABA KHQR",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.FillBounds
-                    )
-                }
-            } else {
                 Card(
-                    shape = RoundedCornerShape(20.dp),
+                    shape = RoundedCornerShape(24.dp),
                     colors = CardDefaults.cardColors(containerColor = Color.White),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
-                        .padding(12.dp)
+                        .padding(horizontal = 16.dp)
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        // Red header with speech bubble style
                         Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(64.dp)
-                                .background(Color(0xFFE1232E)),
-                            contentAlignment = Alignment.Center
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.khqr_logo),
-                                contentDescription = "KHQR",
-                                modifier = Modifier.height(36.dp),
-                                contentScale = ContentScale.Fit
-                            )
+                            // Red background
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(70.dp)
+                                    .background(
+                                        Color(0xFFE1232E),
+                                        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.kh_logo),
+                                    contentDescription = "KHQR",
+                                    modifier = Modifier
+                                        .width(70.dp)
+                                        .height(35.dp),
+                                    contentScale = ContentScale.Fit
+                                )
+                            }
+                            
+                            // Speech bubble tail (triangle at bottom right)
+                            Canvas(
+                                modifier = Modifier
+                                    .align(Alignment.BottomEnd)
+                                    .padding(end = 24.dp, bottom = 0.dp)
+                                    .size(20.dp, 12.dp)
+                            ) {
+                                val path = androidx.compose.ui.graphics.Path().apply {
+                                    moveTo(0f, 0f)
+                                    lineTo(size.width, 0f)
+                                    lineTo(size.width, size.height)
+                                    close()
+                                }
+                                drawPath(
+                                    path = path,
+                                    color = androidx.compose.ui.graphics.Color(0xFFE1232E)
+                                )
+                            }
                         }
 
                         Column(
-                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 28.dp, vertical = 20.dp),
+                            horizontalAlignment = Alignment.Start
                         ) {
+                            // Description/Title
                             Text(
-                                text = "Mobile Parking Chain App",
-                                fontSize = 12.sp,
-                                color = Color(0xFF6B778C),
-                                fontWeight = FontWeight.Medium
+                                text = "Mobile Parking Chain",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = Color(0xFF1E1E1E),
+                                modifier = Modifier.padding(bottom = 2.dp)
                             )
-                            Spacer(modifier = Modifier.height(6.dp))
+                            
+                            // Amount
                             Text(
                                 text = formattedTotal,
-                                fontSize = 26.sp,
+                                fontSize = 36.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF1E2A3A)
+                                color = Color(0xFF000000),
+                                lineHeight = 40.sp
                             )
 
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(18.dp))
 
+                            // Dashed divider
                             Canvas(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(1.dp)
                             ) {
                                 drawLine(
-                                    color = Color(0xFFB0B8C4),
+                                    color = androidx.compose.ui.graphics.Color(0xFFD0D0D0),
                                     start = Offset(0f, 0f),
                                     end = Offset(size.width, 0f),
                                     pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f),
@@ -192,19 +217,139 @@ fun PaymentQrScreen(
                                 )
                             }
 
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(18.dp))
+
+                            // QR Code
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .aspectRatio(1f),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Image(
+                                    bitmap = bitmap,
+                                    contentDescription = "ABA KHQR",
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Fit
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(12.dp))
+                        }
+                    }
+                }
+            } else {
+                Card(
+                    shape = RoundedCornerShape(24.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        // Red header with speech bubble style
+                        Box(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            // Red background
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(70.dp)
+                                    .background(
+                                        Color(0xFFE1232E),
+                                        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.kh_logo),
+                                    contentDescription = "KHQR",
+                                    modifier = Modifier
+                                        .width(70.dp)
+                                        .height(35.dp),
+                                    contentScale = ContentScale.Fit
+                                )
+                            }
+                            
+                            // Speech bubble tail
+                            Canvas(
+                                modifier = Modifier
+                                    .align(Alignment.BottomEnd)
+                                    .padding(end = 24.dp, bottom = 0.dp)
+                                    .size(20.dp, 12.dp)
+                            ) {
+                                val path = androidx.compose.ui.graphics.Path().apply {
+                                    moveTo(0f, 0f)
+                                    lineTo(size.width, 0f)
+                                    lineTo(size.width, size.height)
+                                    close()
+                                }
+                                drawPath(
+                                    path = path,
+                                    color = androidx.compose.ui.graphics.Color(0xFFE1232E)
+                                )
+                            }
+                        }
+
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 28.dp, vertical = 20.dp),
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            Text(
+                                text = "Mobile Parking Chain",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = Color(0xFF1E1E1E),
+                                modifier = Modifier.padding(bottom = 2.dp)
+                            )
+                            
+                            Text(
+                                text = formattedTotal,
+                                fontSize = 36.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF000000),
+                                lineHeight = 40.sp
+                            )
+
+                            Spacer(modifier = Modifier.height(18.dp))
+
+                            Canvas(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(1.dp)
+                            ) {
+                                drawLine(
+                                    color = androidx.compose.ui.graphics.Color(0xFFD0D0D0),
+                                    start = Offset(0f, 0f),
+                                    end = Offset(size.width, 0f),
+                                    pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f),
+                                    strokeWidth = 2.dp.toPx()
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(18.dp))
 
                             Box(
-                                modifier = Modifier.size(220.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .aspectRatio(1f),
                                 contentAlignment = Alignment.Center
                             ) {
                                 CircularProgressIndicator(color = Color(0xFFE1232E))
                             }
+
+                            Spacer(modifier = Modifier.height(12.dp))
                         }
                     }
                 }
             }
 
+            // Additional info shown below the card
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
@@ -215,56 +360,8 @@ fun PaymentQrScreen(
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "or",
-                fontSize = 12.sp,
-                color = Color(0xFF8A9BAE)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            TextButton(onClick = { /* TODO: implement download if needed */ }) {
-                Icon(
-                    imageVector = Icons.Default.Download,
-                    contentDescription = "Download QR",
-                    tint = Color(0xFF4A90E2)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Download QR",
-                    color = Color(0xFF4A90E2),
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = "and upload to Mobile Banking app supporting KHQR",
+                text = "Use any Mobile Banking app supporting KHQR",
                 fontSize = 11.sp,
-                color = Color(0xFF8A9BAE)
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Subtotal:",
-                    fontSize = 12.sp,
-                    color = Color(0xFF8A9BAE)
-                )
-                Text(
-                    text = formattedTotal,
-                    fontSize = 12.sp,
-                    color = Color(0xFF1E2A3A),
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "Waiting for payment confirmation...",
-                fontSize = 12.sp,
                 color = Color(0xFF8A9BAE)
             )
         }
