@@ -26,7 +26,7 @@ interface PaymentApiService {
     @GET("payments/payway/{paymentId}/status")
     suspend fun getPaymentStatus(@Path("paymentId") paymentId: String): Response<ApiResponse<PaywayStatusData>>
 
-    @GET("payments/user/{userId}")
+    @GET("users/{userId}/payments")
     suspend fun getUserTransactions(@Path("userId") userId: String): Response<ApiResponse<List<Payment>>>
 
     @GET("payments/me")

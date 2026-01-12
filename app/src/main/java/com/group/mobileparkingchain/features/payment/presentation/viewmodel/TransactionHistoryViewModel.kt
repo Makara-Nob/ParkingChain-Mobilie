@@ -23,10 +23,14 @@ class TransactionHistoryViewModel(
     private val _uiState = MutableStateFlow<TransactionHistoryState>(TransactionHistoryState.Loading)
     val uiState: StateFlow<TransactionHistoryState> = _uiState
 
-    fun loadTransactions() {
+    fun loadTransactions(userId: String?) {
+        if (userId.isNullOrBlank()) {
+            _uiState.value = TransactionHistoryState.Error("User ID is missing")
+            return
+        }
         viewModelScope.launch {
             _uiState.value = TransactionHistoryState.Loading
-            val result = paymentRepository.getMyTransactions()
+            val result = paymentRepository.getUserTransactions(userId)
             if (result.isSuccess) {
                 _uiState.value = TransactionHistoryState.Success(result.getOrDefault(emptyList()))
             } else {

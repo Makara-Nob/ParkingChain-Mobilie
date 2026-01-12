@@ -42,6 +42,7 @@ import com.group.mobileparkingchain.features.payment.di.PaymentModule
 import com.group.mobileparkingchain.features.payment.presentation.viewmodel.TransactionHistoryState
 import com.group.mobileparkingchain.features.payment.presentation.viewmodel.TransactionHistoryViewModel
 import com.group.mobileparkingchain.features.payment.presentation.viewmodel.TransactionHistoryViewModelFactory
+import com.group.mobileparkingchain.network.datastore.TokenDataStore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,14 +51,16 @@ fun TransactionHistoryScreen(
 ) {
     val context = LocalContext.current
     val paymentModule = remember { PaymentModule(context) }
+    val tokenDataStore = remember { TokenDataStore(context) }
     val viewModel: TransactionHistoryViewModel = viewModel(
         factory = TransactionHistoryViewModelFactory(paymentModule)
     )
     
     val uiState by viewModel.uiState.collectAsState()
+    val userId by tokenDataStore.userId.collectAsState(initial = null)
     
-    androidx.compose.runtime.LaunchedEffect(Unit) {
-        viewModel.loadTransactions()
+    androidx.compose.runtime.LaunchedEffect(userId) {
+        viewModel.loadTransactions(userId)
     }
 
     Scaffold(
