@@ -19,9 +19,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.group.mobileparkingchain.features.payment.presentation.component.reservation.ActionButton
 import com.group.mobileparkingchain.features.payment.presentation.component.reservation.InfoRow
-import java.util.Locale
 import com.group.mobileparkingchain.features.payment.presentation.component.reservation.SheetHeader
 import com.group.mobileparkingchain.features.payment.data.ParkingDetail
+import com.group.mobileparkingchain.utils.Formatters
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
@@ -74,7 +74,7 @@ fun ReservationDetailSheet(
             Spacer(modifier = Modifier.height(24.dp))
 
             parkingDetail.pricePerHour?.let { price ->
-                InfoRow(label = "Pricing", value = "$${String.format(Locale.getDefault(), "%.2f", price)}/hr")
+                InfoRow(label = "Pricing", value = "${Formatters.moneyWithSymbol(price, "$")}/hr")
                 Spacer(modifier = Modifier.height(24.dp))
             }
 
