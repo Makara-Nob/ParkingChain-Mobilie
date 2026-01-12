@@ -345,9 +345,9 @@ fun BookingHistoryItem(
                     Spacer(modifier = Modifier.height(6.dp))
                     val currencySymbol = if (booking.currency == "KHR") "៛" else "$"
                     val formattedPrice = if (booking.currency == "KHR") {
-                        "${String.format("%,.0f", booking.totalPrice ?: 0.0)}"
+                        "${String.format(Locale.getDefault(), "%,.0f", booking.totalPrice ?: 0.0)}"
                     } else {
-                        String.format("%.2f", booking.totalPrice ?: 0.0)
+                        String.format(Locale.getDefault(), "%.2f", booking.totalPrice ?: 0.0)
                     }
 
                     Text(
@@ -396,9 +396,9 @@ private fun BookingDetailsSheet(
 
     val currencySymbol = if (booking.currency == "KHR") "៛" else "$"
     val formattedPrice = if (booking.currency == "KHR") {
-        "${String.format("%,.0f", booking.totalPrice ?: 0.0)}"
+        "${String.format(Locale.getDefault(), "%,.0f", booking.totalPrice ?: 0.0)}"
     } else {
-        String.format("%.2f", booking.totalPrice ?: 0.0)
+        String.format(Locale.getDefault(), "%.2f", booking.totalPrice ?: 0.0)
     }
 
     Column(

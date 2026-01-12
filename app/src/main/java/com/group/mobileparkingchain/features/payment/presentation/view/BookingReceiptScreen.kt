@@ -139,7 +139,7 @@ fun BookingReceiptScreen(
                             color = Color.White
                         )
                         Text(
-                            "$${String.format("%.2f", booking.totalPrice ?: 0.0)}",
+                            "$${String.format(Locale.getDefault(), "%.2f", booking.totalPrice ?: 0.0)}",
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF4CAF50)

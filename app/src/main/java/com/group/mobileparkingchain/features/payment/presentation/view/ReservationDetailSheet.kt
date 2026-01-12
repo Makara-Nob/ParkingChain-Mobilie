@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.group.mobileparkingchain.features.payment.presentation.component.reservation.ActionButton
 import com.group.mobileparkingchain.features.payment.presentation.component.reservation.InfoRow
+import java.util.Locale
 import com.group.mobileparkingchain.features.payment.presentation.component.reservation.SheetHeader
 import com.group.mobileparkingchain.features.payment.data.ParkingDetail
 import java.text.SimpleDateFormat
@@ -73,7 +74,7 @@ fun ReservationDetailSheet(
             Spacer(modifier = Modifier.height(24.dp))
 
             parkingDetail.pricePerHour?.let { price ->
-                InfoRow(label = "Pricing", value = "$${String.format("%.2f", price)}/hr")
+                InfoRow(label = "Pricing", value = "$${String.format(Locale.getDefault(), "%.2f", price)}/hr")
                 Spacer(modifier = Modifier.height(24.dp))
             }
 
@@ -98,4 +99,3 @@ private fun formatLastUpdated(raw: String): String {
         raw
     }
 }
-

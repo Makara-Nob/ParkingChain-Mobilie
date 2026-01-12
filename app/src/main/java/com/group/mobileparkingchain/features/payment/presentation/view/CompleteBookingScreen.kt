@@ -342,13 +342,13 @@ fun CompleteBookingScreen(
 
             PriceRow("Duration", "$duration hrs")
             Spacer(modifier = Modifier.height(12.dp))
-            PriceRow("Rate", "$${String.format("%.0f", bookingInfo.ratePerHour)}/hr")
+            PriceRow("Rate", "$${String.format(Locale.getDefault(), "%.0f", bookingInfo.ratePerHour)}/hr")
             Spacer(modifier = Modifier.height(12.dp))
             Divider(color = Color.White.copy(alpha = 0.1f))
             Spacer(modifier = Modifier.height(12.dp))
             PriceRow(
                 "Total",
-                "$${String.format("%.2f", total)}",
+                "$${String.format(Locale.getDefault(), "%.2f", total)}",
                 isTotal = true
             )
 

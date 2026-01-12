@@ -125,7 +125,7 @@ fun BookingPaymentScreen(
             }
 
             val displaySymbol = "$"
-            val formattedTotal = "$displaySymbol${String.format("%.2f", total)}"
+            val formattedTotal = "$displaySymbol${String.format(Locale.getDefault(), "%.2f", total)}"
 
             Spacer(modifier = Modifier.weight(1f))
 
