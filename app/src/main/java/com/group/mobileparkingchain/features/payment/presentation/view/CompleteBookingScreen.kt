@@ -63,6 +63,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.group.mobileparkingchain.features.payment.presentation.component.payment.PriceRow
+import com.group.mobileparkingchain.utils.Formatters
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -342,13 +343,13 @@ fun CompleteBookingScreen(
 
             PriceRow("Duration", "$duration hrs")
             Spacer(modifier = Modifier.height(12.dp))
-            PriceRow("Rate", "$${String.format(Locale.getDefault(), "%.0f", bookingInfo.ratePerHour)}/hr")
+            PriceRow("Rate", "${Formatters.moneyWithSymbol(bookingInfo.ratePerHour, "$", 0)}/hr")
             Spacer(modifier = Modifier.height(12.dp))
             Divider(color = Color.White.copy(alpha = 0.1f))
             Spacer(modifier = Modifier.height(12.dp))
             PriceRow(
                 "Total",
-                "$${String.format(Locale.getDefault(), "%.2f", total)}",
+                "${Formatters.moneyWithSymbol(total, "$")}",
                 isTotal = true
             )
 

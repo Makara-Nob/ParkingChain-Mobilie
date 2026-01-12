@@ -55,6 +55,7 @@ import com.group.mobileparkingchain.features.parking.data.model.BookingStatus
 import com.group.mobileparkingchain.features.payment.presentation.viewmodel.PaymentState
 import com.group.mobileparkingchain.features.payment.presentation.viewmodel.PaymentViewModel
 import com.group.mobileparkingchain.ui.components.BottomNavigationBar
+import com.group.mobileparkingchain.utils.Formatters
 
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -345,9 +346,9 @@ fun BookingHistoryItem(
                     Spacer(modifier = Modifier.height(6.dp))
                     val currencySymbol = if (booking.currency == "KHR") "៛" else "$"
                     val formattedPrice = if (booking.currency == "KHR") {
-                        "${String.format(Locale.getDefault(), "%,.0f", booking.totalPrice ?: 0.0)}"
+                        Formatters.moneyWithSymbol(booking.totalPrice ?: 0.0, "", 0)
                     } else {
-                        String.format(Locale.getDefault(), "%.2f", booking.totalPrice ?: 0.0)
+                        Formatters.moneyWithSymbol(booking.totalPrice ?: 0.0, "", 2)
                     }
 
                     Text(
@@ -396,9 +397,9 @@ private fun BookingDetailsSheet(
 
     val currencySymbol = if (booking.currency == "KHR") "៛" else "$"
     val formattedPrice = if (booking.currency == "KHR") {
-        "${String.format(Locale.getDefault(), "%,.0f", booking.totalPrice ?: 0.0)}"
+        Formatters.moneyWithSymbol(booking.totalPrice ?: 0.0, "", 0)
     } else {
-        String.format(Locale.getDefault(), "%.2f", booking.totalPrice ?: 0.0)
+        Formatters.moneyWithSymbol(booking.totalPrice ?: 0.0, "", 2)
     }
 
     Column(

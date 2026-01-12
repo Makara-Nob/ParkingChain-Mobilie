@@ -44,7 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.group.mobileparkingchain.R
-import java.util.Locale
+import com.group.mobileparkingchain.utils.Formatters
 
 @OptIn(ExperimentalMaterial3Api::class)
 
@@ -74,9 +74,9 @@ fun PaymentQrScreen(
     }
 
     val formattedTotal = if (currency == "KHR") {
-        "${String.format(Locale.getDefault(), "%,.0f", total)} $currency"
+        Formatters.currency(total, currency, 0)
     } else {
-        "${String.format(Locale.getDefault(), "%,.2f", total)} $currency"
+        Formatters.currency(total, currency, 2)
     }
 
     Scaffold(

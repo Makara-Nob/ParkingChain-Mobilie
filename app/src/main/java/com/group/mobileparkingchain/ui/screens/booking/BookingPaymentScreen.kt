@@ -51,6 +51,7 @@ import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import java.text.SimpleDateFormat
 import java.util.Date
+import com.group.mobileparkingchain.utils.Formatters
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -125,7 +126,7 @@ fun BookingPaymentScreen(
             }
 
             val displaySymbol = "$"
-            val formattedTotal = "$displaySymbol${String.format(Locale.getDefault(), "%.2f", total)}"
+            val formattedTotal = Formatters.moneyWithSymbol(total, displaySymbol)
 
             Spacer(modifier = Modifier.weight(1f))
 

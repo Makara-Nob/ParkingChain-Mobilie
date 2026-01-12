@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.group.mobileparkingchain.features.payment.data.PaymentInfo
+import com.group.mobileparkingchain.utils.Formatters
 import java.util.Locale
 import com.group.mobileparkingchain.features.payment.presentation.component.payment.DigitalWalletOptions
 import java.text.SimpleDateFormat
@@ -68,7 +69,7 @@ fun PaymentScreen(
                 ) {
                     Text("Total", fontSize = 20.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
                     Text(
-                        "$${String.format(Locale.getDefault(), "%.2f", paymentInfo.total)}",
+                        "${Formatters.moneyWithSymbol(paymentInfo.total, "$")}",
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White

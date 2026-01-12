@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.group.mobileparkingchain.features.parking.data.model.Booking
+import com.group.mobileparkingchain.utils.Formatters
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -139,7 +140,7 @@ fun BookingReceiptScreen(
                             color = Color.White
                         )
                         Text(
-                            "$${String.format(Locale.getDefault(), "%.2f", booking.totalPrice ?: 0.0)}",
+                            "${Formatters.moneyWithSymbol(booking.totalPrice ?: 0.0, "$")}",
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF4CAF50)
