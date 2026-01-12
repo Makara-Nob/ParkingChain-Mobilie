@@ -122,7 +122,8 @@ class HomeViewModel(
                             paymentId = payment.paymentId,
                             md5 = payment.md5 ?: "",
                             amount = payment.amount,
-                            currency = payment.currency
+                            currency = payment.currency,
+                            expiresAt = payment.expiresAt
                         )
                     }.onFailure { ex ->
                         _error.value = ex.message ?: "Payment init failed"
@@ -148,13 +149,14 @@ class HomeViewModel(
         object Idle : PaymentState()
         object Loading : PaymentState()
         data class PaymentCreated(
-            val deeplink: String?, 
-            val qrString: String?, 
-            val qrImage: String?, 
-            val paymentId: String, 
+            val deeplink: String?,
+            val qrString: String?,
+            val qrImage: String?,
+            val paymentId: String,
             val md5: String,
             val amount: Double,
-            val currency: String
+            val currency: String,
+            val expiresAt: String?
         ) : PaymentState()
         object PaymentConfirmed : PaymentState()
         data class Error(val message: String) : PaymentState()
@@ -188,8 +190,11 @@ class HomeViewModel(
                             _paymentState.value = PaymentState.PaymentConfirmed
                             fetchParkingSpots()
                             return@launch
-                        } else if (st == "FAILED" || st == "CANCELLED" || st == "EXPIRED") {
-                            _paymentState.value = PaymentState.Error("Payment ${'$'}{payment.status}")
+                        } else if (st == "CANCELLED" || st == "EXPIRED") {
+                            _paymentState.value = PaymentState.Error("QR code expired. Payment cancelled.")
+                            return@launch
+                        } else if (st == "FAILED") {
+                            _paymentState.value = PaymentState.Error("Payment failed.")
                             return@launch
                         }
                     }.onFailure {
@@ -204,7 +209,7 @@ class HomeViewModel(
                 kotlinx.coroutines.delay(delayMs)
             }
 
-            _paymentState.value = PaymentState.Error("Payment timeout")
+            _paymentState.value = PaymentState.Error("QR code expired. Payment cancelled.")
         }
     }
 

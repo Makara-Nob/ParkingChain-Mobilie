@@ -22,7 +22,8 @@ data class Payment(
     val amount: Double,
     val currency: String,
     val status: String,
-    val createdAt: String
+    val createdAt: String,
+    val expiresAt: String? = null
 )
 
 // Generic API Response wrapper

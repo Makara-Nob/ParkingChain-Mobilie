@@ -31,7 +31,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -45,6 +49,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.group.mobileparkingchain.R
 import com.group.mobileparkingchain.utils.Formatters
+import java.time.Instant
+import java.util.Locale
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 
@@ -54,6 +61,7 @@ fun PaymentQrScreen(
     total: Double,
     currency: String,
     deeplink: String?,
+    expiresAt: String?,
     onBack: () -> Unit
 ) {
     // Decode bitmap
@@ -77,6 +85,43 @@ fun PaymentQrScreen(
         Formatters.currency(total, currency, 0)
     } else {
         Formatters.currency(total, currency, 2)
+    }
+
+    val expiresAtMillis = remember(expiresAt) {
+        try {
+            if (expiresAt.isNullOrBlank()) {
+                null
+            } else {
+                Instant.parse(expiresAt).toEpochMilli()
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    var remainingSeconds by remember(expiresAtMillis) {
+        mutableLongStateOf(
+            if (expiresAtMillis != null) {
+                ((expiresAtMillis - System.currentTimeMillis()) / 1000).coerceAtLeast(0)
+            } else {
+                0L
+            }
+        )
+    }
+
+    LaunchedEffect(expiresAtMillis) {
+        if (expiresAtMillis == null) {
+            return@LaunchedEffect
+        }
+
+        while (true) {
+            val secondsLeft = ((expiresAtMillis - System.currentTimeMillis()) / 1000).coerceAtLeast(0)
+            remainingSeconds = secondsLeft
+            if (secondsLeft <= 0) {
+                break
+            }
+            delay(1000)
+        }
     }
 
     Scaffold(
@@ -359,6 +404,21 @@ fun PaymentQrScreen(
                 fontSize = 11.sp,
                 color = Color(0xFF8A9BAE)
             )
+
+            if (expiresAtMillis != null) {
+                Spacer(modifier = Modifier.height(10.dp))
+
+                val minutes = remainingSeconds / 60
+                val seconds = remainingSeconds % 60
+                val countdown = String.format(Locale.US, "%02d:%02d", minutes, seconds)
+
+                Text(
+                    text = "Expires in $countdown",
+                    fontSize = 12.sp,
+                    color = Color(0xFF5C6B80),
+                    fontWeight = FontWeight.Medium
+                )
+            }
         }
     }
 }

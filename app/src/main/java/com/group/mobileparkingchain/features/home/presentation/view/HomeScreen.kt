@@ -127,9 +127,19 @@ fun HomeScreen(
                 onNavigateToBookingHistory()
             }
             is HomeViewModel.PaymentState.Error -> {
-                Toast.makeText(context, (paymentState as HomeViewModel.PaymentState.Error).message, Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    context,
+                    (paymentState as HomeViewModel.PaymentState.Error).message,
+                    Toast.LENGTH_LONG
+                ).show()
                 pollingPaymentId = null
                 homeViewModel.resetPaymentState()
+                showQrScreen = false
+                showPaymentScreen = false
+                showCompleteBooking = false
+                showBookingPayment = false
+                showReceipt = false
+                selectedSpot = null
             }
             else -> {}
         }
@@ -218,6 +228,7 @@ fun HomeScreen(
                     total = state.amount,
                     currency = state.currency,
                     deeplink = state.deeplink,
+                    expiresAt = state.expiresAt,
                     onBack = {
                         showQrScreen = false
                         pollingPaymentId = null
