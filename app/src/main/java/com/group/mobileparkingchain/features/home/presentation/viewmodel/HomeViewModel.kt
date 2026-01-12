@@ -125,6 +125,7 @@ class HomeViewModel(
                             currency = payment.currency,
                             expiresAt = payment.expiresAt
                         )
+                        _paymentStatus.value = payment.status
                     }.onFailure { ex ->
                         _error.value = ex.message ?: "Payment init failed"
                     }
@@ -165,6 +166,9 @@ class HomeViewModel(
     private val _paymentState = MutableStateFlow<PaymentState>(PaymentState.Idle)
     val paymentState: StateFlow<PaymentState> = _paymentState.asStateFlow()
 
+    private val _paymentStatus = MutableStateFlow("PENDING")
+    val paymentStatus: StateFlow<String> = _paymentStatus.asStateFlow()
+
     // Deprecated: merged into createBooking
     fun createPayment(bookingId: String, amount: Double) {
         // No-op or legacy support if needed
@@ -185,13 +189,14 @@ class HomeViewModel(
                     val statusRes = paymentRepository.getPaymentStatus(paymentId)
                     statusRes.onSuccess { payment ->
                         val st = payment.status.trim().uppercase()
+                        _paymentStatus.value = st
                         Log.d("PaymentPoll", "Status=${'$'}st for paymentId=$paymentId")
                         if (st == "PAID" || st == "COMPLETED") {
                             _paymentState.value = PaymentState.PaymentConfirmed
                             fetchParkingSpots()
                             return@launch
                         } else if (st == "CANCELLED" || st == "EXPIRED") {
-                            _paymentState.value = PaymentState.Error("QR code expired. Payment cancelled.")
+                            _paymentState.value = PaymentState.Error("Payment cancelled.")
                             return@launch
                         } else if (st == "FAILED") {
                             _paymentState.value = PaymentState.Error("Payment failed.")
@@ -209,11 +214,28 @@ class HomeViewModel(
                 kotlinx.coroutines.delay(delayMs)
             }
 
-            _paymentState.value = PaymentState.Error("QR code expired. Payment cancelled.")
+            _paymentState.value = PaymentState.Error("Payment cancelled.")
         }
     }
 
     fun resetPaymentState() {
         _paymentState.value = PaymentState.Idle
+        _paymentStatus.value = "PENDING"
+    }
+
+    fun cancelPayment(paymentId: String) {
+        viewModelScope.launch {
+            try {
+                val result = paymentRepository.cancelPayment(paymentId)
+                result.onSuccess {
+                    _paymentStatus.value = "CANCELLED"
+                    _paymentState.value = PaymentState.Error("Payment cancelled.")
+                }.onFailure { ex ->
+                    _paymentState.value = PaymentState.Error(ex.message ?: "Cancel failed")
+                }
+            } catch (e: Exception) {
+                _paymentState.value = PaymentState.Error(e.message ?: "Cancel failed")
+            }
+        }
     }
 }

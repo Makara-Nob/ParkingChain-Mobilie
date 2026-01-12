@@ -87,6 +87,7 @@ fun HomeScreen(
     val context = LocalContext.current
     val bookingResult by homeViewModel.bookingResult.collectAsState()
     val paymentState by homeViewModel.paymentState.collectAsState()
+    val paymentStatus by homeViewModel.paymentStatus.collectAsState()
     val lifecycleOwner = LocalLifecycleOwner.current
     
     // ----- Payment Flow Logic -----
@@ -229,11 +230,16 @@ fun HomeScreen(
                     currency = state.currency,
                     deeplink = state.deeplink,
                     expiresAt = state.expiresAt,
+                    status = paymentStatus,
+                    onCancel = {
+                        val paymentId = state.paymentId
+                        homeViewModel.cancelPayment(paymentId)
+                    },
                     onBack = {
                         showQrScreen = false
                         pollingPaymentId = null
-                        homeViewModel.resetPaymentState() // Reset state when manually backing out
-                        showBookingPayment = true 
+                        homeViewModel.resetPaymentState()
+                        showBookingPayment = true
                     }
                 )
             }
