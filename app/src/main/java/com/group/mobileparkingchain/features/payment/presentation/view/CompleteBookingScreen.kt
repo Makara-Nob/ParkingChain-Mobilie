@@ -1,7 +1,9 @@
 package com.group.mobileparkingchain.ui.screens.booking
 
 import android.graphics.BitmapFactory
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -85,6 +87,7 @@ enum class DurationOption(val hours: Int, val label: String) {
     CUSTOM(0, "Custom")
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CompleteBookingScreen(

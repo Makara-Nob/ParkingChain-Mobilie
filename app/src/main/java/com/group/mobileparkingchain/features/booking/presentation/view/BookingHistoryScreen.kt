@@ -255,14 +255,24 @@ fun BookingHistoryItem(
         startDate?.let { timeFormat.format(it) } ?: "-"
     }
 
-    val statusColor = when (booking.status) {
+    val autoCompleted = booking.status == BookingStatus.ACTIVE &&
+        endDate != null &&
+        endDate.before(Date())
+
+    val effectiveStatus = if (autoCompleted) {
+        BookingStatus.COMPLETED
+    } else {
+        booking.status
+    }
+
+    val statusColor = when (effectiveStatus) {
         BookingStatus.ACTIVE -> Color(0xFF4CAF50)
         BookingStatus.COMPLETED -> Color(0xFF2196F3)
         BookingStatus.CANCELLED -> Color(0xFFF44336)
         BookingStatus.RESERVED -> Color(0xFFFFC107)
     }
 
-    val statusBgColor = when (booking.status) {
+    val statusBgColor = when (effectiveStatus) {
         BookingStatus.ACTIVE -> Color(0xFF1B5E20).copy(alpha = 0.2f)
         BookingStatus.COMPLETED -> Color(0xFF0D47A1).copy(alpha = 0.2f)
         BookingStatus.CANCELLED -> Color(0xFFB71C1C).copy(alpha = 0.2f)
@@ -297,17 +307,35 @@ fun BookingHistoryItem(
                     )
                 }
                 
-                Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    color = statusBgColor
-                ) {
-                    Text(
-                        text = booking.status.name,
-                        color = statusColor,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
-                    )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = statusBgColor
+                    ) {
+                        Text(
+                            text = effectiveStatus.name,
+                            color = statusColor,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                        )
+                    }
+
+                    if (autoCompleted) {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            color = Color(0xFF0D47A1).copy(alpha = 0.2f)
+                        ) {
+                            Text(
+                                text = "Auto-completed",
+                                color = Color(0xFF2196F3),
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Medium,
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+                            )
+                        }
+                    }
                 }
             }
 
@@ -381,14 +409,24 @@ private fun BookingDetailsSheet(
         startDate?.let { timeFormat.format(it) } ?: "-"
     }
 
-    val statusColor = when (booking.status) {
+    val autoCompleted = booking.status == BookingStatus.ACTIVE &&
+        endDate != null &&
+        endDate.before(Date())
+
+    val effectiveStatus = if (autoCompleted) {
+        BookingStatus.COMPLETED
+    } else {
+        booking.status
+    }
+
+    val statusColor = when (effectiveStatus) {
         BookingStatus.ACTIVE -> Color(0xFF4CAF50)
         BookingStatus.COMPLETED -> Color(0xFF2196F3)
         BookingStatus.CANCELLED -> Color(0xFFF44336)
         BookingStatus.RESERVED -> Color(0xFFFFC107)
     }
 
-    val statusBgColor = when (booking.status) {
+    val statusBgColor = when (effectiveStatus) {
         BookingStatus.ACTIVE -> Color(0xFF1B5E20).copy(alpha = 0.2f)
         BookingStatus.COMPLETED -> Color(0xFF0D47A1).copy(alpha = 0.2f)
         BookingStatus.CANCELLED -> Color(0xFFB71C1C).copy(alpha = 0.2f)
@@ -420,18 +458,36 @@ private fun BookingDetailsSheet(
                     fontWeight = FontWeight.SemiBold
                 )
             }
-            Surface(
-                shape = RoundedCornerShape(8.dp),
-                color = statusBgColor
-            ) {
-                Text(
-                    text = booking.status.name,
-                    color = statusColor,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
-                )
-            }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = statusBgColor
+                    ) {
+                        Text(
+                            text = effectiveStatus.name,
+                            color = statusColor,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                        )
+                    }
+
+                    if (autoCompleted) {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            color = Color(0xFF0D47A1).copy(alpha = 0.2f)
+                        ) {
+                            Text(
+                                text = "Auto-completed",
+                                color = Color(0xFF2196F3),
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Medium,
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+                            )
+                        }
+                    }
+                }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
