@@ -173,14 +173,7 @@ fun NavGraph() {
         }
 
         composable(Screen.Home.route) {
-            // Get user profile from ViewModel state
-            val userProfileForHome = when (val state = profileState) {
-                is Resource.Success -> state.data
-                else -> UserProfile("", "", "", "", null)
-            }
-            
             HomeScreen(
-                userProfile = userProfileForHome,
                 parkingSpots = parkingSpots,
                 homeViewModel = homeViewModel,
                 onParkingSpotReserved = updateParkingSpotStatus,

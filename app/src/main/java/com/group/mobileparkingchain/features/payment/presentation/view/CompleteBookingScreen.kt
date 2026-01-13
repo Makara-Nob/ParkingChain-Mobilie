@@ -1,6 +1,7 @@
 package com.group.mobileparkingchain.ui.screens.booking
 
 import android.graphics.BitmapFactory
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -452,9 +453,21 @@ fun CompleteBookingScreen(
 
     // Time Picker Dialog
     if (showTimePicker) {
+        val nowCalendar = remember { Calendar.getInstance() }
+        val selectedDateCalendar = remember(selectedDateTime) {
+            Calendar.getInstance().apply {
+                timeInMillis = selectedDateTime ?: System.currentTimeMillis()
+            }
+        }
+        val isToday = selectedDateCalendar.get(Calendar.YEAR) == nowCalendar.get(Calendar.YEAR) &&
+            selectedDateCalendar.get(Calendar.DAY_OF_YEAR) == nowCalendar.get(Calendar.DAY_OF_YEAR)
+
+        val initialHour = if (isToday) nowCalendar.get(Calendar.HOUR_OF_DAY) else 9
+        val initialMinute = if (isToday) nowCalendar.get(Calendar.MINUTE) else 0
+
         val timePickerState = rememberTimePickerState(
-            initialHour = 9,
-            initialMinute = 0
+            initialHour = initialHour,
+            initialMinute = initialMinute
         )
 
         AlertDialog(
@@ -468,10 +481,27 @@ fun CompleteBookingScreen(
                                 set(Calendar.HOUR_OF_DAY, timePickerState.hour)
                                 set(Calendar.MINUTE, timePickerState.minute)
                                 set(Calendar.SECOND, 0)
+                                set(Calendar.MILLISECOND, 0)
                             }
+
+                            val now = Calendar.getInstance()
+                            val sameDay = calendar.get(Calendar.YEAR) == now.get(Calendar.YEAR) &&
+                                calendar.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR)
+
+                            if (sameDay && calendar.timeInMillis <= now.timeInMillis) {
+                                Toast.makeText(
+                                    context,
+                                    "Please select a future time",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                return@TextButton
+                            }
+
                             selectedDateTime = calendar.timeInMillis
+                            showTimePicker = false
+                        } ?: run {
+                            showTimePicker = false
                         }
-                        showTimePicker = false
                     }
                 ) {
                     Text("OK", color = Color(0xFF2196F3))
