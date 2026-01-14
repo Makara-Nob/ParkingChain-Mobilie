@@ -1,6 +1,6 @@
 package com.group.mobileparkingchain.features.notification.data
 
-import NotificationType
+import com.group.mobileparkingchain.enumuration.NotificationType
 
 
 data class NotificationItem(

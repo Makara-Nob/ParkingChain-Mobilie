@@ -1,6 +1,6 @@
 package com.group.mobileparkingchain.features.notification.presentation.components
 
-import NotificationType
+import com.group.mobileparkingchain.enumuration.NotificationType
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.CheckCircle

@@ -18,9 +18,15 @@ data class AuthResponse(
     val data: AuthData?
 )
 
+data class BasicResponse(
+    val success: Boolean,
+    val message: String
+)
+
 data class AuthData(
     val user: User,
-    val token: String
+    val token: String,
+    val refreshToken: String? = null
 )
 
 data class RegisterRequest(
@@ -66,6 +72,24 @@ data class ChangePasswordRequest(
 
 data class TokenVerifyRequest(
     val token: String
+)
+
+data class RefreshTokenRequest(
+    val refreshToken: String
+)
+
+data class RefreshTokenResponse(
+    val success: Boolean,
+    val message: String,
+    val data: RefreshTokenData?
+)
+
+data class RefreshTokenData(
+    val token: String
+)
+
+data class LogoutRequest(
+    val refreshToken: String
 )
 
 // Profile Update Models

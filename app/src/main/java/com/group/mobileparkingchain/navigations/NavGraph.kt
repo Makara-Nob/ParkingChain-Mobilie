@@ -1,7 +1,7 @@
 package com.group.mobileparkingchain.navigations
 
-import ProfileScreen
-import Resource
+import com.group.mobileparkingchain.features.profile.presentation.view.ProfileScreen
+import com.group.mobileparkingchain.core.Resource
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState

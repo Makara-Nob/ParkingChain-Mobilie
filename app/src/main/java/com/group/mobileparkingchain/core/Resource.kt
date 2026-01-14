@@ -1,3 +1,5 @@
+package com.group.mobileparkingchain.core
+
 sealed class Resource<out T> {
     object Idle : Resource<Nothing>()
     object Loading : Resource<Nothing>()

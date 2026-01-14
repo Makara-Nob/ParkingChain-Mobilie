@@ -1,6 +1,6 @@
 package com.group.mobileparkingchain.features.profile.presentation.view
 
-import Resource
+import com.group.mobileparkingchain.core.Resource
 import android.graphics.Bitmap
 import android.graphics.Color as AndroidColor
 import android.net.Uri

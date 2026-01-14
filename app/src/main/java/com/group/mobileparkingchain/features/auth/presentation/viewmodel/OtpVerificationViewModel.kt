@@ -1,6 +1,6 @@
 package com.group.mobileparkingchain.features.auth.presentation.viewmodel
 
-import Resource
+import com.group.mobileparkingchain.core.Resource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.group.mobileparkingchain.features.auth.domain.VerifyEmailUseCase

@@ -1,3 +1,4 @@
+package com.group.mobileparkingchain.features.profile.presentation.view
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
@@ -10,11 +11,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -29,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.core.Resource
 import com.group.mobileparkingchain.features.profile.data.UserProfile
 import com.group.mobileparkingchain.features.profile.presentation.components.profileScreen.ProfileImage
 import com.group.mobileparkingchain.features.profile.presentation.components.profileScreen.ProfileInfoCard
@@ -51,13 +55,39 @@ fun ProfileScreen(
 ) {
     val context = LocalContext.current
     var selectedNavIndex by remember { mutableStateOf(2) } // Account tab selected
+    var showLogoutDialog by remember { mutableStateOf(false) }
 
     val profileState by viewModel.profileState.collectAsState()
 
     if (showSavedToast) {
         LaunchedEffect(showSavedToast) {
-            Toast.makeText(context, "Profile updated successfully ✅", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Profile updated successfully", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    if (showLogoutDialog) {
+        AlertDialog(
+            onDismissRequest = { showLogoutDialog = false },
+            title = { Text(text = "Logout", color = Color.White) },
+            text = { Text(text = "Are you sure you want to logout?", color = Color.Gray) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showLogoutDialog = false
+                        viewModel.logout()
+                        onLogout()
+                    }
+                ) {
+                    Text(text = "Logout", color = Color(0xFFEF4444))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showLogoutDialog = false }) {
+                    Text(text = "Cancel", color = Color.White)
+                }
+            },
+            containerColor = Color(0xFF1A1A1A)
+        )
     }
 
     Scaffold(
@@ -117,8 +147,7 @@ fun ProfileScreen(
                     onBookingHistory = onBookingHistory,
                     onTransactionHistory = onTransactionHistory,
                     onLogout = {
-                        viewModel.logout()
-                        onLogout()
+                        showLogoutDialog = true
                     },
                     modifier = Modifier.padding(padding)
                 )

@@ -1,6 +1,6 @@
 package com.group.mobileparkingchain.features.profile.presentation.viewmodel
 
-import Resource
+import com.group.mobileparkingchain.core.Resource
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

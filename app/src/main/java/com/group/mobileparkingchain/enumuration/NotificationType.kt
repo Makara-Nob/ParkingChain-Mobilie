@@ -1,3 +1,5 @@
+package com.group.mobileparkingchain.enumuration
+
 enum class NotificationType {
     PARKING_AVAILABLE,
     PARKING_ENDING,

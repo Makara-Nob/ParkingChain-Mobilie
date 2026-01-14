@@ -1,6 +1,6 @@
 package com.group.mobileparkingchain.ui.screens.signin
 
-import Resource
+import com.group.mobileparkingchain.core.Resource
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

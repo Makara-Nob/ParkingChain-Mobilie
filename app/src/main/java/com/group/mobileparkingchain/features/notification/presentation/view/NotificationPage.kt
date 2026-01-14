@@ -1,6 +1,6 @@
 package com.group.mobileparkingchain.ui.screens
 
-import NotificationType
+import com.group.mobileparkingchain.enumuration.NotificationType
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height

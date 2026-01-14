@@ -6,8 +6,13 @@ import com.group.mobileparkingchain.network.AuthEventBus
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Interceptor
 import okhttp3.Response
+import okhttp3.HttpUrl.Companion.toHttpUrl
+import org.json.JSONObject
 
 /**
  * AuthInterceptor adds authentication headers and handles token expiration.
@@ -23,6 +28,12 @@ import okhttp3.Response
 class AuthInterceptor(private val context: Context) : Interceptor {
 
     private val tokenDataStore = TokenDataStore(context)
+    private val refreshClient = OkHttpClient.Builder().build()
+    private val refreshLock = Any()
+
+    private val authBaseUrl = "http://10.0.2.2:3001/api/v1/auth/"
+    private val authHost = authBaseUrl.toHttpUrl().host
+    private val authPort = authBaseUrl.toHttpUrl().port
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val token = runBlocking {
@@ -33,23 +44,69 @@ class AuthInterceptor(private val context: Context) : Interceptor {
 
         val requestBuilder = chain.request().newBuilder()
         token?.let {
-            requestBuilder.addHeader("Authorization", "Bearer $it")
+            requestBuilder.header("Authorization", "Bearer $it")
             android.util.Log.d("AuthInterceptor", "Added Authorization header")
         } ?: android.util.Log.e("AuthInterceptor", "Token is null, header not added")
 
-        val response = chain.proceed(requestBuilder.build())
+        val request = requestBuilder.build()
+        val response = chain.proceed(request)
 
         // Handle 401 Unauthorized - token expired or invalid
-        if (response.code == 401) {
-            android.util.Log.w("AuthInterceptor", "401 Unauthorized - clearing token")
-            runBlocking {
-                tokenDataStore.clearToken()
+        val isAuthHost = request.url.host == authHost && request.url.port == authPort
+        if (response.code == 401 && request.header("X-Auth-Retry") == null && isAuthHost) {
+            android.util.Log.w("AuthInterceptor", "401 Unauthorized - attempting token refresh")
+
+            val newToken = synchronized(refreshLock) {
+                tryRefreshToken()
             }
+
+            if (newToken != null) {
+                response.close()
+                runBlocking { tokenDataStore.saveToken(newToken) }
+                val retryRequest = request.newBuilder()
+                    .header("Authorization", "Bearer $newToken")
+                    .header("X-Auth-Retry", "1")
+                    .build()
+                return chain.proceed(retryRequest)
+            }
+
+            android.util.Log.w("AuthInterceptor", "Token refresh failed - clearing token")
+            runBlocking { tokenDataStore.clearToken() }
             AuthEventBus.emitLogout()
-            // Note: NavGraph will detect cleared token on next API call or app restart
-            // For immediate logout, use a global event bus or shared flow (future enhancement)
         }
 
         return response
+    }
+
+    private fun tryRefreshToken(): String? {
+        val refreshToken = runBlocking {
+            tokenDataStore.refreshToken.map { it }.firstOrNull()
+        } ?: return null
+
+        val payload = JSONObject().apply {
+            put("refreshToken", refreshToken)
+        }
+
+        val requestBody = payload.toString()
+            .toRequestBody("application/json; charset=utf-8".toMediaType())
+
+        val request = okhttp3.Request.Builder()
+            .url("${authBaseUrl}token/refresh")
+            .post(requestBody)
+            .build()
+
+        val response = refreshClient.newCall(request).execute()
+        response.use {
+            if (!it.isSuccessful) {
+                return null
+            }
+            val body = it.body?.string() ?: return null
+            val json = JSONObject(body)
+            if (!json.optBoolean("success", false)) {
+                return null
+            }
+            val data = json.optJSONObject("data") ?: return null
+            return data.optString("token", null)
+        }
     }
 }

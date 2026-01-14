@@ -5,6 +5,7 @@ import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -16,6 +17,12 @@ interface AuthApiService {
 
     @POST("login")
     suspend fun login(@Body request: LoginRequest): Response<AuthResponse>
+
+    @POST("logout")
+    suspend fun logout(@Body request: LogoutRequest): Response<BasicResponse>
+
+    @POST("token/refresh")
+    suspend fun refreshToken(@Body request: RefreshTokenRequest): Response<RefreshTokenResponse>
 
     @POST("email/verify")
     suspend fun verifyEmail(@Body request: VerifyEmailRequest): Response<AuthResponse>
@@ -36,7 +43,9 @@ interface AuthApiService {
     suspend fun changePassword(@Body request: com.group.mobileparkingchain.features.auth.data.model.ChangePasswordRequest): Response<AuthResponse>
 
     @GET("me")
-    suspend fun getCurrentUser(): Response<AuthResponse>
+    suspend fun getCurrentUser(
+        @Header("Authorization") authHeader: String? = null
+    ): Response<AuthResponse>
 
     @POST("token/verify")
     suspend fun verifyToken(@Body request: TokenVerifyRequest): Response<AuthResponse>

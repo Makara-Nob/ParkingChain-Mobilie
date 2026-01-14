@@ -12,6 +12,7 @@ import com.group.mobileparkingchain.features.auth.domain.model.User
 import com.group.mobileparkingchain.features.auth.domain.repository.IAuthRepository
 import com.group.mobileparkingchain.network.datastore.TokenDataStore
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
@@ -32,6 +33,7 @@ class AuthRepository(
                     
                     if (authData != null) {
                         tokenDataStore.saveToken(authData.token)
+                        authData.refreshToken?.let { tokenDataStore.saveRefreshToken(it) }
                         tokenDataStore.saveUserId(authData.user.id)
                         Result.success(authData.user.toDomain())
                     } else {
@@ -77,6 +79,7 @@ class AuthRepository(
 
                     if (authData != null) {
                         tokenDataStore.saveToken(authData.token)
+                        authData.refreshToken?.let { tokenDataStore.saveRefreshToken(it) }
                         tokenDataStore.saveUserId(authData.user.id)
                         Result.success(authData.user.toDomain())
                     } else {
@@ -107,7 +110,22 @@ class AuthRepository(
     }
 
     override suspend fun logout() {
-        tokenDataStore.clearToken()
+        withContext(Dispatchers.IO) {
+            try {
+                val refreshToken = tokenDataStore.refreshToken.firstOrNull()
+                if (refreshToken != null) {
+                    authApiService.logout(
+                        com.group.mobileparkingchain.features.auth.data.model.LogoutRequest(
+                            refreshToken
+                        )
+                    )
+                }
+            } catch (e: Exception) {
+                // Ignore logout errors; clear local auth state regardless.
+            } finally {
+                tokenDataStore.clearToken()
+            }
+        }
     }
 
     override suspend fun verifyEmail(email: String, otp: String): Result<User> {
@@ -123,6 +141,7 @@ class AuthRepository(
                     // Backend now returns token + user on successful verification
                     if (authData != null) {
                         tokenDataStore.saveToken(authData.token)
+                        authData.refreshToken?.let { tokenDataStore.saveRefreshToken(it) }
                         tokenDataStore.saveUserId(authData.user.id)
                         Result.success(authData.user.toDomain())
                     } else {
@@ -154,7 +173,9 @@ class AuthRepository(
     override suspend fun getCurrentUser(): Result<User> {
         return withContext(Dispatchers.IO) {
             try {
-                val response = authApiService.getCurrentUser()
+                val token = tokenDataStore.token.firstOrNull()
+                val authHeader = token?.let { "Bearer $it" }
+                val response = authApiService.getCurrentUser(authHeader)
 
                 if (response.isSuccessful && response.body()?.success == true) {
                     val authResponse = response.body()!!
