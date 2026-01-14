@@ -1,6 +1,8 @@
 package com.group.mobileparkingchain.features.home.presentation.view
 
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -35,14 +37,15 @@ import com.group.mobileparkingchain.features.home.presentation.components.Search
 import com.group.mobileparkingchain.features.home.presentation.viewmodel.HomeViewModel
 import com.group.mobileparkingchain.features.payment.presentation.view.PaymentQrScreen
 import com.group.mobileparkingchain.ui.components.BottomNavigationBar
-import com.group.mobileparkingchain.ui.screens.booking.BookingInfo
+import com.group.mobileparkingchain.features.payment.presentation.view.BookingInfo
 import com.group.mobileparkingchain.ui.screens.booking.BookingPaymentScreen
-import com.group.mobileparkingchain.ui.screens.booking.CompleteBookingScreen
+import com.group.mobileparkingchain.features.payment.presentation.view.CompleteBookingScreen
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(
     parkingSpots: List<ParkingSpot>,
@@ -51,6 +54,7 @@ fun HomeScreen(
     onNavigateToMap: () -> Unit = {},
     onNavigateToChat: () -> Unit = {},
     onNavigateToBookingHistory: () -> Unit = {},
+    onSessionExpired: () -> Unit = {},
     onParkingSpotReserved: (String, ParkingStatus) -> Unit
 ) {
     // ----- UI State -----
@@ -136,6 +140,18 @@ fun HomeScreen(
     // ----- Handle booking creation result -----
     LaunchedEffect(bookingResult) {
         bookingResult?.onFailure { exception ->
+            val message = exception.message.orEmpty()
+            if (message.contains("token", ignoreCase = true) ||
+                message.contains("unauthorized", ignoreCase = true)
+            ) {
+                Toast.makeText(
+                    context,
+                    "Session expired. Please login again.",
+                    Toast.LENGTH_LONG
+                ).show()
+                onSessionExpired()
+                return@onFailure
+            }
             Toast.makeText(
                 context,
                 "Booking failed: ${exception.message}",

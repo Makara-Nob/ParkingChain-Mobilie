@@ -1,4 +1,4 @@
-package com.group.mobileparkingchain.ui.screens.booking
+package com.group.mobileparkingchain.features.payment.presentation.view
 
 import android.graphics.BitmapFactory
 import android.os.Build
@@ -457,6 +457,7 @@ fun CompleteBookingScreen(
     // Time Picker Dialog
     if (showTimePicker) {
         val nowCalendar = remember { Calendar.getInstance() }
+        val nowCalendarPlusMinute = remember { Calendar.getInstance().apply { add(Calendar.MINUTE, 1) } }
         val selectedDateCalendar = remember(selectedDateTime) {
             Calendar.getInstance().apply {
                 timeInMillis = selectedDateTime ?: System.currentTimeMillis()
@@ -465,8 +466,8 @@ fun CompleteBookingScreen(
         val isToday = selectedDateCalendar.get(Calendar.YEAR) == nowCalendar.get(Calendar.YEAR) &&
             selectedDateCalendar.get(Calendar.DAY_OF_YEAR) == nowCalendar.get(Calendar.DAY_OF_YEAR)
 
-        val initialHour = if (isToday) nowCalendar.get(Calendar.HOUR_OF_DAY) else 9
-        val initialMinute = if (isToday) nowCalendar.get(Calendar.MINUTE) else 0
+        val initialHour = if (isToday) nowCalendarPlusMinute.get(Calendar.HOUR_OF_DAY) else 9
+        val initialMinute = if (isToday) nowCalendarPlusMinute.get(Calendar.MINUTE) else 0
 
         val timePickerState = rememberTimePickerState(
             initialHour = initialHour,

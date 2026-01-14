@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -242,13 +243,12 @@ fun BookingHistoryItem(
     booking: Booking,
     onClick: () -> Unit
 ) {
-    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-    inputFormat.timeZone = TimeZone.getTimeZone("UTC")
     val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
     val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
-    
-    val startDate = try { inputFormat.parse(booking.startTime) } catch (e: Exception) { Date() }
-    val endDate = try { booking.endTime?.let { inputFormat.parse(it) } } catch (e: Exception) { null }
+
+    val startDate = parseUtcDate(booking.startTime)
+    val endDate = parseUtcDate(booking.endTime)
+        ?: calculateEndDateFromDuration(startDate, booking.durationHours)
     val timeText = if (endDate != null) {
         "${startDate?.let { timeFormat.format(it) } ?: "-"} - ${timeFormat.format(endDate)}"
     } else {
@@ -321,21 +321,6 @@ fun BookingHistoryItem(
                         )
                     }
 
-                    if (autoCompleted) {
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Surface(
-                            shape = RoundedCornerShape(8.dp),
-                            color = Color(0xFF0D47A1).copy(alpha = 0.2f)
-                        ) {
-                            Text(
-                                text = "Auto-completed",
-                                color = Color(0xFF2196F3),
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Medium,
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
-                            )
-                        }
-                    }
                 }
             }
 
@@ -396,13 +381,12 @@ private fun BookingDetailsSheet(
     booking: Booking,
     onPayClick: () -> Unit
 ) {
-    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-    inputFormat.timeZone = TimeZone.getTimeZone("UTC")
     val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
     val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
 
-    val startDate = try { inputFormat.parse(booking.startTime) } catch (e: Exception) { Date() }
-    val endDate = try { booking.endTime?.let { inputFormat.parse(it) } } catch (e: Exception) { null }
+    val startDate = parseUtcDate(booking.startTime)
+    val endDate = parseUtcDate(booking.endTime)
+        ?: calculateEndDateFromDuration(startDate, booking.durationHours)
     val timeText = if (endDate != null) {
         "${startDate?.let { timeFormat.format(it) } ?: "-"} - ${timeFormat.format(endDate)}"
     } else {
@@ -472,21 +456,6 @@ private fun BookingDetailsSheet(
                         )
                     }
 
-                    if (autoCompleted) {
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Surface(
-                            shape = RoundedCornerShape(8.dp),
-                            color = Color(0xFF0D47A1).copy(alpha = 0.2f)
-                        ) {
-                            Text(
-                                text = "Auto-completed",
-                                color = Color(0xFF2196F3),
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Medium,
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
-                            )
-                        }
-                    }
                 }
         }
 
@@ -554,4 +523,28 @@ private fun BookingDetailsSheet(
             }
         }
     }
+}
+
+private fun parseUtcDate(dateString: String?): Date? {
+    if (dateString.isNullOrBlank()) return null
+    val patterns = listOf(
+        "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+        "yyyy-MM-dd'T'HH:mm:ss'Z'"
+    )
+    for (pattern in patterns) {
+        val format = SimpleDateFormat(pattern, Locale.US)
+        format.timeZone = TimeZone.getTimeZone("UTC")
+        try {
+            return format.parse(dateString)
+        } catch (e: Exception) {
+            // Try next format
+        }
+    }
+    return null
+}
+
+private fun calculateEndDateFromDuration(startDate: Date?, durationHours: Double?): Date? {
+    if (startDate == null || durationHours == null) return null
+    val durationMillis = (durationHours * 60 * 60 * 1000).toLong()
+    return Date(startDate.time + durationMillis)
 }

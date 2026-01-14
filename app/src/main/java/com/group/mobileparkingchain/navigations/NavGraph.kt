@@ -3,6 +3,7 @@ package com.group.mobileparkingchain.navigations
 import ProfileScreen
 import Resource
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +38,8 @@ import com.group.mobileparkingchain.features.profile.data.UserProfile
 import com.group.mobileparkingchain.features.profile.presentation.viewmodel.ProfileViewModel
 import com.group.mobileparkingchain.features.profile.presentation.viewmodel.ProfileViewModelFactory
 import com.group.mobileparkingchain.network.RetrofitInstance
+import com.group.mobileparkingchain.network.AuthEvent
+import com.group.mobileparkingchain.network.AuthEventBus
 import com.group.mobileparkingchain.ui.screens.signin.SignInScreen
 import com.group.mobileparkingchain.ui.screens.signup.SignUpScreen
 import com.group.mobileparkingchain.ui.screens.welcome.WelcomeScreen
@@ -80,6 +83,20 @@ fun NavGraph() {
     // ----- UI State from ViewModel -----
     val parkingSpots by homeViewModel.parkingSpots.collectAsState()
     val profileState by profileViewModel.profileState.collectAsState()
+
+    LaunchedEffect(navController) {
+        AuthEventBus.events.collect { event ->
+            if (event is AuthEvent.Logout) {
+                val currentRoute = navController.currentBackStackEntry?.destination?.route
+                if (currentRoute != Screen.Welcome.route && currentRoute != Screen.SignIn.route) {
+                    navController.navigate(Screen.Welcome.route) {
+                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            }
+        }
+    }
     
     // Function to update parking spot status (Optimistic update)
     val updateParkingSpotStatus: (String, ParkingStatus) -> Unit = { spotId, newStatus ->
@@ -177,6 +194,11 @@ fun NavGraph() {
                 parkingSpots = parkingSpots,
                 homeViewModel = homeViewModel,
                 onParkingSpotReserved = updateParkingSpotStatus,
+                onSessionExpired = {
+                    navController.navigate(Screen.Welcome.route) {
+                        popUpTo(Screen.Home.route) { inclusive = true }
+                    }
+                },
                 onNavigateToProfile = {
                     navController.navigate(Screen.Profile.route)
                 },

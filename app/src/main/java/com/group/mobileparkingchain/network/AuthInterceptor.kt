@@ -2,6 +2,7 @@ package com.group.mobileparkingchain.network
 
 import android.content.Context
 import com.group.mobileparkingchain.network.datastore.TokenDataStore
+import com.group.mobileparkingchain.network.AuthEventBus
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
@@ -44,6 +45,7 @@ class AuthInterceptor(private val context: Context) : Interceptor {
             runBlocking {
                 tokenDataStore.clearToken()
             }
+            AuthEventBus.emitLogout()
             // Note: NavGraph will detect cleared token on next API call or app restart
             // For immediate logout, use a global event bus or shared flow (future enhancement)
         }
