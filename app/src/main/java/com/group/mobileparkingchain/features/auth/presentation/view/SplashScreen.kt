@@ -3,9 +3,9 @@ package com.group.mobileparkingchain.features.auth.presentation.view
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -66,6 +66,34 @@ fun SplashScreen(
         label = "alpha"
     )
 
+    val dotAlpha1 by infiniteTransition.animateFloat(
+        initialValue = 0.3f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(600, delayMillis = 0, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "dot_alpha_1"
+    )
+    val dotAlpha2 by infiniteTransition.animateFloat(
+        initialValue = 0.3f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(600, delayMillis = 200, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "dot_alpha_2"
+    )
+    val dotAlpha3 by infiniteTransition.animateFloat(
+        initialValue = 0.3f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(600, delayMillis = 400, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "dot_alpha_3"
+    )
+
     // Navigate based on auth state
     LaunchedEffect(authState) {
         when (val state = authState) {
@@ -109,10 +137,14 @@ fun SplashScreen(
             when (val state = authState) {
                 is AuthState.Loading -> {
                     // Loading state: checking credentials
-                    CircularProgressIndicator(
-                        color = Color(0xFF2196F3),
-                        modifier = Modifier.size(48.dp)
-                    )
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Dot(alpha = dotAlpha1)
+                        Dot(alpha = dotAlpha2)
+                        Dot(alpha = dotAlpha3)
+                    }
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = "Checking credentials...",
@@ -168,4 +200,14 @@ fun SplashScreen(
                 .padding(bottom = 24.dp)
         )
     }
+}
+
+@Composable
+private fun Dot(alpha: Float) {
+    Box(
+        modifier = Modifier
+            .size(10.dp)
+            .alpha(alpha)
+            .background(color = Color(0xFF2196F3), shape = CircleShape)
+    )
 }

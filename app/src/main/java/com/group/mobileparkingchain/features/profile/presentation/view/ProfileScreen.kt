@@ -50,6 +50,7 @@ fun ProfileScreen(
     onChangePassword: () -> Unit = {},
     onBookingHistory: () -> Unit = {},
     onTransactionHistory: () -> Unit = {},
+    onAbout: () -> Unit = {},
     onLogout: () -> Unit = {},
     showSavedToast: Boolean = false
 ) {
@@ -146,6 +147,7 @@ fun ProfileScreen(
                     onChangePassword = onChangePassword,
                     onBookingHistory = onBookingHistory,
                     onTransactionHistory = onTransactionHistory,
+                    onAbout = onAbout,
                     onLogout = {
                         showLogoutDialog = true
                     },
@@ -164,6 +166,7 @@ private fun ProfileContent(
     onChangePassword: () -> Unit,
     onBookingHistory: () -> Unit,
     onTransactionHistory: () -> Unit,
+    onAbout: () -> Unit,
     onLogout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -269,6 +272,24 @@ private fun ProfileContent(
                 "Logout" to onLogout
             ),
             isDangerZone = true
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = "About",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = Color.White,
+            modifier = Modifier.align(Alignment.Start)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        ProfileOptionsCard(
+            options = listOf(
+                "About" to onAbout
+            )
         )
 
         Spacer(modifier = Modifier.height(32.dp))

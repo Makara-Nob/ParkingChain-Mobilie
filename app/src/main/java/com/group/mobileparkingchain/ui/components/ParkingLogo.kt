@@ -14,7 +14,7 @@ fun ParkingLogo(
     size: Int = 300
 ) {
     Image(
-        painter = painterResource(id = R.drawable.parking_logo), // your image file
+        painter = painterResource(id = R.drawable.parking_logo),
         contentDescription = "Parking Logo",
         modifier = modifier.size(size.dp)
     )

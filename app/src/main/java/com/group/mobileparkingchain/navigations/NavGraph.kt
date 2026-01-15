@@ -34,6 +34,7 @@ import com.group.mobileparkingchain.features.parking.data.repository.ParkingRepo
 import com.group.mobileparkingchain.features.payment.data.repository.PaymentRepository
 import com.group.mobileparkingchain.features.payment.presentation.viewmodel.PaymentViewModel
 import com.group.mobileparkingchain.features.profile.presentation.view.EditProfileScreen
+import com.group.mobileparkingchain.features.profile.presentation.view.AboutScreen
 import com.group.mobileparkingchain.features.profile.data.UserProfile
 import com.group.mobileparkingchain.features.profile.presentation.viewmodel.ProfileViewModel
 import com.group.mobileparkingchain.features.profile.presentation.viewmodel.ProfileViewModelFactory
@@ -249,11 +250,21 @@ fun NavGraph() {
                 onTransactionHistory = {
                     navController.navigate(Screen.TransactionHistory.route)
                 },
+                onAbout = {
+                    navController.navigate(Screen.About.route)
+                },
                 onLogout = {
                     navController.navigate(Screen.SignIn.route) {
                         popUpTo(0) { inclusive = true }
                     }
                 }
+            )
+        }
+
+        // About Screen
+        composable(Screen.About.route) {
+            AboutScreen(
+                onBack = { navController.popBackStack() }
             )
         }
 
