@@ -93,7 +93,8 @@ class SplashViewModel(
                         errorMessage.contains("Unauthorized") ||
                         errorMessage.contains("Invalid token") ||
                         errorMessage.contains("expired token") ||
-                        errorMessage.contains("Invalid or expired token")) {
+                        errorMessage.contains("Invalid or expired token") ||
+                        errorMessage.contains("User not found")) {
                         // Token is invalid/expired → clear and force login
                         tokenDataStore.clearToken()
                         _authState.value = AuthState.Unauthenticated("Session expired. Please login again.")

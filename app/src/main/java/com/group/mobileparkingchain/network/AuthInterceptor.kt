@@ -31,7 +31,7 @@ class AuthInterceptor(private val context: Context) : Interceptor {
     private val refreshClient = OkHttpClient.Builder().build()
     private val refreshLock = Any()
 
-    private val authBaseUrl = "http://10.0.2.2:3001/api/v1/auth/"
+    private val authBaseUrl = "http://18.142.125.101:3001/api/v1/auth/"
     private val authHost = authBaseUrl.toHttpUrl().host
     private val authPort = authBaseUrl.toHttpUrl().port
 

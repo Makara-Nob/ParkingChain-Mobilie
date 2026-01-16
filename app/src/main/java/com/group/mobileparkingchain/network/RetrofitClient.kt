@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitInstance {
     // Host IP for Emulator (10.0.2.2) or Physical Device (IP)
-    private const val HOST_IP = "10.0.2.2" 
+    private const val HOST_IP = "18.142.125.101"
     
     // Updated base URLs to match API specification
     // Auth Service: port 3001

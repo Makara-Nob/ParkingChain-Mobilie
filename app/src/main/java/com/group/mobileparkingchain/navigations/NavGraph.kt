@@ -230,6 +230,9 @@ fun NavGraph() {
 
         // Profile Screen
         composable(Screen.Profile.route) {
+            LaunchedEffect(Unit) {
+                profileViewModel.loadUserProfile()
+            }
             ProfileScreen(
                 viewModel = profileViewModel,
                 onEditClick = {

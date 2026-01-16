@@ -4,14 +4,17 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.Canvas
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -66,33 +69,6 @@ fun SplashScreen(
         label = "alpha"
     )
 
-    val dotAlpha1 by infiniteTransition.animateFloat(
-        initialValue = 0.3f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(600, delayMillis = 0, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "dot_alpha_1"
-    )
-    val dotAlpha2 by infiniteTransition.animateFloat(
-        initialValue = 0.3f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(600, delayMillis = 200, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "dot_alpha_2"
-    )
-    val dotAlpha3 by infiniteTransition.animateFloat(
-        initialValue = 0.3f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(600, delayMillis = 400, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "dot_alpha_3"
-    )
 
     // Navigate based on auth state
     LaunchedEffect(authState) {
@@ -137,14 +113,11 @@ fun SplashScreen(
             when (val state = authState) {
                 is AuthState.Loading -> {
                     // Loading state: checking credentials
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Dot(alpha = dotAlpha1)
-                        Dot(alpha = dotAlpha2)
-                        Dot(alpha = dotAlpha3)
-                    }
+                    CircularProgressIndicator(
+                        color = Color(0xFF2196F3),
+                        modifier = Modifier.size(48.dp),
+                        strokeWidth = 4.dp
+                    )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = "Checking credentials...",
@@ -190,6 +163,14 @@ fun SplashScreen(
             }
         }
 
+        if (authState is AuthState.Loading) {
+            RotatingDotsSpinner(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 48.dp)
+            )
+        }
+
         // App version footer (optional)
         Text(
             text = "v1.0.0",
@@ -203,11 +184,34 @@ fun SplashScreen(
 }
 
 @Composable
-private fun Dot(alpha: Float) {
-    Box(
-        modifier = Modifier
-            .size(10.dp)
-            .alpha(alpha)
-            .background(color = Color(0xFF2196F3), shape = CircleShape)
+private fun RotatingDotsSpinner(modifier: Modifier = Modifier) {
+    val infiniteTransition = rememberInfiniteTransition(label = "spinner_rotation")
+    val rotation by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1200, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "rotation"
     )
+
+    Canvas(modifier = modifier.size(36.dp)) {
+        val dotCount = 8
+        val radius = size.minDimension * 0.35f
+        val dotRadius = size.minDimension * 0.08f
+        rotate(rotation) {
+            for (i in 0 until dotCount) {
+                val angle = (i * 360f / dotCount)
+                val alpha = 0.3f + (i / (dotCount - 1f)) * 0.7f
+                val x = center.x + radius * kotlin.math.cos(Math.toRadians(angle.toDouble())).toFloat()
+                val y = center.y + radius * kotlin.math.sin(Math.toRadians(angle.toDouble())).toFloat()
+                drawCircle(
+                    color = Color(0xFF2196F3).copy(alpha = alpha),
+                    radius = dotRadius,
+                    center = androidx.compose.ui.geometry.Offset(x, y)
+                )
+            }
+        }
+    }
 }

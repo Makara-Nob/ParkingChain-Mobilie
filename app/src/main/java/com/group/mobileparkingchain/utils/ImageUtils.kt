@@ -113,7 +113,7 @@ object ImageUtils {
     fun getFullImageUrl(relativePath: String?): String? {
         if (relativePath.isNullOrBlank()) return null
         // Use 10.0.2.2 for Android emulator to access localhost
-        return "http://10.0.2.2:3001/$relativePath"
+        return "http://18.142.125.101:3001/$relativePath"
     }
 
     /**
