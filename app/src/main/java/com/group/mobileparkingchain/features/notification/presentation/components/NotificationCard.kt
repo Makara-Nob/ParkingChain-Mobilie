@@ -23,6 +23,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.group.mobileparkingchain.features.notification.data.NotificationItem
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 
 @Composable
@@ -38,13 +40,13 @@ fun NotificationCard(
                 color = Color(0xFF1E1E1E),
                 shape = MaterialTheme.shapes.medium
             )
-            .padding(16.dp),
+            .padding(sdp(16)),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Icon
         Box(
             modifier = Modifier
-                .size(48.dp)
+                .size(sdp(48))
                 .background(
                     color = notification.type.getIconColor(),
                     shape = CircleShape
@@ -55,35 +57,35 @@ fun NotificationCard(
                 imageVector = notification.type.getIcon(),
                 contentDescription = null,
                 tint = Color.White,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(sdp(24))
             )
         }
 
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(sdp(16)))
 
         // Content
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = notification.title,
-                fontSize = 15.sp,
+                fontSize = ssp(15),
                 fontWeight = FontWeight.Medium,
                 color = if (notification.isRead) Color(0xFF888888) else Color.White,
-                lineHeight = 20.sp
+                lineHeight = ssp(20)
             )
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(sdp(4)))
             Text(
                 text = notification.time,
-                fontSize = 13.sp,
+                fontSize = ssp(13),
                 color = Color(0xFF666666)
             )
         }
 
         // Unread dot
         if (!notification.isRead) {
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(sdp(8)))
             Box(
                 modifier = Modifier
-                    .size(8.dp)
+                    .size(sdp(8))
                     .background(
                         color = Color(0xFF4A90E2),
                         shape = CircleShape

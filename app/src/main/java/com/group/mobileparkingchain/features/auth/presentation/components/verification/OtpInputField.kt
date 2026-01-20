@@ -20,6 +20,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @Composable
 fun OtpInputField(
@@ -37,7 +39,7 @@ fun OtpInputField(
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         decorationBox = {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(sdp(8)),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 repeat(length) { index ->
@@ -51,26 +53,26 @@ fun OtpInputField(
                         else -> Color(0xFF2C3E50)
                     }
                     
-                    val borderWidth = if (isFocused) 2.dp else 1.dp
+                    val borderWidth = if (isFocused) sdp(2) else sdp(1)
 
                     Box(
                         modifier = Modifier
-                            .size(50.dp)
+                            .size(sdp(50))
                             .background(
                                 color = Color(0xFF1E2A3A),
-                                shape = RoundedCornerShape(12.dp)
+                                shape = RoundedCornerShape(sdp(12))
                             )
                             .border(
                                 width = borderWidth,
                                 color = borderColor,
-                                shape = RoundedCornerShape(12.dp)
+                                shape = RoundedCornerShape(sdp(12))
                             ),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = char,
                             color = Color.White,
-                            fontSize = 24.sp,
+                            fontSize = ssp(24),
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
                         )

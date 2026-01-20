@@ -10,13 +10,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.group.mobileparkingchain.ui.theme.PrimaryBlue
 import com.group.mobileparkingchain.ui.theme.TextGray
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @Composable
 fun SignUpRow(onNavigateToSignUp: () -> Unit) {
     Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-        Text(text = "Don't have an account? ", color = TextGray, fontSize = 14.sp)
+        Text(text = "Don't have an account? ", color = TextGray, fontSize = ssp(14))
         TextButton(onClick = onNavigateToSignUp) {
-            Text(text = "Sign Up", color = PrimaryBlue, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+            Text(text = "Sign Up", color = PrimaryBlue, fontSize = ssp(14), fontWeight = FontWeight.Bold)
         }
     }
 }

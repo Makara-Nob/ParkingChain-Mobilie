@@ -13,6 +13,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @Composable
 fun EditableField(
@@ -25,17 +27,17 @@ fun EditableField(
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = label,
-            fontSize = 14.sp,
+            fontSize = ssp(14),
             color = Color.White,
             fontWeight = FontWeight.Medium,
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier.padding(bottom = sdp(8))
         )
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
             placeholder = { Text(placeholder, color = Color.Gray) },
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(sdp(12)),
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedContainerColor = Color(0xFF1E2836),
                 focusedContainerColor = Color(0xFF1E2836),

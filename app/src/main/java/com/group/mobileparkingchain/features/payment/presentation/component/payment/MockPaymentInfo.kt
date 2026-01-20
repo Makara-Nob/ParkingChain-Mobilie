@@ -17,22 +17,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @Composable
 fun MockPaymentInfo() {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF1E2836)),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(sdp(12))
     ) {
-        Column(modifier = Modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("🧪", fontSize = 48.sp)
-            Spacer(modifier = Modifier.height(16.dp))
-            Text("Mock Payment Mode", fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
-            Spacer(modifier = Modifier.height(8.dp))
+        Column(modifier = Modifier.padding(sdp(20)), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text("🧪", fontSize = ssp(48))
+            Spacer(modifier = Modifier.height(sdp(16)))
+            Text("Mock Payment Mode", fontSize = ssp(18), fontWeight = FontWeight.SemiBold, color = Color.White)
+            Spacer(modifier = Modifier.height(sdp(8)))
             Text(
                 "This is a test payment method. Your booking will be confirmed instantly without any actual payment.",
-                fontSize = 14.sp,
+                fontSize = ssp(14),
                 color = Color.Gray,
                 textAlign = TextAlign.Center
             )

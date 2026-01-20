@@ -7,10 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 import com.group.mobileparkingchain.ui.theme.PrimaryBlue
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @Composable
 fun ForgotPasswordText(onForgotPassword: () -> Unit) {
     TextButton(onClick = onForgotPassword, modifier = Modifier.fillMaxWidth()) {
-        Text(text = "Forgot Password?", color = PrimaryBlue, fontSize = 14.sp)
+        Text(text = "Forgot Password?", color = PrimaryBlue, fontSize = ssp(14))
     }
 }

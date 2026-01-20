@@ -17,6 +17,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 import com.group.mobileparkingchain.features.payment.data.ParkingDetail
 import com.group.mobileparkingchain.features.payment.presentation.component.reservation.ActionButton
 import com.group.mobileparkingchain.features.payment.presentation.component.reservation.InfoRow
@@ -43,46 +45,46 @@ fun ReservationDetailSheet(
         dragHandle = {
             Box(
                 modifier = Modifier
-                    .padding(vertical = 12.dp)
-                    .width(40.dp)
-                    .height(4.dp)
+                    .padding(vertical = sdp(12))
+                    .width(sdp(40))
+                    .height(sdp(4))
                     .background(
                         Color.White.copy(alpha = 0.3f),
-                        shape = RoundedCornerShape(2.dp)
+                        shape = RoundedCornerShape(sdp(2))
                     )
             )
         }
     ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(24.dp)) {
+        Column(modifier = Modifier.fillMaxWidth().padding(sdp(24))) {
 
             SheetHeader(id = parkingDetail.id, status = parkingDetail.status)
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(sdp(24)))
 
             // Info Rows
             parkingDetail.location?.takeIf { it.isNotBlank() }?.let { location ->
                 InfoRow(label = "Location", value = location)
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(sdp(16)))
             }
             InfoRow(label = "Type", value = parkingDetail.type)
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(sdp(16)))
             parkingDetail.lastUpdated?.takeIf { it.isNotBlank() }?.let { updated ->
                 InfoRow(label = "Last Updated", value = formatLastUpdated(updated))
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(sdp(24)))
             }
 
             Divider(color = Color.White.copy(alpha = 0.1f))
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(sdp(24)))
 
             parkingDetail.pricePerHour?.let { price ->
                 InfoRow(label = "Pricing", value = "${Formatters.moneyWithSymbol(price, "$")}/hr")
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(sdp(24)))
             }
 
             ActionButton("Reserve Now", onClick = onReserve)
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(sdp(12)))
             ActionButton("Cancel", onClick = onDismiss, filled = false)
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(sdp(16)))
         }
     }
 }

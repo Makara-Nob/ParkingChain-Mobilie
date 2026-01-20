@@ -40,6 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.group.mobileparkingchain.features.chat.data.model.ChatMessage
 import com.group.mobileparkingchain.features.chat.presentation.viewmodel.ChatViewModel
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -89,7 +91,7 @@ fun ChatScreen(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = sdp(16))
             ) {
                 items(messages) { message ->
                     MessageBubble(message)
@@ -100,28 +102,28 @@ fun ChatScreen(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 8.dp),
+                                .padding(vertical = sdp(8)),
                             contentAlignment = Alignment.CenterStart
                         ) {
                             // Helper box for alignment and shape of the bot's "thinking" state
                             Column(
                                 modifier = Modifier
-                                    .widthIn(max = 280.dp)
+                                    .widthIn(max = sdp(280))
                                     .clip(
                                         RoundedCornerShape(
-                                            topStart = 16.dp,
-                                            topEnd = 16.dp,
-                                            bottomStart = 0.dp,
-                                            bottomEnd = 16.dp
+                                            topStart = sdp(16),
+                                            topEnd = sdp(16),
+                                            bottomStart = sdp(0),
+                                            bottomEnd = sdp(16)
                                         )
                                     )
                                     .background(Color(0xFF2C2C2C))
-                                    .padding(12.dp)
+                                    .padding(sdp(12))
                             ) {
                                 TypingIndicator(
-                                    dotSize = 8.dp,
+                                    dotSize = sdp(8),
                                     dotColor = Color.White,
-                                    modifier = Modifier.padding(horizontal = 4.dp)
+                                    modifier = Modifier.padding(horizontal = sdp(4))
                                 )
                             }
                         }
@@ -134,7 +136,7 @@ fun ChatScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color(0xFF1E1E1E))
-                    .padding(8.dp),
+                    .padding(sdp(8)),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 TextField(
@@ -183,28 +185,28 @@ fun MessageBubble(message: ChatMessage) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp),
+            .padding(vertical = sdp(4)),
         contentAlignment = if (isUser) Alignment.CenterEnd else Alignment.CenterStart
     ) {
         Column(
             modifier = Modifier
-                .widthIn(max = 280.dp)
+                .widthIn(max = sdp(280))
                 .clip(
                     RoundedCornerShape(
-                        topStart = 16.dp,
-                        topEnd = 16.dp,
-                        bottomStart = if (isUser) 16.dp else 0.dp,
-                        bottomEnd = if (isUser) 0.dp else 16.dp
+                        topStart = sdp(16),
+                        topEnd = sdp(16),
+                        bottomStart = if (isUser) sdp(16) else sdp(0),
+                        bottomEnd = if (isUser) sdp(0) else sdp(16)
                     )
                 )
                 .background(if (isUser) Color(0xFF0066CC) else Color(0xFF2C2C2C))
-                .padding(12.dp)
+                .padding(sdp(12))
         ) {
             Text(
                 text = message.content,
                 color = Color.White,
-                fontSize = 16.sp,
-                lineHeight = 22.sp
+                fontSize = ssp(16),
+                lineHeight = ssp(22)
             )
         }
     }

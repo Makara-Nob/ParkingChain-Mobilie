@@ -17,6 +17,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.group.mobileparkingchain.ui.theme.PrimaryBlue
 import com.group.mobileparkingchain.ui.theme.TextGray
+import com.group.mobileparkingchain.ui.theme.sdp
 
 @Composable
 fun EmailInput(email: String, onEmailChange: (String) -> Unit) {
@@ -25,8 +26,8 @@ fun EmailInput(email: String, onEmailChange: (String) -> Unit) {
         onValueChange = onEmailChange,
         placeholder = { Text("Email Address", color = TextGray) },
         leadingIcon = { Icon(imageVector = Icons.Default.Email, contentDescription = "Email", tint = TextGray) },
-        modifier = Modifier.fillMaxWidth().height(60.dp),
-        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.fillMaxWidth().height(sdp(60)),
+        shape = RoundedCornerShape(sdp(12)),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = PrimaryBlue,
             unfocusedBorderColor = Color(0xFF334155),

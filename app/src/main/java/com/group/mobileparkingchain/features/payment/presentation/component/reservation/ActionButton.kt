@@ -14,6 +14,8 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @Composable
 fun ActionButton(
@@ -22,28 +24,28 @@ fun ActionButton(
     filled: Boolean = true,
     modifier: Modifier = Modifier.fillMaxWidth()
 ) {
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(sdp(12))
     if (filled) {
         Button(
             onClick = onClick,
-            modifier = modifier.height(56.dp),
+            modifier = modifier.height(sdp(56)),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3)),
             shape = shape
         ) {
-            Text(text = text, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+            Text(text = text, fontSize = ssp(16), fontWeight = FontWeight.SemiBold)
         }
     } else {
         OutlinedButton(
             onClick = onClick,
-            modifier = modifier.height(56.dp),
+            modifier = modifier.height(sdp(56)),
             colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
             border = ButtonDefaults.outlinedButtonBorder.copy(
-                width = 1.dp,
+                width = sdp(1),
                 brush = SolidColor(Color.White.copy(alpha = 0.3f))
             ),
             shape = shape
         ) {
-            Text(text = text, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+            Text(text = text, fontSize = ssp(16), fontWeight = FontWeight.Medium)
         }
     }
 }

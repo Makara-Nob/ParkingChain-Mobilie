@@ -18,35 +18,37 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @Composable
 fun Legend() {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF1E2836)),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(sdp(16))
     ) {
-        Column(modifier = Modifier.padding(18.dp)) {
+        Column(modifier = Modifier.padding(sdp(18))) {
             Text(
                 text = "Parking Status",
-                fontSize = 16.sp,
+                fontSize = ssp(16),
                 fontWeight = FontWeight.SemiBold,
                 color = Color.White,
                 letterSpacing = 0.3.sp
             )
-            Spacer(Modifier.height(14.dp))
+            Spacer(Modifier.height(sdp(14)))
             LegendItem(
                 color = Color(0xFF4ADE80),
                 icon = Icons.Filled.CheckCircle,
                 label = "Available"
             )
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(sdp(10)))
             LegendItem(
                 color = Color(0xFFEF4444),
                 icon = Icons.Filled.Lock,
                 label = "Occupied"
             )
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(sdp(10)))
             LegendItem(
                 color = Color(0xFF3B82F6),
                 icon = Icons.Filled.Schedule,
@@ -65,7 +67,7 @@ fun LegendItem(color: Color, icon: ImageVector, label: String) {
         // Icon with background
         Box(
             modifier = Modifier
-                .size(32.dp)
+                .size(sdp(32))
                 .clip(CircleShape)
                 .background(color.copy(alpha = 0.15f)),
             contentAlignment = Alignment.Center
@@ -73,15 +75,15 @@ fun LegendItem(color: Color, icon: ImageVector, label: String) {
             Icon(
                 imageVector = icon,
                 contentDescription = label,
-                modifier = Modifier.size(18.dp),
+                modifier = Modifier.size(sdp(18)),
                 tint = color
             )
         }
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(modifier = Modifier.width(sdp(12)))
         Text(
             text = label,
             color = Color.White.copy(alpha = 0.85f),
-            fontSize = 14.sp,
+            fontSize = ssp(14),
             fontWeight = FontWeight.Medium,
             letterSpacing = 0.2.sp
         )

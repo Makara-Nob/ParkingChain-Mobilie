@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.group.mobileparkingchain.ui.theme.sdp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,7 +30,7 @@ fun HomeTopBar(
                 Text(
                     text = "Smart Parking",
                     fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.offset(y = (-4).dp)
+                    modifier = Modifier.offset(y = (-sdp(4)))
                 )
             }
         },

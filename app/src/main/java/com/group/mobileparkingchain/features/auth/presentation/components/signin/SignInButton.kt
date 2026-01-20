@@ -14,6 +14,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.group.mobileparkingchain.ui.theme.PrimaryBlue
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @Composable
 fun SignInButton(
@@ -25,17 +27,17 @@ fun SignInButton(
     Button(
         onClick = onClick,
         enabled = !isLoading && email.isNotBlank() && password.isNotBlank(),
-        modifier = Modifier.fillMaxWidth().height(56.dp),
-        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.fillMaxWidth().height(sdp(56)),
+        shape = RoundedCornerShape(sdp(12)),
         colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue)
     ) {
         if (isLoading) {
             CircularProgressIndicator(
                 color = Color.White,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(sdp(20))
             )
         } else {
-            Text("Sign In", color = Color.White, fontSize = 16.sp)
+            Text("Sign In", color = Color.White, fontSize = ssp(16))
         }
     }
 }

@@ -10,19 +10,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @Composable
 fun InfoRow(label: String, value: String) {
     Column {
         Text(
             text = label,
-            fontSize = 14.sp,
+            fontSize = ssp(14),
             color = Color.Gray
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(sdp(4)))
         Text(
             text = value,
-            fontSize = 16.sp,
+            fontSize = ssp(16),
             fontWeight = FontWeight.Medium,
             color = Color.White
         )

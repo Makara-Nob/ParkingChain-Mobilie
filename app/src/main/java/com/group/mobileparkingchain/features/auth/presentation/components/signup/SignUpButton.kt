@@ -15,6 +15,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.group.mobileparkingchain.ui.theme.PrimaryBlue
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @Composable
 fun SignUpButton(
@@ -28,8 +30,8 @@ fun SignUpButton(
 ) {
     Button(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth().height(56.dp),
-        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.fillMaxWidth().height(sdp(56)),
+        shape = RoundedCornerShape(sdp(12)),
         colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue),
         enabled = !isLoading && firstName.isNotEmpty() && lastName.isNotEmpty() &&
                 email.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty()
@@ -37,10 +39,10 @@ fun SignUpButton(
         if (isLoading) {
             CircularProgressIndicator(
                 color = Color.White,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(sdp(20))
             )
         } else {
-            Text(text = "Sign Up", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White)
+            Text(text = "Sign Up", fontSize = ssp(18), fontWeight = FontWeight.Bold, color = Color.White)
         }
     }
 }

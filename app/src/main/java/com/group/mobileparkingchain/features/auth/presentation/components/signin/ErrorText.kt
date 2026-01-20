@@ -4,8 +4,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @Composable
 fun ErrorText(message: String) {
-    Text(text = message, color = Color.Red, fontSize = 14.sp)
+    Text(text = message, color = Color.Red, fontSize = ssp(14))
 }

@@ -21,6 +21,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,7 +32,7 @@ fun AboutScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("About", fontSize = 20.sp, fontWeight = FontWeight.SemiBold) },
+                title = { Text("About", fontSize = ssp(20), fontWeight = FontWeight.SemiBold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = Color.White)
@@ -48,43 +50,43 @@ fun AboutScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 24.dp, vertical = 16.dp)
+                .padding(horizontal = sdp(24), vertical = sdp(16))
         ) {
             Text(
                 text = "SmartParking",
-                fontSize = 18.sp,
+                fontSize = ssp(18),
                 fontWeight = FontWeight.Medium,
                 color = Color.White
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(sdp(8)))
 
             Text(
                 text = "Version 0.1.2",
-                fontSize = 14.sp,
+                fontSize = ssp(14),
                 color = Color.Gray
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(sdp(24)))
 
             Text(
                 text = "Developed by",
-                fontSize = 16.sp,
+                fontSize = ssp(16),
                 fontWeight = FontWeight.SemiBold,
                 color = Color.White
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(sdp(12)))
 
-            Text(text = "1. SOKNA Chun", fontSize = 14.sp, color = Color.Gray)
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(text = "2. Nob Makara", fontSize = 14.sp, color = Color.Gray)
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(text = "3. Buot Sreychea", fontSize = 14.sp, color = Color.Gray)
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(text = "4. Doung Chanvattana", fontSize = 14.sp, color = Color.Gray)
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(text = "5. Torng Mengheng", fontSize = 14.sp, color = Color.Gray)
+            Text(text = "1. SOKNA Chun", fontSize = ssp(14), color = Color.Gray)
+            Spacer(modifier = Modifier.height(sdp(6)))
+            Text(text = "2. Nob Makara", fontSize = ssp(14), color = Color.Gray)
+            Spacer(modifier = Modifier.height(sdp(6)))
+            Text(text = "3. Buot Sreychea", fontSize = ssp(14), color = Color.Gray)
+            Spacer(modifier = Modifier.height(sdp(6)))
+            Text(text = "4. Doung Chanvattana", fontSize = ssp(14), color = Color.Gray)
+            Spacer(modifier = Modifier.height(sdp(6)))
+            Text(text = "5. Torng Mengheng", fontSize = ssp(14), color = Color.Gray)
         }
     }
 }

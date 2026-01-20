@@ -15,6 +15,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
+import com.group.mobileparkingchain.ui.theme.sdp
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -35,13 +36,18 @@ fun LoadingSpinner(
         label = "rotation"
     )
 
-    Canvas(modifier = modifier.size(40.dp)) {
+    val spinnerSize = sdp(40)
+    val padding = sdp(4)
+    val dashLengthDp = sdp(8)
+    val strokeWidthDp = sdp(3)
+
+    Canvas(modifier = modifier.size(spinnerSize)) {
         val centerX = size.width / 2
         val centerY = size.height / 2
-        val radius = size.minDimension / 2 - 4.dp.toPx()
+        val radius = size.minDimension / 2 - padding.toPx()
         val dashCount = 8
-        val dashLength = 8.dp.toPx()
-        val strokeWidth = 3.dp.toPx()
+        val dashLength = dashLengthDp.toPx()
+        val strokeWidth = strokeWidthDp.toPx()
 
         for (i in 0 until dashCount) {
             val angle = (i * 360f / dashCount + rotation) * PI / 180f

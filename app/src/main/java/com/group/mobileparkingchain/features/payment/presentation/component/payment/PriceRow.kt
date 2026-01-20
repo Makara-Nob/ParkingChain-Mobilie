@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @Composable
 fun PriceRow(label: String, value: String, isTotal: Boolean = false) {
@@ -20,13 +22,13 @@ fun PriceRow(label: String, value: String, isTotal: Boolean = false) {
     ) {
         Text(
             text = label,
-            fontSize = if (isTotal) 18.sp else 16.sp,
+            fontSize = if (isTotal) ssp(18) else ssp(16),
             fontWeight = if (isTotal) FontWeight.SemiBold else FontWeight.Normal,
             color = if (isTotal) Color.White else Color.Gray
         )
         Text(
             text = value,
-            fontSize = if (isTotal) 18.sp else 16.sp,
+            fontSize = if (isTotal) ssp(18) else ssp(16),
             fontWeight = if (isTotal) FontWeight.Bold else FontWeight.Medium,
             color = Color.White
         )

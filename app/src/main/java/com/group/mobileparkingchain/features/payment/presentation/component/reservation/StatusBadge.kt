@@ -17,27 +17,29 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @Composable
 fun StatusBadge(status: String, color: Color = Color(0xFF4CAF50)) {
     Surface(
         color = Color(0xFF1B4D2C),
-        shape = RoundedCornerShape(20.dp)
+        shape = RoundedCornerShape(sdp(20))
     ) {
         Row (
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+            modifier = Modifier.padding(horizontal = sdp(12), vertical = sdp(6)),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 modifier = Modifier
-                    .size(8.dp)
-                    .background(color, shape = RoundedCornerShape(4.dp))
+                    .size(sdp(8))
+                    .background(color, shape = RoundedCornerShape(sdp(4)))
             )
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(sdp(8)))
             Text(
                 text = status,
                 color = color,
-                fontSize = 12.sp,
+                fontSize = ssp(12),
                 fontWeight = FontWeight.Medium
             )
         }

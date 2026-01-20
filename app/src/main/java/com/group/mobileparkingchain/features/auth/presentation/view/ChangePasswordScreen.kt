@@ -49,6 +49,8 @@ import com.group.mobileparkingchain.features.auth.presentation.viewmodel.ChangeP
 import com.group.mobileparkingchain.features.auth.presentation.viewmodel.ChangePasswordViewModel
 import com.group.mobileparkingchain.features.auth.presentation.viewmodel.ChangePasswordViewModelFactory
 import com.group.mobileparkingchain.ui.theme.PrimaryBlue
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -90,7 +92,7 @@ fun ChangePasswordScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Change Password", fontSize = 20.sp, fontWeight = FontWeight.SemiBold) },
+                title = { Text("Change Password", fontSize = ssp(20), fontWeight = FontWeight.SemiBold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, "Back", tint = Color.White)
@@ -109,11 +111,11 @@ fun ChangePasswordScreen(
                 .fillMaxSize()
                 .background(Color(0xFF121212))
                 .padding(padding)
-                .padding(horizontal = 24.dp),
+                .padding(horizontal = sdp(24)),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(sdp(24)))
 
             PasswordField(
                 label = "Current Password",
@@ -123,7 +125,7 @@ fun ChangePasswordScreen(
                 onToggleVisibility = { currentVisible = !currentVisible }
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(sdp(16)))
 
             PasswordField(
                 label = "New Password",
@@ -133,7 +135,7 @@ fun ChangePasswordScreen(
                 onToggleVisibility = { newVisible = !newVisible }
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(sdp(16)))
 
             PasswordField(
                 label = "Confirm New Password",
@@ -143,7 +145,7 @@ fun ChangePasswordScreen(
                 onToggleVisibility = { confirmVisible = !confirmVisible }
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(sdp(32)))
 
             val isLoading = uiState is ChangePasswordState.Loading
 
@@ -157,14 +159,14 @@ fun ChangePasswordScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .height(sdp(56)),
                 enabled = !isLoading,
                 colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue)
             ) {
                 if (isLoading) {
-                    CircularProgressIndicator(color = Color.White, modifier = Modifier.height(24.dp))
+                    CircularProgressIndicator(color = Color.White, modifier = Modifier.height(sdp(24)))
                 } else {
-                    Text("Save", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                    Text("Save", fontSize = ssp(16), fontWeight = FontWeight.SemiBold)
                 }
             }
         }

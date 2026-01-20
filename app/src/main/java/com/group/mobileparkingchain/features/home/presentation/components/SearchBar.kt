@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.group.mobileparkingchain.ui.theme.sdp
 
 @Composable
 fun SearchBar(searchQuery: String, onQueryChange: (String) -> Unit) {
@@ -23,8 +24,8 @@ fun SearchBar(searchQuery: String, onQueryChange: (String) -> Unit) {
         leadingIcon = { Icon(Icons.Default.Search, "Search", tint = Color.Gray) },
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp),
-        shape = RoundedCornerShape(12.dp),
+            .height(sdp(50)),
+        shape = RoundedCornerShape(sdp(12)),
         colors = OutlinedTextFieldDefaults.colors(
             unfocusedContainerColor = Color(0xFF1E2836),
             focusedContainerColor = Color(0xFF1E2836),

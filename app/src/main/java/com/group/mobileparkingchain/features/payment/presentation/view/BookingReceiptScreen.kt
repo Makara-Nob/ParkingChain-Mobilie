@@ -29,6 +29,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 import com.group.mobileparkingchain.features.parking.data.model.Booking
 import com.group.mobileparkingchain.utils.Formatters
 import java.text.SimpleDateFormat
@@ -51,81 +53,81 @@ fun BookingReceiptScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(24.dp),
+                .padding(sdp(24)),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(sdp(40)))
             
             // Success Icon
             Icon(
                 imageVector = Icons.Default.CheckCircle,
                 contentDescription = "Success",
-                modifier = Modifier.size(100.dp),
+                modifier = Modifier.size(sdp(100)),
                 tint = Color(0xFF4CAF50)
             )
             
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(sdp(24)))
             
             // Success Title
             Text(
                 text = "Booking Successful!",
-                fontSize = 28.sp,
+                fontSize = ssp(28),
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
             
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(sdp(8)))
             
             Text(
                 text = "Your parking spot has been reserved",
-                fontSize = 16.sp,
+                fontSize = ssp(16),
                 color = Color.Gray,
                 textAlign = TextAlign.Center
             )
             
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(sdp(32)))
             
             // Booking Details Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = Color(0xFF1E2836)),
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(sdp(16))
             ) {
                 Column(
-                    modifier = Modifier.padding(24.dp)
+                    modifier = Modifier.padding(sdp(24))
                 ) {
                     Text(
                         "BOOKING DETAILS",
-                        fontSize = 12.sp,
+                        fontSize = ssp(12),
                         color = Color.Gray,
                         fontWeight = FontWeight.Medium
                     )
                     
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(sdp(16)))
                     
                     // Booking ID
                     ReceiptRow("Booking ID", booking.id.takeLast(8).uppercase())
                     
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(sdp(12)))
                     Divider(color = Color(0xFF2C3E50))
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(sdp(12)))
                     
                     // Spot ID
                     ReceiptRow("Parking Spot", "P-${booking.spotId}")
                     
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(sdp(12)))
                     
                     // Start Time
                     ReceiptRow("Start Time", dateFormat.format(parseIsoDate(booking.startTime)))
                     
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(sdp(12)))
                     
                     // Duration
                     ReceiptRow("Duration", "${booking.durationHours ?: 0} hours")
                     
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(sdp(12)))
                     Divider(color = Color(0xFF2C3E50))
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(sdp(12)))
                     
                     // Total Price
                     Row(
@@ -135,13 +137,13 @@ fun BookingReceiptScreen(
                     ) {
                         Text(
                             "Total Paid",
-                            fontSize = 16.sp,
+                            fontSize = ssp(16),
                             fontWeight = FontWeight.Bold,
                             color = Color.White
                         )
                         Text(
                             "${Formatters.moneyWithSymbol(booking.totalPrice ?: 0.0, "$")}",
-                            fontSize = 24.sp,
+                            fontSize = ssp(24),
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF4CAF50)
                         )
@@ -156,18 +158,18 @@ fun BookingReceiptScreen(
                 onClick = onDoneClick,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .height(sdp(56)),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3)),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(sdp(12))
             ) {
                 Text(
                     "Done",
-                    fontSize = 16.sp,
+                    fontSize = ssp(16),
                     fontWeight = FontWeight.SemiBold
                 )
             }
             
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(sdp(24)))
         }
     }
 }
@@ -178,8 +180,8 @@ fun ReceiptRow(label: String, value: String) {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(label, fontSize = 14.sp, color = Color.Gray)
-        Text(value, fontSize = 14.sp, color = Color.White, fontWeight = FontWeight.Medium)
+        Text(label, fontSize = ssp(14), color = Color.Gray)
+        Text(value, fontSize = ssp(14), color = Color.White, fontWeight = FontWeight.Medium)
     }
 }
 

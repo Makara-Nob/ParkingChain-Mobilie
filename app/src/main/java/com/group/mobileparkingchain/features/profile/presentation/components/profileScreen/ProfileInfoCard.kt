@@ -15,25 +15,27 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @Composable
 fun ProfileInfoCard(label: String, value: String) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF1E2836)),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(sdp(12))
     ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+        Column(modifier = Modifier.fillMaxWidth().padding(sdp(16))) {
             Text(
                 text = label,
-                fontSize = 12.sp,
+                fontSize = ssp(12),
                 color = Color.Gray,
                 fontWeight = FontWeight.Medium
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(sdp(8)))
             Text(
                 text = value.ifEmpty { "Not set" },
-                fontSize = 16.sp,
+                fontSize = ssp(16),
                 color = Color.White,
                 fontWeight = FontWeight.Normal
             )

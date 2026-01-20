@@ -25,6 +25,8 @@ import com.group.mobileparkingchain.ui.components.LoadingSpinner
 import com.group.mobileparkingchain.ui.components.ParkingLogo
 import com.group.mobileparkingchain.ui.theme.SmartParkingTheme
 import com.group.mobileparkingchain.ui.theme.TextGray
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 import kotlinx.coroutines.delay
 
 @Composable
@@ -53,17 +55,17 @@ fun WelcomeScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             // Logo
-            ParkingLogo()
+            ParkingLogo(size = sdp(200))
 
             // Tagline
             Text(
                 text = "Find. Reserved. Park.",
-                fontSize = 18.sp,
+                fontSize = ssp(18),
                 color = TextGray,
-                letterSpacing = 1.sp
+                letterSpacing = ssp(1)
             )
 
-            Spacer(modifier = Modifier.height(200.dp))
+            Spacer(modifier = Modifier.height(sdp(200)))
 
             // Loading Spinner
             LoadingSpinner()

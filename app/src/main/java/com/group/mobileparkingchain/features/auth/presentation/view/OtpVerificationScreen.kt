@@ -27,6 +27,8 @@ import com.group.mobileparkingchain.features.auth.data.repository.AuthRepository
 import com.group.mobileparkingchain.features.auth.domain.VerifyEmailUseCase
 import com.group.mobileparkingchain.network.datastore.TokenDataStore
 import com.group.mobileparkingchain.features.auth.presentation.components.verification.OtpInputField
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 
 @Composable
@@ -86,7 +88,7 @@ fun OtpVerificationScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = sdp(24))
             .verticalScroll(rememberScrollState()),
         contentAlignment = Alignment.Center
     ) {
@@ -94,37 +96,37 @@ fun OtpVerificationScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 40.dp)
+                .padding(vertical = sdp(40))
         ) {
-            ParkingLogo(size = 150)
+            ParkingLogo(size = sdp(150))
             
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(sdp(24)))
             
             Text(
                 text = "Verify Your Email",
-                fontSize = 28.sp,
+                fontSize = ssp(28),
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
             
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(sdp(12)))
             
             Text(
                 text = "We've sent a verification code to",
-                fontSize = 14.sp,
+                fontSize = ssp(14),
                 color = Color.Gray,
                 textAlign = TextAlign.Center
             )
             
             Text(
                 text = email,
-                fontSize = 14.sp,
+                fontSize = ssp(14),
                 color = Color.White,
                 fontWeight = FontWeight.Medium,
                 textAlign = TextAlign.Center
             )
             
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(sdp(32)))
             
             // OTP Input Field
             OtpInputField(
@@ -136,7 +138,7 @@ fun OtpVerificationScreen(
                 }
             )
             
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(sdp(32)))
             
             // Verify Button (matching PasswordReset style)
             Button(
@@ -153,26 +155,26 @@ fun OtpVerificationScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .height(sdp(56)),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3)), // Changed to blue to match PrimaryBlue
                 enabled = verificationState !is Resource.Loading
             ) {
                 if (verificationState is Resource.Loading) {
                     CircularProgressIndicator(
                         color = Color.White,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(sdp(24))
                     )
                 } else {
                     Text(
                         text = "Verify Email",
-                        fontSize = 16.sp,
+                        fontSize = ssp(16),
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White
                     )
                 }
             }
             
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(sdp(24)))
             
             // Resend OTP
             Row(
@@ -183,7 +185,7 @@ fun OtpVerificationScreen(
                 Text(
                     text = "Didn't receive the code? ",
                     color = Color.Gray,
-                    fontSize = 14.sp
+                    fontSize = ssp(14)
                 )
                 TextButton(
                     onClick = {
@@ -198,7 +200,7 @@ fun OtpVerificationScreen(
                     Text(
                         text = "Resend",
                         color = Color(0xFF2196F3),
-                        fontSize = 14.sp,
+                        fontSize = ssp(14),
                         fontWeight = FontWeight.SemiBold
                     )
                 }

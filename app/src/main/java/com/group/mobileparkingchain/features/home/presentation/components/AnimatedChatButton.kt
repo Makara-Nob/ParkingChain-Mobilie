@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.group.mobileparkingchain.R
+import com.group.mobileparkingchain.ui.theme.sdp
 
 @Composable
 fun AnimatedChatButton(
@@ -40,7 +41,7 @@ fun AnimatedChatButton(
         Image(
             painter = painterResource(id = R.drawable.chatbot),
             contentDescription = "Chat",
-            modifier = Modifier.size(32.dp) // Slightly larger for better visibility
+            modifier = Modifier.size(sdp(32)) // Slightly larger for better visibility
         )
     }
 }

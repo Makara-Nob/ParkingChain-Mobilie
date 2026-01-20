@@ -32,10 +32,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.group.mobileparkingchain.enumuration.ParkingStatus
 import com.group.mobileparkingchain.features.home.data.ParkingSpot
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @Composable
 fun ParkingSpotCard(spot: ParkingSpot, onClick: () -> Unit) {
@@ -73,13 +76,13 @@ fun ParkingSpotCard(spot: ParkingSpot, onClick: () -> Unit) {
             .fillMaxWidth()
             .aspectRatio(1f)
             .shadow(
-                elevation = if (spot.status == ParkingStatus.AVAILABLE) 8.dp else 4.dp,
-                shape = RoundedCornerShape(16.dp),
+                elevation = if (spot.status == ParkingStatus.AVAILABLE) sdp(8) else sdp(4),
+                shape = RoundedCornerShape(sdp(16)),
                 spotColor = accentColor.copy(alpha = 0.3f)
             )
             .clickable(enabled = spot.status == ParkingStatus.AVAILABLE, onClick = onClick),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(sdp(16))
     ) {
         Box(
             modifier = Modifier
@@ -94,31 +97,31 @@ fun ParkingSpotCard(spot: ParkingSpot, onClick: () -> Unit) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(12.dp),
+                    .padding(sdp(12)),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 // Spot ID at top (left-aligned to avoid dot)
                 Text(
                     text = spot.id,
-                    fontSize = 16.sp,
+                    fontSize = ssp(13),
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
-                    modifier = Modifier.align(Alignment.Start)
+                    textAlign = TextAlign.Center
                 )
 
                 // Center: Vehicle icon
                 Icon(
                     imageVector = vehicleIcon,
                     contentDescription = spot.type,
-                    modifier = Modifier.size(40.dp),
+                    modifier = Modifier.size(sdp(40)),
                     tint = accentColor
                 )
 
                 // Bottom: Vehicle type text
                 Text(
                     text = spot.type,
-                    fontSize = 11.sp,
+                    fontSize = ssp(11),
                     fontWeight = FontWeight.Medium,
                     color = Color.White.copy(alpha = 0.9f),
                     maxLines = 1

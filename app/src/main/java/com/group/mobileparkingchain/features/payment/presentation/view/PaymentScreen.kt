@@ -16,6 +16,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 import com.group.mobileparkingchain.features.payment.data.PaymentInfo
 import com.group.mobileparkingchain.utils.Formatters
 import java.util.Locale
@@ -40,17 +42,17 @@ fun PaymentScreen(
                 title = {
                     Text(
                         "Complete",
-                        fontSize = 20.sp,
+                        fontSize = ssp(20),
                         fontWeight = FontWeight.SemiBold
                     )
                 },
                 actions = {
                     Text(
                         text = "2 of 3",
-                        fontSize = 14.sp,
+                        fontSize = ssp(14),
                         fontWeight = FontWeight.Medium,
                         color = Color.White,
-                        modifier = Modifier.padding(end = 16.dp)
+                        modifier = Modifier.padding(end = sdp(16))
                     )
                 },
                 navigationIcon = {
@@ -69,29 +71,29 @@ fun PaymentScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color(0xFF121212))
-                    .padding(16.dp)
+                    .padding(sdp(16))
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Total", fontSize = 20.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
+                    Text("Total", fontSize = ssp(20), fontWeight = FontWeight.SemiBold, color = Color.White)
                     Text(
                         "${Formatters.moneyWithSymbol(paymentInfo.total, "$")}",
-                        fontSize = 24.sp,
+                        fontSize = ssp(24),
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(sdp(12)))
 
                 if (isProcessing) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(56.dp),
+                            .height(sdp(56)),
                         contentAlignment = Alignment.Center
                     ) {
                         CircularProgressIndicator(
@@ -108,43 +110,43 @@ fun PaymentScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp)
+                .padding(horizontal = sdp(24))
         ) {
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(sdp(24)))
 
             // Booking Summary
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = Color(0xFF1E2836)),
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(sdp(16))
             ) {
-                Column(modifier = Modifier.padding(20.dp)) {
+                Column(modifier = Modifier.padding(sdp(20))) {
                     Text(
                         "BOOKING DETAILS",
-                        fontSize = 12.sp,
+                        fontSize = ssp(12),
                         color = Color.Gray,
                         fontWeight = FontWeight.Medium
                     )
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(sdp(12)))
                     BookingSummaryRow("Parking Spot", "P-${paymentInfo.spotId}")
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(sdp(8)))
                     BookingSummaryRow("Duration", "${paymentInfo.duration} hours")
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(sdp(8)))
                     BookingSummaryRow("Start Time", dateFormat.format(Date(paymentInfo.startTime)))
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(sdp(24)))
 
             // Payment Method Section
             Text(
                 "Select Payment Method",
-                fontSize = 20.sp,
+                fontSize = ssp(20),
                 fontWeight = FontWeight.SemiBold,
                 color = Color.White
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(sdp(24)))
 
             // Only PayWay option
             DigitalWalletOptions(
@@ -159,7 +161,7 @@ fun PaymentScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.height(80.dp))
+            Spacer(modifier = Modifier.height(sdp(80)))
         }
     }
 }
@@ -170,7 +172,7 @@ fun BookingSummaryRow(label: String, value: String) {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(label, fontSize = 14.sp, color = Color.Gray)
-        Text(value, fontSize = 14.sp, color = Color.White, fontWeight = FontWeight.Medium)
+        Text(label, fontSize = ssp(14), color = Color.Gray)
+        Text(value, fontSize = ssp(14), color = Color.White, fontWeight = FontWeight.Medium)
     }
 }

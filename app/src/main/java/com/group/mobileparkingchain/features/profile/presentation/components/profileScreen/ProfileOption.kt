@@ -9,16 +9,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @Composable
 fun ProfileOption(text: String, onClick: () -> Unit = {}) {
     Text(
         text = text,
-        fontSize = 16.sp,
+        fontSize = ssp(16),
         color = Color.White,
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
-            .padding(vertical = 4.dp)
+            .padding(vertical = sdp(4))
     )
 }

@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @Composable
 fun SheetHeader(id: String, status: String) {
@@ -20,7 +22,7 @@ fun SheetHeader(id: String, status: String) {
     ) {
         Text(
             text = id,
-            fontSize = 28.sp,
+            fontSize = ssp(28),
             fontWeight = FontWeight.Bold,
             color = Color.White
         )

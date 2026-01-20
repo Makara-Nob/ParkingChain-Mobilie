@@ -15,27 +15,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @Composable
 fun ErrorCard(message: String, onDismiss: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 16.dp),
+            .padding(bottom = sdp(16)),
         colors = CardDefaults.cardColors(containerColor = Color(0xFFD32F2F)),
-        shape = RoundedCornerShape(8.dp)
+        shape = RoundedCornerShape(sdp(8))
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(sdp(12)),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = message,
                 color = Color.White,
-                fontSize = 14.sp
+                fontSize = ssp(14)
             )
             TextButton(onClick = onDismiss) {
                 Text("Dismiss", color = Color.White)

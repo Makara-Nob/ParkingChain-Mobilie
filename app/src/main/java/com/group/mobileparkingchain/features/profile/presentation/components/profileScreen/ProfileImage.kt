@@ -17,15 +17,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.group.mobileparkingchain.ui.theme.sdp
 
 @Composable
 fun ProfileImage(imageUrl: String?) {
     Box(
         modifier = Modifier
-            .size(120.dp)
+            .size(sdp(120))
             .clip(CircleShape)
             .background(Color(0xFF2C2C2C))
-            .border(3.dp, Color(0xFF2196F3), CircleShape),
+            .border(sdp(3), Color(0xFF2196F3), CircleShape),
         contentAlignment = Alignment.Center
     ) {
         if (!imageUrl.isNullOrEmpty()) {
@@ -40,7 +41,7 @@ fun ProfileImage(imageUrl: String?) {
                 imageVector = Icons.Default.Person,
                 contentDescription = "Profile",
                 tint = Color.Gray,
-                modifier = Modifier.size(60.dp)
+                modifier = Modifier.size(sdp(60))
             )
         }
     }

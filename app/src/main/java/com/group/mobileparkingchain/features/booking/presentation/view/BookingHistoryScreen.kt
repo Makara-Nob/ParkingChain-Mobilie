@@ -47,12 +47,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 import com.group.mobileparkingchain.features.booking.presentation.components.BookingFilterChips
 import com.group.mobileparkingchain.features.booking.presentation.viewmodel.BookingViewModel
 import com.group.mobileparkingchain.features.home.presentation.components.HomeTopBar
 import com.group.mobileparkingchain.features.home.presentation.components.SearchBar
 import com.group.mobileparkingchain.features.parking.data.model.Booking
 import com.group.mobileparkingchain.features.parking.data.model.BookingStatus
+import com.group.mobileparkingchain.features.payment.data.model.Payment
+import com.group.mobileparkingchain.features.payment.presentation.view.PaymentQrScreen
 import com.group.mobileparkingchain.features.payment.presentation.viewmodel.PaymentState
 import com.group.mobileparkingchain.features.payment.presentation.viewmodel.PaymentViewModel
 import com.group.mobileparkingchain.ui.components.BottomNavigationBar
@@ -78,6 +82,15 @@ fun BookingHistoryScreen(
 
     val context = LocalContext.current
 
+    var selectedNavIndex by remember { mutableStateOf(1) } // Booking History tab selected
+    var selectedFilter by remember { mutableStateOf<BookingStatus?>(null) }
+    var searchQuery by remember { mutableStateOf("") }
+    var showDetailsSheet by remember { mutableStateOf(false) }
+    var selectedBooking by remember { mutableStateOf<Booking?>(null) }
+    var showQrScreen by remember { mutableStateOf(false) }
+    var lastPayment by remember { mutableStateOf<Payment?>(null) }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
     LaunchedEffect(Unit) {
         bookingViewModel.fetchUserBookings()
     }
@@ -90,18 +103,35 @@ fun BookingHistoryScreen(
                 android.widget.Toast.makeText(context, (paymentState as PaymentState.Error).message, android.widget.Toast.LENGTH_LONG).show()
             }
             is PaymentState.Success -> {
-                // Handled in ViewModel (opening deep link) but we can show a success message
+                lastPayment = (paymentState as PaymentState.Success).response
+                showQrScreen = true
             }
             else -> {}
         }
     }
 
-    var selectedNavIndex by remember { mutableStateOf(1) } // Booking History tab selected
-    var selectedFilter by remember { mutableStateOf<BookingStatus?>(null) }
-    var searchQuery by remember { mutableStateOf("") }
-    var showDetailsSheet by remember { mutableStateOf(false) }
-    var selectedBooking by remember { mutableStateOf<Booking?>(null) }
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    if (showQrScreen && lastPayment != null) {
+        val payment = lastPayment!!
+        PaymentQrScreen(
+            qrCodeBase64 = payment.qrImage,
+            total = payment.amount,
+            currency = payment.currency,
+            deeplink = payment.deeplinkUrl,
+            expiresAt = payment.expiresAt,
+            status = payment.status,
+            onCancel = {
+                showQrScreen = false
+                paymentViewModel.resetPaymentState()
+                lastPayment = null
+            },
+            onBack = {
+                showQrScreen = false
+                paymentViewModel.resetPaymentState()
+                lastPayment = null
+            }
+        )
+        return
+    }
 
     Scaffold(
         topBar = {
@@ -126,7 +156,7 @@ fun BookingHistoryScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(16.dp)
+                .padding(sdp(16))
         ) {
             Column(
                 modifier = Modifier
@@ -141,7 +171,7 @@ fun BookingHistoryScreen(
                         text = "Booking History",
                         color = Color.White,
                         fontWeight = FontWeight.SemiBold,
-                        fontSize = 18.sp
+                        fontSize = ssp(18)
                     )
                     IconButton(onClick = { bookingViewModel.refreshBookings() }) {
                         Icon(
@@ -151,9 +181,9 @@ fun BookingHistoryScreen(
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(sdp(12)))
                 SearchBar(searchQuery) { searchQuery = it }
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(sdp(12)))
                 BookingFilterChips(
                     selectedStatus = selectedFilter,
                     onStatusSelected = { status ->
@@ -161,7 +191,7 @@ fun BookingHistoryScreen(
                         bookingViewModel.filterByStatus(status?.name)
                     }
                 )
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(sdp(12)))
             }
 
             // Booking History List
@@ -183,29 +213,29 @@ fun BookingHistoryScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(32.dp),
+                        .padding(sdp(32)),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
                             text = "No bookings yet",
                             color = Color.White,
-                            fontSize = 18.sp,
+                            fontSize = ssp(18),
                             fontWeight = FontWeight.SemiBold
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(sdp(8)))
                         Text(
                             text = "Reserve a spot to see it here.",
                             color = Color(0xFF8A9BAE),
-                            fontSize = 14.sp
+                            fontSize = ssp(14)
                         )
                     }
                 }
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(horizontal = 0.dp, vertical = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    contentPadding = PaddingValues(horizontal = sdp(0), vertical = sdp(8)),
+                    verticalArrangement = Arrangement.spacedBy(sdp(12))
                 ) {
                     items(filteredBookings) { booking ->
                         BookingHistoryItem(
@@ -227,13 +257,29 @@ fun BookingHistoryScreen(
             sheetState = sheetState,
             containerColor = Color(0xFF1B2430),
             contentColor = Color.White,
-            tonalElevation = 0.dp
+            tonalElevation = sdp(0)
         ) {
             BookingDetailsSheet(
                 booking = selectedBooking!!,
-                onPayClick = { /* TODO: hook payment action if needed */ }
+                onPayClick = {
+                    val booking = selectedBooking
+                    if (booking == null) {
+                        android.widget.Toast.makeText(context, "Booking not found", android.widget.Toast.LENGTH_SHORT).show()
+                    } else {
+                        val total = booking.totalPrice ?: 0.0
+                        if (total <= 0.0) {
+                            android.widget.Toast.makeText(context, "Invalid booking total", android.widget.Toast.LENGTH_SHORT).show()
+                        } else {
+                            paymentViewModel.initiatePayment(
+                                bookingId = booking.id,
+                                amount = total,
+                                currency = booking.currency ?: "USD"
+                            )
+                        }
+                    }
+                }
             )
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(sdp(24)))
         }
     }
 }
@@ -283,14 +329,14 @@ fun BookingHistoryItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() },
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(sdp(12)),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF1B2430)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = sdp(4))
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(sdp(16))
         ) {
             // Header Row: Spot Info and Status
             Row(
@@ -302,33 +348,33 @@ fun BookingHistoryItem(
                     Text(
                         text = booking.spot?.spotName ?: "Spot ${booking.spotId}",
                         color = Color.White,
-                        fontSize = 18.sp,
+                        fontSize = ssp(18),
                         fontWeight = FontWeight.Bold
                     )
                 }
                 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Surface(
-                        shape = RoundedCornerShape(8.dp),
+                        shape = RoundedCornerShape(sdp(8)),
                         color = statusBgColor
                     ) {
                         Text(
                             text = effectiveStatus.name,
                             color = statusColor,
-                            fontSize = 12.sp,
+                            fontSize = ssp(12),
                             fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                            modifier = Modifier.padding(horizontal = sdp(12), vertical = sdp(6))
                         )
                     }
 
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(sdp(12)))
 
-            Divider(color = Color(0xFF2C3E50), thickness = 1.dp)
+            Divider(color = Color(0xFF2C3E50), thickness = sdp(1))
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(sdp(12)))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -339,13 +385,13 @@ fun BookingHistoryItem(
                     Text(
                         text = "Date",
                         color = Color(0xFF8A9BAE),
-                        fontSize = 12.sp
+                        fontSize = ssp(12)
                     )
-                    Spacer(modifier = Modifier.height(6.dp))
+                    Spacer(modifier = Modifier.height(sdp(6)))
                     Text(
                         text = startDate?.let { dateFormat.format(it) } ?: "-",
                         color = Color.White,
-                        fontSize = 14.sp,
+                        fontSize = ssp(14),
                         fontWeight = FontWeight.Medium
                     )
                 }
@@ -354,9 +400,9 @@ fun BookingHistoryItem(
                     Text(
                         text = "Total",
                         color = Color(0xFF8A9BAE),
-                        fontSize = 12.sp
+                        fontSize = ssp(12)
                     )
-                    Spacer(modifier = Modifier.height(6.dp))
+                    Spacer(modifier = Modifier.height(sdp(6)))
                     val currencySymbol = if (booking.currency == "KHR") "៛" else "$"
                     val formattedPrice = if (booking.currency == "KHR") {
                         Formatters.moneyWithSymbol(booking.totalPrice ?: 0.0, "", 0)
@@ -367,7 +413,7 @@ fun BookingHistoryItem(
                     Text(
                         text = if (booking.currency == "KHR") "$formattedPrice $currencySymbol" else "$currencySymbol$formattedPrice",
                         color = Color(0xFF4A90E2),
-                        fontSize = 18.sp,
+                        fontSize = ssp(18),
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -427,7 +473,7 @@ private fun BookingDetailsSheet(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 12.dp)
+            .padding(horizontal = sdp(20), vertical = sdp(12))
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -438,85 +484,85 @@ private fun BookingDetailsSheet(
                 Text(
                     text = booking.spot?.spotName ?: "Spot ${booking.spotId}",
                     color = Color.White,
-                    fontSize = 18.sp,
+                    fontSize = ssp(18),
                     fontWeight = FontWeight.SemiBold
                 )
             }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Surface(
-                        shape = RoundedCornerShape(8.dp),
+                        shape = RoundedCornerShape(sdp(8)),
                         color = statusBgColor
                     ) {
                         Text(
                             text = effectiveStatus.name,
                             color = statusColor,
-                            fontSize = 12.sp,
+                            fontSize = ssp(12),
                             fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                            modifier = Modifier.padding(horizontal = sdp(12), vertical = sdp(6))
                         )
                     }
 
                 }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-        Divider(color = Color(0xFF2C3E50), thickness = 1.dp)
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(sdp(16)))
+        Divider(color = Color(0xFF2C3E50), thickness = sdp(1))
+        Spacer(modifier = Modifier.height(sdp(12)))
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Column {
-                Text("Date", color = Color(0xFF8A9BAE), fontSize = 12.sp)
-                Spacer(modifier = Modifier.height(6.dp))
+                Text("Date", color = Color(0xFF8A9BAE), fontSize = ssp(12))
+                Spacer(modifier = Modifier.height(sdp(6)))
                 Text(
                     text = startDate?.let { dateFormat.format(it) } ?: "-",
                     color = Color.White,
-                    fontSize = 14.sp,
+                    fontSize = ssp(14),
                     fontWeight = FontWeight.Medium
                 )
             }
             Column(horizontalAlignment = Alignment.End) {
-                Text("Time", color = Color(0xFF8A9BAE), fontSize = 12.sp)
-                Spacer(modifier = Modifier.height(6.dp))
+                Text("Time", color = Color(0xFF8A9BAE), fontSize = ssp(12))
+                Spacer(modifier = Modifier.height(sdp(6)))
                 Text(
                     text = timeText,
                     color = Color.White,
-                    fontSize = 14.sp,
+                    fontSize = ssp(14),
                     fontWeight = FontWeight.Medium
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(sdp(16)))
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Column {
-                Text("Duration", color = Color(0xFF8A9BAE), fontSize = 12.sp)
-                Spacer(modifier = Modifier.height(6.dp))
+                Text("Duration", color = Color(0xFF8A9BAE), fontSize = ssp(12))
+                Spacer(modifier = Modifier.height(sdp(6)))
                 Text(
                     text = "${booking.durationHours ?: 0} hrs",
                     color = Color.White,
-                    fontSize = 14.sp,
+                    fontSize = ssp(14),
                     fontWeight = FontWeight.Medium
                 )
             }
             Column(horizontalAlignment = Alignment.End) {
-                Text("Total", color = Color(0xFF8A9BAE), fontSize = 12.sp)
-                Spacer(modifier = Modifier.height(6.dp))
+                Text("Total", color = Color(0xFF8A9BAE), fontSize = ssp(12))
+                Spacer(modifier = Modifier.height(sdp(6)))
                 Text(
                     text = if (booking.currency == "KHR") "$formattedPrice $currencySymbol" else "$currencySymbol$formattedPrice",
                     color = Color(0xFF4A90E2),
-                    fontSize = 18.sp,
+                    fontSize = ssp(18),
                     fontWeight = FontWeight.Bold
                 )
             }
         }
 
         if (booking.status == BookingStatus.RESERVED) {
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(sdp(16)))
             Button(
                 onClick = onPayClick,
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF006C84)),
-                shape = RoundedCornerShape(10.dp),
+                shape = RoundedCornerShape(sdp(10)),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Pay Now", color = Color.White)

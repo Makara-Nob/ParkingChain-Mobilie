@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.group.mobileparkingchain.enumuration.ParkingStatus
 import com.group.mobileparkingchain.features.home.data.ParkingSpot
+import com.group.mobileparkingchain.features.parking.data.model.BookingStatus
+import com.group.mobileparkingchain.features.parking.data.model.Booking
 import com.group.mobileparkingchain.features.parking.data.model.SpotType
 import com.group.mobileparkingchain.features.parking.domain.repository.IParkingRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -90,6 +92,9 @@ class HomeViewModel(
     // Booking creation
     private val _bookingResult = MutableStateFlow<Result<com.group.mobileparkingchain.features.parking.data.model.BookingResponse>?>(null)
     val bookingResult: StateFlow<Result<com.group.mobileparkingchain.features.parking.data.model.BookingResponse>?> = _bookingResult.asStateFlow()
+    private val _lastBookingId = MutableStateFlow<String?>(null)
+    private val _receiptBooking = MutableStateFlow<Booking?>(null)
+    val receiptBooking: StateFlow<Booking?> = _receiptBooking.asStateFlow()
     
     fun createBooking(spotId: String, startTime: String?, durationHours: Double, paymentMethod: String, currency: String) {
         viewModelScope.launch {
@@ -102,6 +107,7 @@ class HomeViewModel(
             result.onSuccess { bookingResponse ->
                 // Booking created (RESERVED). Now create Bakong/KHQR payment separately.
                 val booking = bookingResponse.booking
+                _lastBookingId.value = booking.id
                 val amount = booking.totalPrice ?: 0.0
                 val currencyToUse = booking.currency ?: currency
                 try {
@@ -143,6 +149,22 @@ class HomeViewModel(
     
     fun clearBookingResult() {
         _bookingResult.value = null
+    }
+
+    fun loadReceiptBooking(bookingId: String) {
+        viewModelScope.launch {
+            parkingRepository.getBookingById(bookingId)
+                .onSuccess { booking ->
+                    _receiptBooking.value = booking
+                }
+                .onFailure { ex ->
+                    Log.d("PaymentPoll", "Receipt booking fetch failed: ${'$'}{ex.message}")
+                }
+        }
+    }
+
+    fun clearReceiptBooking() {
+        _receiptBooking.value = null
     }
 
     // Payment Flow
@@ -198,8 +220,17 @@ class HomeViewModel(
                         _paymentStatus.value = st
                         Log.d("PaymentPoll", "Status=${'$'}st for paymentId=$paymentId")
                         if (st == "PAID" || st == "COMPLETED") {
+                            val bookingId = _lastBookingId.value
+                            if (!bookingId.isNullOrBlank()) {
+                                parkingRepository.updateBookingStatus(bookingId, BookingStatus.ACTIVE)
+                                    .onFailure { ex ->
+                                        Log.d("PaymentPoll", "Booking status update failed: ${'$'}{ex.message}")
+                                    }
+                                loadReceiptBooking(bookingId)
+                            }
                             _paymentState.value = PaymentState.PaymentConfirmed
                             fetchParkingSpots()
+                            _lastBookingId.value = null
                             return@launch
                         } else if (st == "CANCELLED" || st == "EXPIRED") {
                             _paymentState.value = PaymentState.Error("Payment cancelled.")

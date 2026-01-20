@@ -14,21 +14,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @Composable
 fun PaymentMethodChip(label: String, isSelected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Surface (
         modifier = modifier.clickable(onClick = onClick),
         color = if (isSelected) Color(0xFF2196F3) else Color(0xFF1E2836),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(sdp(12))
     ) {
         Box(
-            modifier = Modifier.padding(vertical = 16.dp),
+            modifier = Modifier.padding(vertical = sdp(16)),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = label,
-                fontSize = 12.sp,
+                fontSize = ssp(12),
                 fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
                 color = if (isSelected) Color.White else Color.Gray,
                 textAlign = TextAlign.Center

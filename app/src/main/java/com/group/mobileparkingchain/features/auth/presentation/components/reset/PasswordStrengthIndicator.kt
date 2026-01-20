@@ -30,6 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.group.mobileparkingchain.ui.theme.PrimaryBlue
 import androidx.compose.foundation.border
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @Composable
 fun PasswordStrengthIndicator(password: String) {
@@ -47,21 +49,21 @@ fun PasswordStrengthIndicator(password: String) {
         Text(
             text = "Password Strength",
             color = Color.White,
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier.padding(bottom = sdp(8))
         )
 
         LinearProgressIndicator(
             progress = animatedProgress,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(8.dp)
-                .clip(RoundedCornerShape(4.dp)),
+                .height(sdp(8))
+                .clip(RoundedCornerShape(sdp(4))),
             color = PrimaryBlue,
             trackColor = Color(0xFF334155),
             strokeCap = StrokeCap.Round
         )
         
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(sdp(16)))
 
         StrengthItem(label = "At least 8 characters", isMet = hasMinLength)
         StrengthItem(label = "Contains an uppercase letter", isMet = hasUpperCase)
@@ -74,15 +76,15 @@ fun PasswordStrengthIndicator(password: String) {
 private fun StrengthItem(label: String, isMet: Boolean) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(vertical = 4.dp)
+        modifier = Modifier.padding(vertical = sdp(4))
     ) {
         Box(
             modifier = Modifier
-                .size(20.dp)
+                .size(sdp(20))
                 .clip(CircleShape)
                 .background(if (isMet) PrimaryBlue else Color.Transparent)
                 .then(
-                    if (!isMet) Modifier.border(1.dp, Color.Gray, CircleShape) else Modifier
+                    if (!isMet) Modifier.border(sdp(1), Color.Gray, CircleShape) else Modifier
                 ),
             contentAlignment = Alignment.Center
         ) {
@@ -91,18 +93,17 @@ private fun StrengthItem(label: String, isMet: Boolean) {
                     imageVector = Icons.Default.Check,
                     contentDescription = null,
                     tint = Color.White,
-                    modifier = Modifier.size(14.dp)
+                    modifier = Modifier.size(sdp(14))
                 )
             }
         }
         
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(modifier = Modifier.width(sdp(12)))
         
         Text(
             text = label,
             color = Color.LightGray,
-            fontSize = 14.sp
+            fontSize = ssp(14)
         )
     }
 }
-

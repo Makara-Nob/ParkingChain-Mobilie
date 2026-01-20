@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.sp
 import com.group.mobileparkingchain.features.notification.data.NotificationItem
 import com.group.mobileparkingchain.features.notification.presentation.components.NotificationCard
 import com.group.mobileparkingchain.ui.components.BottomNavigationBar
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -87,7 +89,7 @@ fun NotificationPage(
                 title = {
                     Text(
                         text = "Notification",
-                        fontSize = 20.sp,
+                        fontSize = ssp(20),
                         fontWeight = FontWeight.SemiBold
                     )
                 },
@@ -126,16 +128,16 @@ fun NotificationPage(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = sdp(16))
         ) {
             item {
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(sdp(16)))
             }
 
             items(
                 items = notifications,
                 key = { it.id }
-            ) { notification ->
+                ) { notification ->
                 NotificationCard (
                     notification = notification,
                     onClick = {
@@ -144,13 +146,12 @@ fun NotificationPage(
                         }
                     }
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(sdp(8)))
             }
 
             item {
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(sdp(16)))
             }
         }
     }
 }
-

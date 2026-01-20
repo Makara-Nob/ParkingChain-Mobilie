@@ -55,6 +55,8 @@ import com.group.mobileparkingchain.features.auth.presentation.viewmodel.Passwor
 import com.group.mobileparkingchain.features.auth.presentation.viewmodel.PasswordResetViewModelFactory
 import com.group.mobileparkingchain.features.auth.presentation.viewmodel.ResetStep
 import com.group.mobileparkingchain.ui.theme.PrimaryBlue
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -111,12 +113,12 @@ fun PasswordResetScreen(
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 24.dp)
+                    .padding(horizontal = sdp(24))
             ) {
                 // Logo
-                com.group.mobileparkingchain.ui.components.ParkingLogo(size = 180)
+                com.group.mobileparkingchain.ui.components.ParkingLogo(size = sdp(180))
                 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(sdp(16)))
                 
                 // Title based on step
                 Text(
@@ -126,21 +128,21 @@ fun PasswordResetScreen(
                         ResetStep.RESET_PASSWORD -> "New Password"
                         else -> "Reset Password"
                     },
-                    fontSize = 28.sp,
+                    fontSize = ssp(28),
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
                 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(sdp(32)))
                 
                 when (currentStep) {
                     ResetStep.REQUEST_OTP -> {
                         Text(
                             text = "Enter your email to receive a verification code",
                             color = Color.Gray,
-                            fontSize = 14.sp,
+                            fontSize = ssp(14),
                             textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(bottom = 24.dp)
+                            modifier = Modifier.padding(bottom = sdp(24))
                         )
                         OutlinedTextField(
                             value = email,
@@ -158,19 +160,19 @@ fun PasswordResetScreen(
                             ),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
                         )
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(sdp(24)))
                         Button(
                             onClick = viewModel::requestOtp,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(56.dp),
+                                .height(sdp(56)),
                             enabled = uiState !is PasswordResetState.Loading,
                             colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue)
                         ) {
                             if (uiState is PasswordResetState.Loading) {
-                                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
+                                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(sdp(24)))
                             } else {
-                                Text("Send Code", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                                Text("Send Code", fontSize = ssp(16), fontWeight = FontWeight.SemiBold)
                             }
                         }
                     }
@@ -178,34 +180,34 @@ fun PasswordResetScreen(
                         Text(
                             text = "Enter the 6-digit code sent to",
                             color = Color.Gray,
-                            fontSize = 14.sp,
+                            fontSize = ssp(14),
                             textAlign = TextAlign.Center
                         )
                         Text(
                             text = email,
                             color = PrimaryBlue,
-                            fontSize = 14.sp,
+                            fontSize = ssp(14),
                             fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(bottom = 24.dp)
+                            modifier = Modifier.padding(bottom = sdp(24))
                         )
                         OtpInputField(
                             otp = otp,
                             onOtpChange = viewModel::onOtpChange
                         )
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(sdp(24)))
                         Button(
                             onClick = viewModel::verifyOtp,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(56.dp),
+                                .height(sdp(56)),
                             enabled = uiState !is PasswordResetState.Loading,
                             colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue)
                         ) {
                             if (uiState is PasswordResetState.Loading) {
-                                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
+                                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(sdp(24)))
                             } else {
-                                Text("Verify Code", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                                Text("Verify Code", fontSize = ssp(16), fontWeight = FontWeight.SemiBold)
                             }
                         }
                     }
@@ -213,9 +215,9 @@ fun PasswordResetScreen(
                         Text(
                             text = "Choose a strong password with at least 8 characters",
                             color = Color.Gray,
-                            fontSize = 14.sp,
+                            fontSize = ssp(14),
                             textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(bottom = 24.dp)
+                            modifier = Modifier.padding(bottom = sdp(24))
                         )
                         
                         PasswordInput(
@@ -226,7 +228,7 @@ fun PasswordResetScreen(
                             onPasswordVisibilityToggle = { newPasswordVisible = !newPasswordVisible }
                         )
                         
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(sdp(16)))
                         
                         PasswordInput(
                             label = "Confirm Password",
@@ -236,11 +238,11 @@ fun PasswordResetScreen(
                             onPasswordVisibilityToggle = { confirmPasswordVisible = !confirmPasswordVisible }
                         )
                         
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(sdp(16)))
                         
                         PasswordStrengthIndicator(password = newPassword)
                         
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(sdp(24)))
                         
                         Button(
                             onClick = {
@@ -252,14 +254,14 @@ fun PasswordResetScreen(
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(56.dp),
+                                .height(sdp(56)),
                             enabled = uiState !is PasswordResetState.Loading && newPassword.isNotEmpty() && confirmPassword.isNotEmpty(),
                             colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue)
                         ) {
                             if (uiState is PasswordResetState.Loading) {
-                                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
+                                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(sdp(24)))
                             } else {
-                                Text("Reset Password", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                                Text("Reset Password", fontSize = ssp(16), fontWeight = FontWeight.SemiBold)
                             }
                         }
                     }
@@ -272,7 +274,7 @@ fun PasswordResetScreen(
                 onClick = onNavigateBack,
                 modifier = Modifier
                     .align(Alignment.TopStart)
-                    .padding(start = 16.dp, top = 48.dp) // Moved down from top
+                    .padding(start = sdp(16), top = sdp(48)) // Moved down from top
             ) {
                 Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
             }
@@ -290,28 +292,28 @@ fun SuccessScreen(onLoginClick: () -> Unit) {
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(24.dp)
+            modifier = Modifier.padding(sdp(24))
         ) {
             Box(
                 modifier = Modifier
-                    .size(100.dp)
-                    .padding(bottom = 24.dp),
+                    .size(sdp(100))
+                    .padding(bottom = sdp(24)),
                 contentAlignment = Alignment.Center
             ) {
                  // Outer circle stroke (optional if needed, but icon is solid blue circle with check)
                  // Assuming we want a style similar to provided image: solid blue circle with check
                  Box(
                      modifier = Modifier
-                         .size(80.dp)
+                         .size(sdp(80))
                          .background(PrimaryBlue, CircleShape)
-                         .border(4.dp, PrimaryBlue.copy(alpha = 0.3f), CircleShape), // Optional glow effect
+                         .border(sdp(4), PrimaryBlue.copy(alpha = 0.3f), CircleShape), // Optional glow effect
                      contentAlignment = Alignment.Center
                  ) {
                      Icon(
                          imageVector = Icons.Default.Check,
                          contentDescription = "Success",
                          tint = Color.White,
-                         modifier = Modifier.size(40.dp)
+                         modifier = Modifier.size(sdp(40))
                      )
                  }
             }
@@ -319,29 +321,29 @@ fun SuccessScreen(onLoginClick: () -> Unit) {
             Text(
                 text = "Password Reset\nSuccessful!",
                 color = Color.White,
-                fontSize = 24.sp,
+                fontSize = ssp(24),
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(bottom = 16.dp)
+                modifier = Modifier.padding(bottom = sdp(16))
             )
 
             Text(
                 text = "Your password has been updated. You can now\nlog in with your new password.",
                 color = Color.Gray,
-                fontSize = 14.sp,
+                fontSize = ssp(14),
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(bottom = 32.dp)
+                modifier = Modifier.padding(bottom = sdp(32))
             )
 
             Button(
                 onClick = onLoginClick,
-                modifier = Modifier.fillMaxWidth().height(50.dp),
+                modifier = Modifier.fillMaxWidth().height(sdp(50)),
                 colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue),
                 shape = CircleShape
             ) {
                 Text(
                     text = "Back to Login",
-                    fontSize = 16.sp,
+                    fontSize = ssp(16),
                     fontWeight = FontWeight.Bold
                 )
             }

@@ -43,6 +43,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
@@ -160,7 +162,7 @@ fun EditProfileScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Edit Profile", fontSize = 20.sp, fontWeight = FontWeight.SemiBold) },
+                title = { Text("Edit Profile", fontSize = ssp(20), fontWeight = FontWeight.SemiBold) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.Default.ArrowBack, "Back", tint = Color.White)
@@ -183,13 +185,13 @@ fun EditProfileScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .padding(24.dp),
+                    .padding(sdp(24)),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
                 errorMessage?.let { msg ->
                     ErrorCard(message = msg, onDismiss = { errorMessage = null })
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(sdp(24)))
                 }
 
                 ProfileImagePicker(
@@ -202,24 +204,24 @@ fun EditProfileScreen(
                 )
 
                 if (isUploading) {
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(sdp(8)))
                     CircularProgressIndicator(
-                        modifier = Modifier.padding(8.dp),
+                        modifier = Modifier.padding(sdp(8)),
                         color = Color(0xFF4A90E2)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(sdp(32)))
 
                 EditableField("First Name", firstName, { firstName = it }, "Enter first name")
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(sdp(16)))
                 EditableField("Last Name", lastName, { lastName = it }, "Enter last name")
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(sdp(16)))
                 // Email is read-only
                 EditableField("Email", email, {}, "Email", enabled = false)
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(sdp(16)))
                 EditableField("Phone Number", phoneNumber, { phoneNumber = it }, "Enter phone number")
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(sdp(32)))
 
                 val isUpdateLoading = updateProfileState is Resource.Loading
 
@@ -255,26 +257,26 @@ fun EditProfileScreen(
                             }
                         }
                     },
-                    modifier = Modifier.fillMaxWidth().height(56.dp),
+                    modifier = Modifier.fillMaxWidth().height(sdp(56)),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3)),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(sdp(12)),
                     enabled = !isUpdateLoading && !isUploading
                 ) {
                     if (isUpdateLoading) {
                         CircularProgressIndicator(
-                            modifier = Modifier.padding(end = 8.dp),
+                            modifier = Modifier.padding(end = sdp(8)),
                             color = Color.White
                         )
                     }
                     Text(
                         text = if (isUpdateLoading) "Saving..." else "Save Changes",
-                        fontSize = 16.sp,
+                        fontSize = ssp(16),
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White
                     )
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(sdp(24)))
             }
         }
     }

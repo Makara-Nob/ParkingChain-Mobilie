@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.group.mobileparkingchain.enumuration.FilterType
+import com.group.mobileparkingchain.ui.theme.sdp
 
 @Composable
 fun FilterChips(selectedFilter: FilterType, onFilterSelected: (FilterType) -> Unit) {
@@ -36,7 +37,7 @@ fun FilterChips(selectedFilter: FilterType, onFilterSelected: (FilterType) -> Un
         modifier = Modifier
             .fillMaxWidth()
             .horizontalScroll(androidx.compose.foundation.rememberScrollState()),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(sdp(8))
     ) {
         filters.forEach { item ->
             val isSelected = selectedFilter == item.type
@@ -55,7 +56,7 @@ fun FilterChips(selectedFilter: FilterType, onFilterSelected: (FilterType) -> Un
                         Icon(
                             imageVector = item.icon, 
                             contentDescription = null,
-                            modifier = Modifier.size(18.dp),
+                            modifier = Modifier.size(sdp(18)),
                             tint = if (isSelected) Color.White else (item.color ?: Color.Gray)
                         ) 
                     }

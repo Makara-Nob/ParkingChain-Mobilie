@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.group.mobileparkingchain.ui.theme.sdp
 import com.group.mobileparkingchain.enumuration.FilterType
 import com.group.mobileparkingchain.enumuration.ParkingStatus
 import com.group.mobileparkingchain.features.home.data.ParkingSpot
@@ -35,8 +36,10 @@ import com.group.mobileparkingchain.features.home.presentation.components.Parkin
 import com.group.mobileparkingchain.features.home.presentation.components.ReservationSheet
 import com.group.mobileparkingchain.features.home.presentation.components.SearchBar
 import com.group.mobileparkingchain.features.home.presentation.viewmodel.HomeViewModel
+import com.group.mobileparkingchain.features.payment.presentation.view.BookingReceiptScreen
 import com.group.mobileparkingchain.features.payment.presentation.view.PaymentQrScreen
 import com.group.mobileparkingchain.ui.components.BottomNavigationBar
+import com.group.mobileparkingchain.ui.components.LoadingSpinner
 import com.group.mobileparkingchain.features.payment.presentation.view.BookingInfo
 import com.group.mobileparkingchain.ui.screens.booking.BookingPaymentScreen
 import com.group.mobileparkingchain.features.payment.presentation.view.CompleteBookingScreen
@@ -70,6 +73,7 @@ fun HomeScreen(
     var bookingStartTime by remember { mutableLongStateOf(0L) }
     var bookingTotal by remember { mutableDoubleStateOf(0.0) }
     var showQrScreen by remember { mutableStateOf(false) }
+    var showReceipt by remember { mutableStateOf(false) }
     var lastPaymentCreated by remember { mutableStateOf<HomeViewModel.PaymentState.PaymentCreated?>(null) }
     var pollingPaymentId by remember { mutableStateOf<String?>(null) }
 
@@ -78,6 +82,7 @@ fun HomeScreen(
     val paymentState by homeViewModel.paymentState.collectAsState()
     val paymentStatus by homeViewModel.paymentStatus.collectAsState()
     val isLoading by homeViewModel.isLoading.collectAsState()
+    val receiptBooking by homeViewModel.receiptBooking.collectAsState()
     // ----- Payment Flow Logic -----
     
     LaunchedEffect(paymentState) {
@@ -98,8 +103,8 @@ fun HomeScreen(
                 Toast.makeText(context, "Payment successful", Toast.LENGTH_SHORT).show()
                 showQrScreen = false
                 pollingPaymentId = null
+                showReceipt = true
                 homeViewModel.resetPaymentState()
-                onNavigateToBookingHistory()
             }
             is HomeViewModel.PaymentState.Error -> {
                 Toast.makeText(
@@ -112,6 +117,8 @@ fun HomeScreen(
                 showQrScreen = false
                 showCompleteBooking = false
                 showBookingPayment = false
+                showReceipt = false
+                homeViewModel.clearReceiptBooking()
                 selectedSpot = null
             }
             else -> {}
@@ -173,6 +180,22 @@ fun HomeScreen(
 
     // ----- Screen Navigation -----
     when {
+        showReceipt -> {
+            val booking = receiptBooking
+            if (booking != null) {
+                BookingReceiptScreen(
+                    booking = booking,
+                    onDoneClick = {
+                        showReceipt = false
+                        homeViewModel.clearReceiptBooking()
+                        onNavigateToBookingHistory()
+                    }
+                )
+            } else {
+                LoadingSpinner()
+            }
+        }
+
         showQrScreen -> {
             val state = (paymentState as? HomeViewModel.PaymentState.PaymentCreated) ?: lastPaymentCreated
             if (state != null) {
@@ -277,18 +300,18 @@ fun HomeScreen(
                     modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(16.dp)
+                    .padding(sdp(16))
                     .pointerInput(Unit) {
                         detectTapGestures(onTap = {
                             focusManager.clearFocus()
                         })
                     }
                 ) {
-                    Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(sdp(16)))
                     SearchBar(searchQuery) { searchQuery = it }
-                    Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(sdp(16)))
                     FilterChips(selectedFilter) { selectedFilter = it }
-                    Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(sdp(16)))
 
                     ParkingGrid(filteredSpots) { spot ->
                         if (spot.status == ParkingStatus.AVAILABLE) {

@@ -21,6 +21,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.group.mobileparkingchain.ui.theme.PrimaryBlue
 import com.group.mobileparkingchain.ui.theme.TextGray
+import com.group.mobileparkingchain.ui.theme.sdp
 
 @Composable
 fun PasswordInput(
@@ -46,8 +47,8 @@ fun PasswordInput(
             }
         },
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-        modifier = Modifier.fillMaxWidth().height(60.dp),
-        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.fillMaxWidth().height(sdp(60)),
+        shape = RoundedCornerShape(sdp(12)),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = PrimaryBlue,
             unfocusedBorderColor = Color(0xFF334155),

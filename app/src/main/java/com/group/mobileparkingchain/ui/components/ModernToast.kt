@@ -32,6 +32,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -107,24 +109,24 @@ private fun ModernToast(
     
     Row(
         modifier = modifier
-            .padding(horizontal = 24.dp, vertical = 16.dp)
-            .shadow(8.dp, RoundedCornerShape(12.dp))
-            .background(backgroundColor, RoundedCornerShape(12.dp))
-            .padding(horizontal = 16.dp, vertical = 14.dp),
+            .padding(horizontal = sdp(24), vertical = sdp(16))
+            .shadow(sdp(8), RoundedCornerShape(sdp(12)))
+            .background(backgroundColor, RoundedCornerShape(sdp(12)))
+            .padding(horizontal = sdp(16), vertical = sdp(14)),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(sdp(12))
     ) {
         Icon(
             imageVector = icon,
             contentDescription = null,
             tint = iconColor,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(sdp(24))
         )
         
         Text(
             text = message,
             color = Color.White,
-            fontSize = 15.sp,
+            fontSize = ssp(15),
             fontWeight = FontWeight.Medium,
             modifier = Modifier.weight(1f, fill = false)
         )

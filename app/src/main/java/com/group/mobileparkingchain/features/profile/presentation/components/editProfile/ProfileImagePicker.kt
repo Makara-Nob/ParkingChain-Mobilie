@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.group.mobileparkingchain.ui.theme.sdp
 
 @Composable
 fun ProfileImagePicker(
@@ -27,15 +28,15 @@ fun ProfileImagePicker(
     showError: (String) -> Unit
 ) {
     Box(
-        modifier = Modifier.size(120.dp),
+        modifier = Modifier.size(sdp(120)),
         contentAlignment = Alignment.BottomEnd
     ) {
         Box(
             modifier = Modifier
-                .size(120.dp)
+                .size(sdp(120))
                 .clip(CircleShape)
                 .background(Color(0xFF2C2C2C))
-                .border(3.dp, Color(0xFF2196F3), CircleShape),
+                .border(sdp(3), Color(0xFF2196F3), CircleShape),
             contentAlignment = Alignment.Center
         ) {
             if (imageUrl != null) {
@@ -50,14 +51,14 @@ fun ProfileImagePicker(
                     imageVector = Icons.Default.Person,
                     contentDescription = "Profile",
                     tint = Color.Gray,
-                    modifier = Modifier.size(60.dp)
+                    modifier = Modifier.size(sdp(60))
                 )
             }
         }
 
         Box(
             modifier = Modifier
-                .size(36.dp)
+                .size(sdp(36))
                 .clip(CircleShape)
                 .background(Color(0xFF2196F3))
                 .clickable { onImageSelected() },
@@ -67,7 +68,7 @@ fun ProfileImagePicker(
                 imageVector = Icons.Default.CameraAlt,
                 contentDescription = "Change Photo",
                 tint = Color.White,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(sdp(20))
             )
         }
     }

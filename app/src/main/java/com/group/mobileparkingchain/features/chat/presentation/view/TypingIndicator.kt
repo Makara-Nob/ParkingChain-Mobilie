@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.group.mobileparkingchain.ui.theme.sdp
 import kotlinx.coroutines.delay
 
 @Composable
@@ -62,7 +63,7 @@ fun TypingIndicator(
 
     Row(
         modifier = modifier
-            .padding(8.dp),
+            .padding(sdp(8)),
         verticalAlignment = Alignment.CenterVertically
     ) {
         dots.forEachIndexed { index, animatable ->

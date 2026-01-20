@@ -65,6 +65,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 import com.group.mobileparkingchain.features.payment.presentation.component.payment.PriceRow
 import com.group.mobileparkingchain.utils.Formatters
 import java.text.SimpleDateFormat
@@ -132,17 +134,17 @@ fun CompleteBookingScreen(
                 title = {
                     Text(
                         "Complete",
-                        fontSize = 20.sp,
+                        fontSize = ssp(20),
                         fontWeight = FontWeight.SemiBold
                     )
                 },
                 actions = {
                     Text(
                         text = "1 of 3",
-                        fontSize = 14.sp,
+                        fontSize = ssp(14),
                         fontWeight = FontWeight.Medium,
                         color = Color.White,
-                        modifier = Modifier.padding(end = 16.dp)
+                        modifier = Modifier.padding(end = sdp(16))
                     )
                 },
                 navigationIcon = {
@@ -161,10 +163,10 @@ fun CompleteBookingScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = sdp(16))
                 .verticalScroll(rememberScrollState()) // Allow scrolling
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(sdp(16)))
 
             // Booking Summary Card
             Card(
@@ -172,43 +174,43 @@ fun CompleteBookingScreen(
                 colors = CardDefaults.cardColors(
                     containerColor = Color(0xFF1E2836)
                 ),
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(sdp(16))
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp),
+                        .padding(sdp(20)),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column {
                         Text(
                             "BOOKING SUMMARY",
-                            fontSize = 12.sp,
+                            fontSize = ssp(12),
                             color = Color.Gray,
                             fontWeight = FontWeight.Medium
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(sdp(8)))
                         Text(
                             bookingInfo.spotId,
-                            fontSize = 24.sp,
+                            fontSize = ssp(24),
                             fontWeight = FontWeight.Bold,
                             color = Color.White
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(sdp(4)))
                         Text(
                             text = "${bookingInfo.spotType} Parking",
-                            fontSize = 14.sp,
+                            fontSize = ssp(14),
                             color = Color(0xFF8A9BAE)
                         )
                     }
 
                     Box(
                         modifier = Modifier
-                            .size(80.dp)
+                            .size(sdp(80))
                             .background(
                                 Color(0xFF2C3E50),
-                                shape = RoundedCornerShape(12.dp)
+                                shape = RoundedCornerShape(sdp(12))
                             ),
                         contentAlignment = Alignment.Center
                     ) {
@@ -216,13 +218,13 @@ fun CompleteBookingScreen(
                             Image(
                                 bitmap = parkingImage,
                                 contentDescription = null,
-                                modifier = Modifier.size(48.dp),
+                                modifier = Modifier.size(sdp(48)),
                                 contentScale = ContentScale.Fit
                             )
                         } else {
                             Text(
                                 "P",
-                                fontSize = 32.sp,
+                                fontSize = ssp(32),
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
                             )
@@ -231,21 +233,21 @@ fun CompleteBookingScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(sdp(16)))
 
             // Time Selector
             Text(
                 "Time Selector",
-                fontSize = 20.sp,
+                fontSize = ssp(20),
                 fontWeight = FontWeight.SemiBold,
                 color = Color.White
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(sdp(8)))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(sdp(8))
             ) {
                 DurationOption.values().forEach { option ->
                     val isSelected = selectedDuration == option
@@ -254,7 +256,7 @@ fun CompleteBookingScreen(
                         onClick = { selectedDuration = option },
                         label = { Text(option.label) },
                         modifier = Modifier
-                            .height(36.dp),
+                            .height(sdp(36)),
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = Color(0xFF2196F3),
                             selectedLabelColor = Color.White,
@@ -271,7 +273,7 @@ fun CompleteBookingScreen(
             }
 
             if (selectedDuration == DurationOption.CUSTOM) {
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(sdp(12)))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -279,29 +281,29 @@ fun CompleteBookingScreen(
                 ) {
                     Text(
                         text = "Custom Hours",
-                        fontSize = 14.sp,
+                        fontSize = ssp(14),
                         color = Color(0xFF8A9BAE)
                     )
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         OutlinedButton(
                             onClick = { if (customHours > 1) customHours -= 1 },
-                            shape = RoundedCornerShape(10.dp),
-                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
+                            shape = RoundedCornerShape(sdp(10)),
+                            contentPadding = PaddingValues(horizontal = sdp(8), vertical = sdp(4))
                         ) {
                             Icon(Icons.Default.Remove, contentDescription = "Decrease")
                         }
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(sdp(8)))
                         Text(
                             text = "$customHours hrs",
-                            fontSize = 16.sp,
+                            fontSize = ssp(16),
                             fontWeight = FontWeight.SemiBold,
                             color = Color.White
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(sdp(8)))
                         OutlinedButton(
                             onClick = { if (customHours < 12) customHours += 1 },
-                            shape = RoundedCornerShape(10.dp),
-                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
+                            shape = RoundedCornerShape(sdp(10)),
+                            contentPadding = PaddingValues(horizontal = sdp(8), vertical = sdp(4))
                         ) {
                             Icon(Icons.Default.Add, contentDescription = "Increase")
                         }
@@ -309,57 +311,57 @@ fun CompleteBookingScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(sdp(16)))
 
             // Start Time
             Text(
                 "Start Time",
-                fontSize = 18.sp,
+                fontSize = ssp(18),
                 fontWeight = FontWeight.SemiBold,
                 color = Color.White
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(sdp(8)))
 
             OutlinedButton(
                 onClick = { showDatePicker = true },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp),
+                    .height(sdp(50)),
                 colors = ButtonDefaults.outlinedButtonColors(
                     containerColor = Color(0xFF1E2836),
                     contentColor = if (selectedDateTime != null) Color.White else Color.Gray
                 ),
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(sdp(12)),
                 border = null
             ) {
                 Text(
                     text = selectedDateTime?.let { dateFormat.format(Date(it)) }
                         ?: "Select Date & Time",
-                    fontSize = 16.sp,
+                    fontSize = ssp(16),
                     textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(sdp(16)))
 
             // Price Calculation
             Text(
                 "Price Calculation",
-                fontSize = 20.sp,
+                fontSize = ssp(20),
                 fontWeight = FontWeight.SemiBold,
                 color = Color.White
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(sdp(12)))
 
             PriceRow("Duration", "$duration hrs")
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(sdp(12)))
             PriceRow("Rate", "${Formatters.moneyWithSymbol(bookingInfo.ratePerHour, "$", 0)}/hr")
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(sdp(12)))
             Divider(color = Color.White.copy(alpha = 0.1f))
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(sdp(12)))
             PriceRow(
                 "Total",
                 "${Formatters.moneyWithSymbol(total, "$")}",
@@ -377,22 +379,22 @@ fun CompleteBookingScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .height(sdp(56)),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF2196F3),
                     disabledContainerColor = Color(0xFF2196F3).copy(alpha = 0.5f)
                 ),
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(sdp(12)),
                 enabled = selectedDateTime != null
             ) {
                 Text(
                     text = "Continue to Payment",
-                    fontSize = 16.sp,
+                    fontSize = ssp(16),
                     fontWeight = FontWeight.SemiBold
                 )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(sdp(24)))
         }
     }
 

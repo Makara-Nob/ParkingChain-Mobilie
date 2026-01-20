@@ -17,6 +17,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @Composable
 fun WalletOption(name: String, icon: String) {
@@ -25,19 +27,19 @@ fun WalletOption(name: String, icon: String) {
             .fillMaxWidth()
             .clickable { /* TODO: handle wallet selection */ },
         color = Color(0xFF1E2836),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(sdp(12))
     ) {
         Row (
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(sdp(16)),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(icon, fontSize = 24.sp)
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(name, fontSize = 16.sp, fontWeight = FontWeight.Medium, color = Color.White)
+                Text(icon, fontSize = ssp(24))
+                Spacer(modifier = Modifier.width(sdp(12)))
+                Text(name, fontSize = ssp(16), fontWeight = FontWeight.Medium, color = Color.White)
             }
-            Text("→", fontSize = 20.sp, color = Color.Gray)
+            Text("→", fontSize = ssp(20), color = Color.Gray)
         }
     }
 }

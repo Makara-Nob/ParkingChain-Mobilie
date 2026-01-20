@@ -33,6 +33,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 // Navigation item data class
 data class BottomNavItem(
@@ -56,12 +58,12 @@ fun BottomNavigationBar(
     Surface(
         modifier = modifier.fillMaxWidth(),
         color = Color(0xFF1E2A3A),
-        shadowElevation = 8.dp
+        shadowElevation = sdp(8)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 12.dp),
+                .padding(vertical = sdp(12)),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -88,8 +90,8 @@ private fun BottomNavItemView(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .width(80.dp)
-            .padding(horizontal = 4.dp)
+            .width(sdp(80))
+            .padding(horizontal = sdp(4))
             .then(
                 if (isSelected) {
                     Modifier.background(
@@ -100,36 +102,36 @@ private fun BottomNavItemView(
                     Modifier
                 }
             )
-            .padding(vertical = 8.dp)
+            .padding(vertical = sdp(8))
     ) {
         IconButton(
             onClick = onClick,
-            modifier = Modifier.size(32.dp)
+            modifier = Modifier.size(sdp(32))
         ) {
             Icon(
                 imageVector = item.icon,
                 contentDescription = item.label,
                 tint = iconColor,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(sdp(24))
             )
         }
         
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(sdp(4)))
         
         Text(
             text = item.label,
             color = textColor,
-            fontSize = 12.sp,
+            fontSize = ssp(12),
             fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
         )
         
         // Underline indicator for selected item
         if (isSelected) {
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(sdp(6)))
             Box(
                 modifier = Modifier
-                    .width(40.dp)
-                    .height(2.dp)
+                    .width(sdp(40))
+                    .height(sdp(2))
                     .background(Color(0xFF4A90E2))
             )
         }

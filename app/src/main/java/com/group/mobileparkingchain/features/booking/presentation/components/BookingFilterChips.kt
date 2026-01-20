@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.group.mobileparkingchain.features.parking.data.model.BookingStatus
+import com.group.mobileparkingchain.ui.theme.sdp
 
 @Composable
 fun BookingFilterChips(
@@ -37,7 +38,7 @@ fun BookingFilterChips(
         modifier = Modifier
             .fillMaxWidth()
             .horizontalScroll(androidx.compose.foundation.rememberScrollState()),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(sdp(8))
     ) {
         filters.forEach { item ->
             val isSelected = selectedStatus == item.status
@@ -57,7 +58,7 @@ fun BookingFilterChips(
                         Icon(
                             imageVector = item.icon, 
                             contentDescription = null,
-                            modifier = Modifier.size(18.dp),
+                            modifier = Modifier.size(sdp(18)),
                             tint = if (isSelected) Color.White else (item.color ?: Color.Gray)
                         ) 
                     }

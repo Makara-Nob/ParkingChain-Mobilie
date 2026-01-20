@@ -38,6 +38,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
@@ -69,17 +71,17 @@ fun BookingPaymentScreen(
                 title = {
                     Text(
                         "Complete",
-                        fontSize = 20.sp,
+                        fontSize = ssp(20),
                         fontWeight = FontWeight.SemiBold
                     )
                 },
                 actions = {
                     Text(
                         text = "2 of 3",
-                        fontSize = 14.sp,
+                        fontSize = ssp(14),
                         fontWeight = FontWeight.Medium,
                         color = Color.White,
-                        modifier = Modifier.padding(end = 16.dp)
+                        modifier = Modifier.padding(end = sdp(16))
                     )
                 },
                 navigationIcon = {
@@ -98,24 +100,24 @@ fun BookingPaymentScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = sdp(16))
                 .verticalScroll(rememberScrollState())
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(sdp(16)))
 
             // Payment Method Selection
             Text(
                 "Payment Method",
-                fontSize = 20.sp,
+                fontSize = ssp(20),
                 fontWeight = FontWeight.SemiBold,
                 color = Color.White
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(sdp(12)))
             
             // Vertical List of Payment Methods (Rows)
             Column(
                 modifier = Modifier.fillMaxWidth(), 
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(sdp(12))
             ) {
                 // PayWay Option (Only payment method available - always selected)
                 PaymentMethodRow(
@@ -141,32 +143,32 @@ fun BookingPaymentScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .height(sdp(56)),
                 enabled = !isProcessing,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF2196F3),
                     disabledContainerColor = Color(0xFF2196F3).copy(alpha = 0.5f)
                 ),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(sdp(12))
             ) {
                 if (isProcessing) {
                     CircularProgressIndicator(
                         color = Color.White,
-                        strokeWidth = 2.dp,
+                        strokeWidth = sdp(2),
                         modifier = Modifier
-                            .width(20.dp)
-                            .height(20.dp)
+                            .width(sdp(20))
+                            .height(sdp(20))
                     )
                 } else {
                     Text(
                         text = "Confirm & Pay ($formattedTotal)",
-                        fontSize = 16.sp,
+                        fontSize = ssp(16),
                         fontWeight = FontWeight.SemiBold
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(sdp(24)))
         }
     }
 }
@@ -185,17 +187,17 @@ fun PaymentMethodRow(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .height(72.dp),
+            .height(sdp(72)),
         colors = CardDefaults.cardColors(
             containerColor = Color(0xFF1E2836)
         ),
-        shape = RoundedCornerShape(12.dp),
-        border = if (isSelected) androidx.compose.foundation.BorderStroke(2.dp, Color(0xFF2196F3)) else null
+        shape = RoundedCornerShape(sdp(12)),
+        border = if (isSelected) androidx.compose.foundation.BorderStroke(sdp(2), Color(0xFF2196F3)) else null
     ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = sdp(16)),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -207,22 +209,22 @@ fun PaymentMethodRow(
                         .build(),
                     contentDescription = title,
                     modifier = Modifier
-                        .width(40.dp)
-                        .height(40.dp)
-                        .padding(end = 16.dp),
+                        .width(sdp(40))
+                        .height(sdp(40))
+                        .padding(end = sdp(16)),
                     contentScale = ContentScale.Fit
                 )
                 Column {
                     Text(
                         text = title,
-                        fontSize = 16.sp,
+                        fontSize = ssp(16),
                         fontWeight = FontWeight.Medium,
                         color = if (isSelected) Color.White else Color.Gray
                     )
-                    Spacer(modifier = Modifier.height(2.dp))
+                    Spacer(modifier = Modifier.height(sdp(2)))
                     Text(
                         text = description,
-                        fontSize = 12.sp,
+                        fontSize = ssp(12),
                         color = Color(0xFF8A9BAE)
                     )
                 }

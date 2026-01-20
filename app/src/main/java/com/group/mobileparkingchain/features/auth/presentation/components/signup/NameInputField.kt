@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.group.mobileparkingchain.ui.theme.PrimaryBlue
 import com.group.mobileparkingchain.ui.theme.TextGray
+import com.group.mobileparkingchain.ui.theme.sdp
 
 @Composable
 fun NameInputField(label: String, value: String, onValueChange: (String) -> Unit) {
@@ -22,8 +23,8 @@ fun NameInputField(label: String, value: String, onValueChange: (String) -> Unit
         onValueChange = onValueChange,
         placeholder = { Text(label, color = TextGray) }, // Changed from label to placeholder
         leadingIcon = { Icon(imageVector = androidx.compose.material.icons.Icons.Default.Person, contentDescription = label, tint = TextGray) },
-        modifier = Modifier.fillMaxWidth().height(60.dp),
-        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.fillMaxWidth().height(sdp(60)),
+        shape = RoundedCornerShape(sdp(12)),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = PrimaryBlue,
             unfocusedBorderColor = Color(0xFF334155),

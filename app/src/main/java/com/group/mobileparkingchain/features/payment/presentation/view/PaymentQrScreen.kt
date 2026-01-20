@@ -39,6 +39,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 import com.group.mobileparkingchain.utils.Formatters
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -136,7 +138,7 @@ fun PaymentQrScreen(
                 title = {
                     Text(
                         text = "Complete",
-                        fontSize = 20.sp,
+                        fontSize = ssp(20),
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White
                     )
@@ -144,10 +146,10 @@ fun PaymentQrScreen(
                 actions = {
                     Text(
                         text = "3 of 3",
-                        fontSize = 14.sp,
+                        fontSize = ssp(14),
                         fontWeight = FontWeight.Medium,
                         color = Color.White,
-                        modifier = Modifier.padding(end = 16.dp)
+                        modifier = Modifier.padding(end = sdp(16))
                     )
                 },
                 navigationIcon = {
@@ -169,26 +171,26 @@ fun PaymentQrScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 20.dp, vertical = 16.dp),
+                .padding(horizontal = sdp(20), vertical = sdp(16)),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(sdp(8)))
 
             Text(
                 text = "Total: $formattedTotal",
-                fontSize = 18.sp,
+                fontSize = ssp(18),
                 color = Color(0xFF444444),
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(sdp(6)))
 
             Text(
                 text = "Payment Status: $statusLabel",
-                fontSize = 18.sp,
+                fontSize = ssp(18),
                 color = statusColor,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
@@ -196,7 +198,7 @@ fun PaymentQrScreen(
             )
 
             if (expiresAtMillis != null) {
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(sdp(6)))
 
                 val minutes = remainingSeconds / 60
                 val seconds = remainingSeconds % 60
@@ -204,20 +206,20 @@ fun PaymentQrScreen(
 
                 Text(
                     text = "Expires in $countdown",
-                    fontSize = 14.sp,
+                    fontSize = ssp(14),
                     color = Color(0xFF666666),
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
 
-            Spacer(modifier = Modifier.height(18.dp))
+            Spacer(modifier = Modifier.height(sdp(18)))
 
             Box(
                 modifier = Modifier
                     .fillMaxWidth(0.9f)
-                    .background(Color.White, RoundedCornerShape(12.dp))
-                    .padding(16.dp),
+                    .background(Color.White, RoundedCornerShape(sdp(12)))
+                    .padding(sdp(16)),
                 contentAlignment = Alignment.Center
             ) {
                 if (bitmap != null) {
@@ -234,18 +236,18 @@ fun PaymentQrScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(sdp(16)))
 
             Button(
                 onClick = onCancel,
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE0534E)),
-                shape = RoundedCornerShape(8.dp),
+                shape = RoundedCornerShape(sdp(8)),
                 modifier = Modifier.fillMaxWidth(0.6f)
             ) {
                 Text(
                     text = "Cancel Payment",
                     color = Color.White,
-                    fontSize = 16.sp,
+                    fontSize = ssp(16),
                     fontWeight = FontWeight.SemiBold
                 )
             }

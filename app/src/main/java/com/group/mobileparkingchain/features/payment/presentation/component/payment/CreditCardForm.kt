@@ -18,6 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @Composable
 fun CreditCardForm(
@@ -35,14 +37,14 @@ fun CreditCardForm(
             onValueChange = onCardNumberChange,
             placeholder = { Text("XXXX XXXX XXXX XXXX", color = Color.Gray) },
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(sdp(12)),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             colors = textFieldColors()
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(sdp(16)))
 
-        Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(sdp(12))) {
             Column(modifier = Modifier.weight(1f)) {
                 LabeledField("Expiry Date")
                 OutlinedTextField(
@@ -50,7 +52,7 @@ fun CreditCardForm(
                     onValueChange = onExpiryDateChange,
                     placeholder = { Text("MM/YY", color = Color.Gray) },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(sdp(12)),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     colors = textFieldColors()
                 )
@@ -62,7 +64,7 @@ fun CreditCardForm(
                     onValueChange = onCvvChange,
                     placeholder = { Text("***", color = Color.Gray) },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(sdp(12)),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     colors = textFieldColors()
                 )
@@ -73,8 +75,8 @@ fun CreditCardForm(
 
 @Composable
 private fun LabeledField(label: String) {
-    Text(label, fontSize = 14.sp, fontWeight = FontWeight.Medium, color = Color(0xFF2196F3))
-    Spacer(modifier = Modifier.height(8.dp))
+    Text(label, fontSize = ssp(14), fontWeight = FontWeight.Medium, color = Color(0xFF2196F3))
+    Spacer(modifier = Modifier.height(sdp(8)))
 }
 
 @Composable

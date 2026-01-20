@@ -5,17 +5,18 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.group.mobileparkingchain.R
 
 @Composable
 fun ParkingLogo(
     modifier: Modifier = Modifier,
-    size: Int = 300
+    size: Dp = 300.dp
 ) {
     Image(
         painter = painterResource(id = R.drawable.parking_logo),
         contentDescription = "Parking Logo",
-        modifier = modifier.size(size.dp)
+        modifier = modifier.size(size)
     )
 }

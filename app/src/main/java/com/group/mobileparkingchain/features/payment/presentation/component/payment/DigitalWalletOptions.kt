@@ -18,6 +18,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 import com.group.mobileparkingchain.R
 
 @Composable
@@ -39,39 +41,39 @@ fun DigitalWalletOptions(onOptionSelected: (String) -> Unit) {
                 else 
                     Color(0xFF1E2836)
             ),
-            shape = RoundedCornerShape(16.dp)
+            shape = RoundedCornerShape(sdp(16))
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp),
+                    .padding(sdp(20)),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    horizontalArrangement = Arrangement.spacedBy(sdp(16))
                 ) {
                     // PayWay (KHQR) Logo
                     Image(
                         painter = painterResource(id = R.drawable.khqr_logo),
                         contentDescription = "PayWay Logo",
                         modifier = Modifier
-                            .size(48.dp),
+                            .size(sdp(48)),
                         contentScale = ContentScale.Fit
                     )
                     
                     Column {
                         Text(
                             text = "PayWay Payment",
-                            fontSize = 16.sp,
+                            fontSize = ssp(16),
                             fontWeight = FontWeight.SemiBold,
                             color = Color.White
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(sdp(4)))
                         Text(
                             text = "Pay with ABA PayWay",
-                            fontSize = 12.sp,
+                            fontSize = ssp(12),
                             color = Color.Gray
                         )
                     }

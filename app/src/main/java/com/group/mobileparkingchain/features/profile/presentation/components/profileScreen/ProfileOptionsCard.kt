@@ -21,6 +21,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @Composable
 fun ProfileOptionsCard(
@@ -29,16 +31,16 @@ fun ProfileOptionsCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(sdp(16)),
         colors = CardDefaults.cardColors(
             containerColor = if (isDangerZone) Color(0xFF2A1515) else Color(0xFF1E1E1E)
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = sdp(4))
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(4.dp)
+                .padding(sdp(4))
         ) {
             options.forEachIndexed { index, (label, onClick) ->
                 ProfileOptionItem(
@@ -50,8 +52,8 @@ fun ProfileOptionsCard(
                 if (index < options.size - 1) {
                     HorizontalDivider(
                         color = Color(0xFF2A2A2A),
-                        thickness = 1.dp,
-                        modifier = Modifier.padding(horizontal = 16.dp)
+                        thickness = sdp(1),
+                        modifier = Modifier.padding(horizontal = sdp(16))
                     )
                 }
             }
@@ -69,13 +71,13 @@ private fun ProfileOptionItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 16.dp),
+            .padding(horizontal = sdp(16), vertical = sdp(16)),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = label,
-            fontSize = 16.sp,
+            fontSize = ssp(16),
             fontWeight = FontWeight.Medium,
             color = if (isDanger) Color(0xFFFF6B6B) else Color.White
         )

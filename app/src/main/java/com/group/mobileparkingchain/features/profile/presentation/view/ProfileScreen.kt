@@ -39,6 +39,8 @@ import com.group.mobileparkingchain.features.profile.presentation.components.pro
 import com.group.mobileparkingchain.features.profile.presentation.components.profileScreen.ProfileOptionsCard
 import com.group.mobileparkingchain.features.profile.presentation.viewmodel.ProfileViewModel
 import com.group.mobileparkingchain.ui.components.BottomNavigationBar
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -129,13 +131,13 @@ fun ProfileScreen(
                         Text(
                             text = "Failed to load profile",
                             color = Color.White,
-                            fontSize = 16.sp
+                            fontSize = ssp(16)
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(sdp(8)))
                         Text(
                             text = state.message,
                             color = Color.Gray,
-                            fontSize = 14.sp
+                            fontSize = ssp(14)
                         )
                     }
                 }
@@ -174,15 +176,15 @@ private fun ProfileContent(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 24.dp)
-            .padding(bottom = 24.dp),
+            .padding(horizontal = sdp(24))
+            .padding(bottom = sdp(24)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(sdp(24)))
 
         // Profile Image and Name with Edit Button
         ProfileImage(userProfile.profileImageUrl)
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(sdp(16)))
 
         // Edit Profile Button
         androidx.compose.material3.TextButton(
@@ -195,44 +197,44 @@ private fun ProfileContent(
                 imageVector = Icons.Default.Edit,
                 contentDescription = "Edit",
                 tint = Color(0xFF4A90E2),
-                modifier = Modifier.padding(end = 4.dp)
+                modifier = Modifier.padding(end = sdp(4))
             )
             Text(
                 text = "Edit Profile",
-                fontSize = 14.sp,
+                fontSize = ssp(14),
                 fontWeight = FontWeight.Medium
             )
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(sdp(8)))
 
         Text(
             text = "${userProfile.firstName} ${userProfile.lastName}",
-            fontSize = 24.sp,
+            fontSize = ssp(24),
             fontWeight = FontWeight.Bold,
             color = Color.White
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(sdp(8)))
 
         Text(
             text = userProfile.email,
-            fontSize = 14.sp,
+            fontSize = ssp(14),
             color = Color.Gray
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(sdp(32)))
 
         // Personal Information Section
         Text(
             text = "Personal Information",
-            fontSize = 18.sp,
+            fontSize = ssp(18),
             fontWeight = FontWeight.SemiBold,
             color = Color.White,
             modifier = Modifier.align(Alignment.Start)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(sdp(16)))
 
         listOf(
             "First Name" to userProfile.firstName,
@@ -241,21 +243,21 @@ private fun ProfileContent(
             "Phone Number" to (userProfile.phoneNumber.takeIf { it.isNotBlank() } ?: "Not set")
         ).forEach {
             ProfileInfoCard(it.first, it.second)
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(sdp(12)))
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(sdp(24)))
 
         // Account Management Section
         Text(
             text = "Account Management",
-            fontSize = 18.sp,
+            fontSize = ssp(18),
             fontWeight = FontWeight.SemiBold,
             color = Color.White,
             modifier = Modifier.align(Alignment.Start)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(sdp(16)))
 
         ProfileOptionsCard(
             options = listOf(
@@ -264,7 +266,7 @@ private fun ProfileContent(
             )
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(sdp(24)))
 
         // Logout Section
         ProfileOptionsCard(
@@ -274,17 +276,17 @@ private fun ProfileContent(
             isDangerZone = true
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(sdp(24)))
 
         Text(
             text = "About",
-            fontSize = 18.sp,
+            fontSize = ssp(18),
             fontWeight = FontWeight.SemiBold,
             color = Color.White,
             modifier = Modifier.align(Alignment.Start)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(sdp(16)))
 
         ProfileOptionsCard(
             options = listOf(
@@ -292,6 +294,6 @@ private fun ProfileContent(
             )
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(sdp(32)))
     }
 }

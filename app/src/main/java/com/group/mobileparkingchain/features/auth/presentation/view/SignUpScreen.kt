@@ -26,6 +26,8 @@ import com.group.mobileparkingchain.features.auth.presentation.components.signup
 import com.group.mobileparkingchain.features.auth.presentation.viewmodel.SignUpViewModel
 import com.group.mobileparkingchain.features.auth.presentation.viewmodel.SignUpViewModelFactory
 import com.group.mobileparkingchain.ui.components.ParkingLogo
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @Composable
 fun SignUpScreen(
@@ -78,7 +80,7 @@ fun SignUpScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = sdp(24))
             .verticalScroll(rememberScrollState()),
         contentAlignment = Alignment.Center
     ) {
@@ -86,22 +88,22 @@ fun SignUpScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 24.dp) // Reduced from 40dp
+                .padding(vertical = sdp(24))
         ) {
-            ParkingLogo(size = 150) // Reduced from 200
-            Spacer(modifier = Modifier.height(12.dp)) // Reduced from 16dp
+            ParkingLogo(size = sdp(150))
+            Spacer(modifier = Modifier.height(sdp(12)))
             Text(
                 text = "Join Us Now!",
-                fontSize = 28.sp,
+                fontSize = ssp(28),
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
-            Spacer(modifier = Modifier.height(24.dp)) // Reduced from 32dp
+            Spacer(modifier = Modifier.height(sdp(24)))
 
             // First and Last Name side-by-side
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(sdp(12))
             ) {
                 Box(modifier = Modifier.weight(1f)) {
                     NameInputField("First Name", firstName) { firstName = it; errorMessage = null }
@@ -110,16 +112,16 @@ fun SignUpScreen(
                     NameInputField("Last Name", lastName) { lastName = it; errorMessage = null }
                 }
             }
-            Spacer(modifier = Modifier.height(12.dp)) // Reduced from 16dp
+            Spacer(modifier = Modifier.height(sdp(12)))
 
             EmailInput(email) { email = it; errorMessage = null }
-            Spacer(modifier = Modifier.height(12.dp)) // Reduced from 16dp
+            Spacer(modifier = Modifier.height(sdp(12)))
 
             PasswordInput("Password", password, passwordVisible,
                 onPasswordChange = { password = it; errorMessage = null },
                 onPasswordVisibilityToggle = { passwordVisible = !passwordVisible }
             )
-            Spacer(modifier = Modifier.height(12.dp)) // Reduced from 16dp
+            Spacer(modifier = Modifier.height(sdp(12)))
 
             PasswordInput("Confirm Password", confirmPassword, confirmPasswordVisible,
                 onPasswordChange = { confirmPassword = it; errorMessage = null },
@@ -127,11 +129,11 @@ fun SignUpScreen(
             )
 
             if (errorMessage != null) {
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(sdp(8)))
                 ErrorText(errorMessage!!)
             }
 
-            Spacer(modifier = Modifier.height(24.dp)) // Reduced from 32dp
+            Spacer(modifier = Modifier.height(sdp(24)))
 
             SignUpButton(
                 firstName, lastName, email, password, confirmPassword,
@@ -141,7 +143,7 @@ fun SignUpScreen(
                 isLoading = registerState is Resource.Loading
             )
 
-            Spacer(modifier = Modifier.height(24.dp)) // Reduced from 40dp
+            Spacer(modifier = Modifier.height(sdp(24)))
             SignInRow(onNavigateToSignIn)
         }
     }

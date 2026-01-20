@@ -22,6 +22,8 @@ import com.group.mobileparkingchain.features.auth.presentation.components.signin
 import com.group.mobileparkingchain.features.auth.presentation.viewmodel.SignInViewModel
 import com.group.mobileparkingchain.features.auth.presentation.viewmodel.SignInViewModelFactory
 import com.group.mobileparkingchain.ui.components.ParkingLogo
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 @Composable
 fun SignInScreen(
@@ -77,7 +79,7 @@ fun SignInScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = sdp(24))
             .verticalScroll(rememberScrollState()),
         contentAlignment = Alignment.Center
     ) {
@@ -85,20 +87,20 @@ fun SignInScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 40.dp)
+                .padding(vertical = sdp(40))
         ) {
-            ParkingLogo(size = 200)
-            Spacer(modifier = Modifier.height(16.dp))
+            ParkingLogo(size = sdp(200))
+            Spacer(modifier = Modifier.height(sdp(16)))
             Text(
                 text = "Welcome Back!",
-                fontSize = 28.sp,
+                fontSize = ssp(28),
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(sdp(32)))
 
             EmailInput(email) { email = it; errorMessage = null }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(sdp(16)))
 
             PasswordInput(
                 password = password,
@@ -108,13 +110,13 @@ fun SignInScreen(
             )
 
             if (errorMessage != null) {
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(sdp(8)))
                 ErrorText(errorMessage!!)
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(sdp(8)))
             ForgotPasswordText(onForgotPassword)
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(sdp(24)))
 
             SignInButton(
                 email = email,
@@ -125,7 +127,7 @@ fun SignInScreen(
                 isLoading = loginState is Resource.Loading
             )
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(sdp(40)))
             SignUpRow(onNavigateToSignUp)
         }
     }

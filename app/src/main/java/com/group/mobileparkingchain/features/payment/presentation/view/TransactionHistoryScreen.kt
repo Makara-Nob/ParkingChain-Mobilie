@@ -36,6 +36,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.group.mobileparkingchain.features.payment.data.model.Payment
 import com.group.mobileparkingchain.features.payment.di.PaymentModule
@@ -101,8 +103,8 @@ fun TransactionHistoryScreen(
                         )
                     } else {
                         LazyColumn(
-                            contentPadding = PaddingValues(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                            contentPadding = PaddingValues(sdp(16)),
+                            verticalArrangement = Arrangement.spacedBy(sdp(12))
                         ) {
                             items(state.payments) { payment ->
                                 TransactionItem(payment)
@@ -119,10 +121,10 @@ fun TransactionHistoryScreen(
 fun TransactionItem(payment: Payment) {
     Card(
         colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(sdp(12)),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(sdp(16))) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -132,16 +134,16 @@ fun TransactionItem(payment: Payment) {
                     text = "Payment", // Could be booking ID or Description
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
+                    fontSize = ssp(16)
                 )
                 Text(
                     text = "${payment.amount} ${payment.currency}",
                     color = Color(0xFF4A90E2),
                     fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
+                    fontSize = ssp(16)
                 )
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(sdp(8)))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -149,7 +151,7 @@ fun TransactionItem(payment: Payment) {
                 Text(
                     text = formatPaymentDate(payment.createdAt),
                     color = Color.Gray,
-                    fontSize = 12.sp
+                    fontSize = ssp(12)
                 )
                 
                 // Status Pill
@@ -163,7 +165,7 @@ fun TransactionItem(payment: Payment) {
                 Text(
                     text = payment.status.uppercase(),
                     color = statusColor,
-                    fontSize = 12.sp,
+                    fontSize = ssp(12),
                     fontWeight = FontWeight.Medium
                 )
             }

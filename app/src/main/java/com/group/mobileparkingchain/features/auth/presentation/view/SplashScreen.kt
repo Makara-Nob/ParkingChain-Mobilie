@@ -25,6 +25,8 @@ import com.group.mobileparkingchain.features.auth.domain.model.AuthState
 import com.group.mobileparkingchain.features.auth.presentation.viewmodel.SplashViewModel
 import com.group.mobileparkingchain.features.auth.presentation.viewmodel.SplashViewModelFactory
 import com.group.mobileparkingchain.ui.components.ParkingLogo
+import com.group.mobileparkingchain.ui.theme.sdp
+import com.group.mobileparkingchain.ui.theme.ssp
 
 /**
  * Splash screen displayed on app startup.
@@ -99,15 +101,15 @@ fun SplashScreen(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(32.dp)
+            modifier = Modifier.padding(sdp(32))
         ) {
             // Logo with optional pulse animation
             ParkingLogo(
-                size = 200,
+                size = sdp(200),
                 modifier = Modifier.alpha(if (authState is AuthState.Loading) logoAlpha else 1f)
             )
 
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(sdp(48)))
 
             // State-specific UI
             when (val state = authState) {
@@ -115,14 +117,14 @@ fun SplashScreen(
                     // Loading state: checking credentials
                     CircularProgressIndicator(
                         color = Color(0xFF2196F3),
-                        modifier = Modifier.size(48.dp),
-                        strokeWidth = 4.dp
+                        modifier = Modifier.size(sdp(48)),
+                        strokeWidth = sdp(4)
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(sdp(16)))
                     Text(
                         text = "Checking credentials...",
                         color = Color.White.copy(alpha = 0.7f),
-                        fontSize = 16.sp
+                        fontSize = ssp(16)
                     )
                 }
 
@@ -130,17 +132,17 @@ fun SplashScreen(
                     // Error state: show message and retry button
                     Text(
                         text = "⚠️",
-                        fontSize = 48.sp,
-                        modifier = Modifier.padding(bottom = 16.dp)
+                        fontSize = ssp(48),
+                        modifier = Modifier.padding(bottom = sdp(16))
                     )
                     Text(
                         text = state.message,
                         color = Color.White,
-                        fontSize = 16.sp,
+                        fontSize = ssp(16),
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(horizontal = 24.dp)
+                        modifier = Modifier.padding(horizontal = sdp(24))
                     )
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(sdp(24)))
                     Button(
                         onClick = { viewModel.retry() },
                         colors = ButtonDefaults.buttonColors(
@@ -148,11 +150,11 @@ fun SplashScreen(
                         ),
                         modifier = Modifier
                             .fillMaxWidth(0.6f)
-                            .height(48.dp)
+                            .height(sdp(48))
                     ) {
                         Text(
                             text = "Retry",
-                            fontSize = 16.sp,
+                            fontSize = ssp(16),
                             fontWeight = FontWeight.SemiBold
                         )
                     }
@@ -167,7 +169,7 @@ fun SplashScreen(
             RotatingDotsSpinner(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 48.dp)
+                    .padding(bottom = sdp(48))
             )
         }
 
@@ -175,10 +177,10 @@ fun SplashScreen(
         Text(
             text = "v1.0.0",
             color = Color.White.copy(alpha = 0.3f),
-            fontSize = 12.sp,
+            fontSize = ssp(12),
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 24.dp)
+                .padding(bottom = sdp(24))
         )
     }
 }
@@ -196,7 +198,7 @@ private fun RotatingDotsSpinner(modifier: Modifier = Modifier) {
         label = "rotation"
     )
 
-    Canvas(modifier = modifier.size(36.dp)) {
+    Canvas(modifier = modifier.size(sdp(36))) {
         val dotCount = 8
         val radius = size.minDimension * 0.35f
         val dotRadius = size.minDimension * 0.08f

@@ -59,6 +59,10 @@ class PaymentViewModel(application: Application) : AndroidViewModel(application)
                 }
         }
     }
+
+    fun resetPaymentState() {
+        _paymentState.value = PaymentState.Idle
+    }
 }
 
 sealed class PaymentState {
