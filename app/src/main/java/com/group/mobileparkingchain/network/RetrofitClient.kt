@@ -69,8 +69,8 @@ object RetrofitInstance {
         createService(PAYMENT_URL, PaymentApiService::class.java)
     }
 
-    // TODO: Replace with your actual Ngrok/Colab URL
-    private const val CHAT_URL = "https://grouseless-nonphysically-craig.ngrok-free.dev/api/"
+    // Hosted LLM endpoint (Hugging Face Space)
+    private const val CHAT_URL = "https://nobmakara-parking-llm.hf.space/"
     
     val chatApi: com.group.mobileparkingchain.features.chat.data.remote.ChatApiService by lazy {
         createService(CHAT_URL, com.group.mobileparkingchain.features.chat.data.remote.ChatApiService::class.java)

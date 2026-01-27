@@ -36,6 +36,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -82,7 +83,7 @@ fun BookingHistoryScreen(
 
     val context = LocalContext.current
 
-    var selectedNavIndex by remember { mutableStateOf(1) } // Booking History tab selected
+    var selectedNavIndex by remember { mutableIntStateOf(1) } // Booking History tab selected
     var selectedFilter by remember { mutableStateOf<BookingStatus?>(null) }
     var searchQuery by remember { mutableStateOf("") }
     var showDetailsSheet by remember { mutableStateOf(false) }
