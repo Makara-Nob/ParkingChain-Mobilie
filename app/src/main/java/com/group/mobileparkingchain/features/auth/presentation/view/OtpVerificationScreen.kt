@@ -24,6 +24,7 @@ import com.group.mobileparkingchain.features.auth.presentation.viewmodel.OtpVeri
 import com.group.mobileparkingchain.ui.components.ParkingLogo
 import com.group.mobileparkingchain.network.RetrofitInstance
 import com.group.mobileparkingchain.features.auth.data.repository.AuthRepository
+import com.group.mobileparkingchain.features.auth.domain.ResendVerificationUseCase
 import com.group.mobileparkingchain.features.auth.domain.VerifyEmailUseCase
 import com.group.mobileparkingchain.network.datastore.TokenDataStore
 import com.group.mobileparkingchain.features.auth.presentation.components.verification.OtpInputField
@@ -46,19 +47,19 @@ fun OtpVerificationScreen(
                     RetrofitInstance.authApi,
                     TokenDataStore(context)
                 )
+            ),
+            ResendVerificationUseCase(
+                AuthRepository(
+                    RetrofitInstance.authApi,
+                    TokenDataStore(context)
+                )
             )
         )
     )
 
     var otp by remember { mutableStateOf("") }
     val verificationState by viewModel.verificationState.collectAsState()
-
-    // Auto-submit when OTP is complete (6 digits)
-    LaunchedEffect(otp) {
-        if (otp.length == 6 && verificationState !is Resource.Loading) {
-            viewModel.verifyEmail(email, otp)
-        }
-    }
+    val resendState by viewModel.resendState.collectAsState()
 
     LaunchedEffect(verificationState) {
         when (val state = verificationState) {
@@ -79,6 +80,28 @@ fun OtpVerificationScreen(
                 ).show()
                 // Clear OTP on error for retry
                 otp = ""
+            }
+            else -> Unit
+        }
+    }
+
+    LaunchedEffect(resendState) {
+        when (val state = resendState) {
+            is Resource.Success -> {
+                Toast.makeText(
+                    context,
+                    state.data,
+                    Toast.LENGTH_SHORT
+                ).show()
+                viewModel.clearResendState()
+            }
+            is Resource.Error -> {
+                Toast.makeText(
+                    context,
+                    state.message,
+                    Toast.LENGTH_SHORT
+                ).show()
+                viewModel.clearResendState()
             }
             else -> Unit
         }
@@ -135,6 +158,11 @@ fun OtpVerificationScreen(
                     if (newOtp.length <= 6) {
                         otp = newOtp
                     }
+                },
+                onOtpComplete = { completedOtp ->
+                    if (verificationState !is Resource.Loading) {
+                        viewModel.verifyEmail(email, completedOtp)
+                    }
                 }
             )
             
@@ -189,12 +217,7 @@ fun OtpVerificationScreen(
                 )
                 TextButton(
                     onClick = {
-                        // TODO: Implement resend OTP logic
-                        Toast.makeText(
-                            context,
-                            "OTP resent to $email",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        viewModel.resendVerification(email)
                     }
                 ) {
                     Text(

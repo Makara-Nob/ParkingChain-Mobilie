@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -50,6 +51,8 @@ fun SignUpScreen(
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
     val registerState by viewModel.registerState.collectAsState<Resource<User>>()
+    val screenWidthDp = LocalConfiguration.current.screenWidthDp
+    val isCompact = screenWidthDp < 380
 
     LaunchedEffect(registerState) {
         when (val state = registerState) {
@@ -100,16 +103,22 @@ fun SignUpScreen(
             )
             Spacer(modifier = Modifier.height(sdp(24)))
 
-            // First and Last Name side-by-side
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(sdp(12))
-            ) {
-                Box(modifier = Modifier.weight(1f)) {
-                    NameInputField("First Name", firstName) { firstName = it; errorMessage = null }
-                }
-                Box(modifier = Modifier.weight(1f)) {
-                    NameInputField("Last Name", lastName) { lastName = it; errorMessage = null }
+            if (isCompact) {
+                NameInputField("First Name", firstName) { firstName = it; errorMessage = null }
+                Spacer(modifier = Modifier.height(sdp(12)))
+                NameInputField("Last Name", lastName) { lastName = it; errorMessage = null }
+            } else {
+                // First and Last Name side-by-side
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(sdp(12))
+                ) {
+                    Box(modifier = Modifier.weight(1f)) {
+                        NameInputField("First Name", firstName) { firstName = it; errorMessage = null }
+                    }
+                    Box(modifier = Modifier.weight(1f)) {
+                        NameInputField("Last Name", lastName) { lastName = it; errorMessage = null }
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(sdp(12)))

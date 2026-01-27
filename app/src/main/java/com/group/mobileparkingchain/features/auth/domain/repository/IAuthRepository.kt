@@ -12,6 +12,7 @@ interface IAuthRepository {
     ): Result<User>
     suspend fun logout()
     suspend fun verifyEmail(email: String, otp: String): Result<User>
+    suspend fun resendVerification(email: String): Result<String>
     suspend fun getCurrentUser(): Result<User>
 
     // Password Reset

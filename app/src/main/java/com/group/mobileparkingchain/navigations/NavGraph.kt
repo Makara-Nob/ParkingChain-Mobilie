@@ -154,6 +154,9 @@ fun NavGraph() {
                 },
                 onForgotPassword = {
                     navController.navigate(Screen.PasswordReset.route)
+                },
+                onNavigateToOtp = { email ->
+                    navController.navigate(Screen.OtpVerification.createRoute(email))
                 }
             )
         }

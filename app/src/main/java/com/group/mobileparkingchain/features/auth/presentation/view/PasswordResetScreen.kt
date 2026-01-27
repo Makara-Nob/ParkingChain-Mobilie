@@ -193,7 +193,13 @@ fun PasswordResetScreen(
                         )
                         OtpInputField(
                             otp = otp,
-                            onOtpChange = viewModel::onOtpChange
+                            onOtpChange = viewModel::onOtpChange,
+                            onOtpComplete = { completedOtp ->
+                                if (uiState !is PasswordResetState.Loading) {
+                                    viewModel.onOtpChange(completedOtp)
+                                    viewModel.verifyOtp()
+                                }
+                            }
                         )
                         Spacer(modifier = Modifier.height(sdp(24)))
                         Button(
@@ -212,13 +218,7 @@ fun PasswordResetScreen(
                         }
                     }
                     ResetStep.RESET_PASSWORD -> {
-                        Text(
-                            text = "Choose a strong password with at least 8 characters",
-                            color = Color.Gray,
-                            fontSize = ssp(14),
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(bottom = sdp(24))
-                        )
+                        Spacer(modifier = Modifier.height(sdp(24)))
                         
                         PasswordInput(
                             label = "New Password",
@@ -239,9 +239,6 @@ fun PasswordResetScreen(
                         )
                         
                         Spacer(modifier = Modifier.height(sdp(16)))
-                        
-                        PasswordStrengthIndicator(password = newPassword)
-                        
                         Spacer(modifier = Modifier.height(sdp(24)))
                         
                         Button(

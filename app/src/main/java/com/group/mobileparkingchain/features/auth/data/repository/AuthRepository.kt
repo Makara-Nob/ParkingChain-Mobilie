@@ -5,6 +5,7 @@ import com.group.mobileparkingchain.features.auth.data.model.PasswordResetReques
 import com.group.mobileparkingchain.features.auth.data.model.RegisterRequest
 import com.group.mobileparkingchain.features.auth.data.model.ChangePasswordRequest
 import com.group.mobileparkingchain.features.auth.data.model.ResetPasswordRequest
+import com.group.mobileparkingchain.features.auth.data.model.ResendEmailRequest
 import com.group.mobileparkingchain.features.auth.data.model.VerifyEmailRequest
 import com.group.mobileparkingchain.features.auth.data.model.VerifyResetRequest
 import com.group.mobileparkingchain.features.auth.data.remote.AuthApiService
@@ -158,6 +159,35 @@ class AuthRepository(
                             }
                         } 
                         ?: "Verification failed"
+                    Result.failure(Exception(errorMessage))
+                }
+            } catch (e: HttpException) {
+                Result.failure(Exception(e.message()))
+            } catch (e: IOException) {
+                Result.failure(Exception("Network error"))
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    }
+
+    override suspend fun resendVerification(email: String): Result<String> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = authApiService.resendVerification(ResendEmailRequest(email))
+                if (response.isSuccessful && response.body()?.success == true) {
+                    Result.success(response.body()?.message ?: "OTP resent")
+                } else {
+                    val errorMessage = response.body()?.message
+                        ?: response.errorBody()?.string()?.let {
+                            try {
+                                val json = org.json.JSONObject(it)
+                                json.optString("message", "Failed to resend OTP")
+                            } catch (e: Exception) {
+                                "Failed to resend OTP"
+                            }
+                        }
+                        ?: "Failed to resend OTP"
                     Result.failure(Exception(errorMessage))
                 }
             } catch (e: HttpException) {

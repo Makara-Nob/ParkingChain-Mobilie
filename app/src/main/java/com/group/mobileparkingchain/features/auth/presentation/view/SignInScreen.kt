@@ -29,7 +29,8 @@ import com.group.mobileparkingchain.ui.theme.ssp
 fun SignInScreen(
     onSignInSuccess: () -> Unit = {},
     onNavigateToSignUp: () -> Unit = {},
-    onForgotPassword: () -> Unit = {}
+    onForgotPassword: () -> Unit = {},
+    onNavigateToOtp: (String) -> Unit = {}
 ) {
     val context = LocalContext.current
 
@@ -70,6 +71,9 @@ fun SignInScreen(
                     message,
                     Toast.LENGTH_SHORT
                 ).show()
+                if (message.contains("verify your email", ignoreCase = true)) {
+                    onNavigateToOtp(email)
+                }
             }
             else -> Unit
         }

@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.group.mobileparkingchain.ui.theme.PrimaryBlue
 import com.group.mobileparkingchain.ui.theme.TextGray
@@ -21,7 +22,7 @@ fun NameInputField(label: String, value: String, onValueChange: (String) -> Unit
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        placeholder = { Text(label, color = TextGray) }, // Changed from label to placeholder
+        label = { Text(label, color = TextGray, maxLines = 1, overflow = TextOverflow.Ellipsis) },
         leadingIcon = { Icon(imageVector = androidx.compose.material.icons.Icons.Default.Person, contentDescription = label, tint = TextGray) },
         modifier = Modifier.fillMaxWidth().height(sdp(60)),
         shape = RoundedCornerShape(sdp(12)),

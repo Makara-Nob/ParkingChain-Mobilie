@@ -28,6 +28,7 @@ class PasswordResetViewModel(private val authRepository: IAuthRepository) : View
 
     private val _otp = MutableStateFlow("")
     val otp: StateFlow<String> = _otp
+    private var verifiedOtp: String? = null
 
     fun onEmailChange(newEmail: String) {
         _email.value = newEmail
@@ -63,6 +64,7 @@ class PasswordResetViewModel(private val authRepository: IAuthRepository) : View
             _uiState.value = PasswordResetState.Loading
             val result = authRepository.verifyResetOtp(_email.value.trim(), _otp.value)
             if (result.isSuccess) {
+                verifiedOtp = _otp.value
                 _uiState.value = PasswordResetState.Success("OTP verified")
                 _currentStep.value = ResetStep.RESET_PASSWORD
             } else {
@@ -76,9 +78,14 @@ class PasswordResetViewModel(private val authRepository: IAuthRepository) : View
             _uiState.value = PasswordResetState.Error("New password is required")
             return
         }
+        val otpToUse = verifiedOtp ?: _otp.value
+        if (otpToUse.isBlank()) {
+            _uiState.value = PasswordResetState.Error("OTP missing. Please verify again.")
+            return
+        }
         viewModelScope.launch {
             _uiState.value = PasswordResetState.Loading
-            val result = authRepository.resetPassword(_email.value.trim(), _otp.value, newPassword)
+            val result = authRepository.resetPassword(_email.value.trim(), otpToUse, newPassword)
             if (result.isSuccess) {
                 _uiState.value = PasswordResetState.Success("Password reset successfully")
                 _currentStep.value = ResetStep.SUCCESS
